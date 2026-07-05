@@ -1,0 +1,8 @@
+# Build-time deps: used OFFLINE to build data/skill_graph.pkl
+#   (scripts/build_graph_artifact.py) — not installed on the deployed server.
+# Install with:  pip install -r requirements-dev.txt
+-r requirements.txt
+pandas==2.2.2
+sentence-transformers==3.0.1
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.12.1+cpu

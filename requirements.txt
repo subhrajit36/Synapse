@@ -1,7 +1,6 @@
-# Phase 2 — Knowledge Graph (we add more per phase, not all at once)
-networkx==3.2.1
-pandas==2.2.2
-sentence-transformers==3.0.1
+# Runtime deps for the deployed app — deliberately light (no PyTorch on the server).
+# The graph is prebuilt offline into data/skill_graph.pkl.
 streamlit==1.38.0
+networkx==3.2.1
 pypdf==4.3.1
 python-docx==1.1.2
