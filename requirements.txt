@@ -1,0 +1,4 @@
+# Phase 2 — Knowledge Graph (we add more per phase, not all at once)
+networkx==3.2.1
+pandas==2.2.2
+sentence-transformers==3.0.1

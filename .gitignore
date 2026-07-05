@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# Data artifacts (keep the repo light; large third-party dumps live locally)
+# Re-download with scripts/fetch_onet.sh
+data/taxonomies/onet/
+*.zip
+
+# Editor
+.vscode/
+
+# Notebooks scratch
+.ipynb_checkpoints/
+
+# Env / secrets
+.env
+
+# OS
+.DS_Store
