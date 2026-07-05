@@ -1,0 +1,13 @@
+Meera Sharma
+Frontend Engineer
+
+Summary
+Frontend developer focused on building responsive, accessible web interfaces
+with React and modern JavaScript.
+
+Experience
+- Developed reusable component libraries in React and TypeScript.
+- Styled applications with CSS and semantic HTML; designed mockups in Figma.
+- Collaborated with backend teams to integrate REST APIs.
+
+Skills: React, JavaScript, TypeScript, HTML, CSS, Figma

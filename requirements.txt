@@ -2,3 +2,6 @@
 networkx==3.2.1
 pandas==2.2.2
 sentence-transformers==3.0.1
+streamlit==1.38.0
+pypdf==4.3.1
+python-docx==1.1.2

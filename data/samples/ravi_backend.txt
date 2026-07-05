@@ -1,0 +1,13 @@
+Ravi Kumar
+Backend / DevOps Engineer
+
+Summary
+Backend engineer with 4 years building and deploying containerized microservices
+on AWS. Comfortable owning CI/CD pipelines and Linux production environments.
+
+Experience
+- Containerized legacy services with Docker and automated builds using Jenkins.
+- Managed deployments on AWS and wrote infrastructure automation scripts in Bash.
+- Built REST APIs in Python and handled version control with Git.
+
+Skills: Python, Docker, Jenkins, AWS, Git, Linux, Bash, PostgreSQL

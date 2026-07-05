@@ -58,7 +58,20 @@ class Matcher:
             "gaps": sorted(gaps, key=lambda g: g["distance"]),
         }
 
+    def rank(self, jd_skills, candidates):
+        """Rank candidates for a job
 
+        candidates: dict {name: [linked skill nodes]}
+        returns: list of match results (each with 'name'), best fit first.
+        """
+        results = []
+        for name, skills in candidates.items():
+            r = self.match(jd_skills, skills)
+            r["name"] = name
+            results.append(r)
+        results.sort(key=lambda r: r["score"], reverse=True)
+        return results
+    
 if __name__ == "__main__":
     import sys
     sys.path.insert(0, "src")
@@ -67,25 +80,31 @@ if __name__ == "__main__":
 
     G = build_skill_graph()
     G = add_semantic_edges(G)
-
     skills = [n for n, d in G.nodes(data=True) if d["node_type"] == "skill"]
     linker = EntityLinker(skills)
 
-    # A DevOps job description vs a candidate who has Docker but NOT Kubernetes.
+    # The job we're hiring for.
     jd_raw = ["Kubernetes", "Docker", "AWS", "Terraform",
               "Jenkins", "Python", "Linux", "Prometheus"]
-    cand_raw = ["Docker", "Jenkins", "AWS", "Python", "Git", "Linux", "Bash"]
-
     jd = linker.extract(jd_raw)
-    cand = linker.extract(cand_raw)
 
-    result = Matcher(G).match(jd, cand)
+    # A pool of candidates (raw resume skills).
+    candidates_raw = {
+        "Aisha (DevOps)":   ["Kubernetes", "Docker", "AWS", "Terraform",
+                             "Jenkins", "Python", "Linux", "Prometheus"],
+        "Ravi (Backend)":   ["Docker", "Jenkins", "AWS", "Python", "Git", "Linux", "Bash"],
+        "Meera (Frontend)": ["React", "JavaScript", "CSS", "HTML", "Figma", "TypeScript"],
+        "Sam (Data)":       ["Python", "SQL", "TensorFlow", "Tableau", "R"],
+    }
+    candidates = {name: linker.extract(raw) for name, raw in candidates_raw.items()}
 
-    print(f"\n=== FIT SCORE: {result['score']} ===\n")
-    print("Directly has:", result["matched"])
-    print("\nGaps:")
-    for g in result["gaps"]:
-        if g["bridgeable"]:
-            print(f"  ✓ {g['skill']}: BRIDGEABLE — ~{g['distance']:.2f} from '{g['via']}'")
-        else:
-            print(f"  ✗ {g['skill']}: real gap (nearest '{g['via']}', {g['distance']:.2f})")
+    ranked = Matcher(G).rank(jd, candidates)
+
+    print("\n=== CANDIDATE RANKING for the DevOps role ===\n")
+    for i, r in enumerate(ranked, 1):
+        bridgeable = [g["skill"] for g in r["gaps"] if g["bridgeable"]]
+        real_gaps = [g["skill"] for g in r["gaps"] if not g["bridgeable"]]
+        print(f"{i}. {r['name']:18s} fit={r['score']:.3f}  "
+              f"({len(r['matched'])}/{len(jd)} direct)")
+        print(f"     bridgeable gaps: {bridgeable}")
+        print(f"     real gaps:       {real_gaps}\n")

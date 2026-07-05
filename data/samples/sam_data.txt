@@ -1,0 +1,13 @@
+Sam Patel
+Data Scientist
+
+Summary
+Data scientist building machine learning models and analytics dashboards for
+product teams.
+
+Experience
+- Trained deep learning models with TensorFlow and PyTorch for demand forecasting.
+- Analyzed large datasets with Python and SQL; built dashboards in Tableau.
+- Ran statistical experiments and reported results in R.
+
+Skills: Python, SQL, TensorFlow, PyTorch, Tableau, R
