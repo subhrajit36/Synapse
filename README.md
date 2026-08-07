@@ -30,6 +30,50 @@ Ranked candidates + explainable, traceable gaps
   [sentence-transformers](https://www.sbert.net/) embeddings (`all-MiniLM-L6-v2`).
 - **Matching:** weighted shortest-path "bridgeability" over skill↔skill edges.
 
+## HLD
+```mermaid
+graph TD
+    %% User Input & Documents
+    subgraph Input ["1. Candidate Data Input"]
+        A[Candidate Resume<br/>.txt / .docx]
+    end
+
+    %% Ingestion & Extraction Module
+    subgraph Ingest ["2. Ingestion & Extraction"]
+        B[synapse.ingest.resume<br/>Document Parser]
+        C[synapse.ingest.skill_extractor<br/>Raw Skill Extractor]
+    end
+
+    %% Taxonomy & Knowledge Graph Base
+    subgraph GraphBase ["Pre-built Knowledge Base"]
+        D[(ONET Skill Dataset)]
+        E[scripts/build_graph_artifact.py]
+        F[(data/skill_graph.pkl<br/>Serialized NetworkX Graph)]
+        D -->|fetch_onet.sh| E
+        E -->|Serializes| F
+    end
+
+    %% Entity Linking & Matching Engine
+    subgraph Engine ["3. Disambiguation & Scoring"]
+        G[synapse.matching.entity_linker<br/>Vector / Text Entity Linker]
+        H[synapse.matching.matcher<br/>Graph Matcher & Scoring Engine]
+    end
+
+    %% Application UI
+    subgraph Presentation ["4. User Interface"]
+        I[app.py<br/>Streamlit Dashboard]
+    end
+
+    %% Data Flow Connections
+    A -->|Raw File Buffer| B
+    B -->|Clean Text Stream| C
+    C -->|Extracted Raw Skill Terms| G
+    F -->|Canonical Nodes & Edges| G
+    G -->|Normalized Canonical Skills| H
+    F -->|Job Profiles & Graph Traversal| H
+    H -->|Match Scores & Skill Gaps| I
+```
+
 ## Quickstart
 
 ```bash
