@@ -11,12 +11,15 @@ data/taxonomies/onet/
 
 # Editor
 .vscode/
+CLAUDE.md
 
 # Notebooks scratch
 .ipynb_checkpoints/
 
 # Env / secrets
 .env
+venv
 
 # OS
 .DS_Store
+
