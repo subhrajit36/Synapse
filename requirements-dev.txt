@@ -1,8 +1,15 @@
-# Build-time deps: used OFFLINE to build data/skill_graph.pkl
-#   (scripts/build_graph_artifact.py) — not installed on the deployed server.
-# Install with:  pip install -r requirements-dev.txt
+# Dev/offline deps: graph building, extraction, evaluation. NOT installed on the
+# server — NFR2 bans torch from the deployed image, and these stay off it.
 -r requirements.txt
-pandas==2.2.2
+
+# Phase A1 — LLM extraction
+google-genai==1.29.0
+pydantic==2.9.2
+
+# Phase A2/A3 — dev-phase embeddings + graph build (replaced by FastEmbed in C1)
 sentence-transformers==3.0.1
---extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.12.1+cpu
+pandas==2.2.2
+numpy==1.26.4
+
+# Testing
+pytest==8.3.3
