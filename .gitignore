@@ -23,3 +23,9 @@ venv
 # OS
 .DS_Store
 
+# Documentation (local only)
+KNOWLEDGE_GRAPH_AND_SCORING.md
+
+# Documentation (local only)
+src/synapse/KNOWLEDGE_GRAPH_AND_SCORING.md
+
