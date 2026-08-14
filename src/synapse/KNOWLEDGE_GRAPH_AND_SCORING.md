@@ -13,7 +13,7 @@
 We use the **O*NET 30.3** taxonomy (US Department of Labor), specifically:
 
 | File | Purpose |
-|------|---------|
+|---|---|
 | `Occupation Data.txt` | Role definitions (title, SOC code, description) |
 | `Software Skills.txt` | Skill-to-role mappings with metadata |
 
@@ -25,19 +25,19 @@ We use the **O*NET 30.3** taxonomy (US Department of Labor), specifically:
 
 ```mermaid
 flowchart TD
-    A[O*NET Occupation Data] --> B[Filter SOC 15-xxxx<br/>Software/IT roles]
-    C[O*NET Software Skills] --> D[Filter Hot Technology=Y<br/>or In Demand=Y]
-    D --> E[Remove STOP_SKILLS<br/>(MS Office, etc.)]
-    B --> F[Add Role Nodes<br/>node_type=role]
-    E --> G[Add Skill Nodes<br/>node_type=skill, category=Element Name]
-    F --> H[Create Graph]
+    A["O*NET Occupation Data"] --> B["Filter SOC 15-xxxx<br/>Software and IT roles"]
+    C["O*NET Software Skills"] --> D["Filter Hot Technology=Y<br/>or In Demand=Y"]
+    D --> E["Remove STOP_SKILLS<br/>such as MS Office"]
+    B --> F["Add Role Nodes<br/>node_type=role"]
+    E --> G["Add Skill Nodes<br/>node_type=skill<br/>category=Element Name"]
+    F --> H["Create Graph"]
     G --> H
-    H --> I[Add role--skill edges<br/>relation=requires]
-    I --> J[add_semantic_edges()]
-    J --> K[Embed skills with<br/>SentenceTransformer]
-    K --> L[Top-k cosine similarity<br/>k=5, min_sim=0.30]
-    L --> M[Add skill-skill edges<br/>relation=similar, weight=similarity]
-    M --> N[Final Graph<br/>skill_graph.pkl]
+    H --> I["Add role-skill edges<br/>relation=requires"]
+    I --> J["add_semantic_edges()"]
+    J --> K["Embed skills with<br/>SentenceTransformer"]
+    K --> L["Top-k cosine similarity<br/>k=5, min_sim=0.30"]
+    L --> M["Add skill-skill edges<br/>relation=similar<br/>weight=similarity"]
+    M --> N["Final Graph<br/>skill_graph.pkl"]
 ```
 
 ---
@@ -47,29 +47,29 @@ flowchart TD
 #### Nodes
 
 | Node Type | Attributes | Count (approx.) |
-|-----------|------------|-----------------|
+|---|---|---:|
 | **Role** | `node_type="role"`, `soc="15-xxxx"`, `Title` | ~25 |
-| **Skill** | `node_type="skill"`, `category="Element Name"` (e.g., "Development environment software"), `Workplace Example` | ~200 |
+| **Skill** | `node_type="skill"`, `category="Element Name"`, `Workplace Example` | ~200 |
 
 #### Edges
 
 | Relation | Direction | Weight | Meaning |
-|----------|-----------|--------|---------|
-| `requires` | Role → Skill | 1.0 (implicit) | Role requires this skill (from O*NET) |
-| `similar` | Skill ↔ Skill | `cosine_sim ∈ [0.30, 1.0]` | Semantic similarity via embedding |
+|---|---|---:|---|
+| `requires` | Role → Skill | 1.0 (implicit) | Role requires this skill from O*NET |
+| `similar` | Skill ↔ Skill | `cosine_sim ∈ [0.30, 1.0]` | Semantic similarity via embeddings |
 
 #### Example Subgraph
 
-```
+```text
 Software Developer (role)
-    │ requires
-    ▼
+    | requires
+    v
 Docker (skill, category="Development environment software")
-    │ similar (weight=0.87)
-    ▼
+    | similar (weight=0.87)
+    v
 Kubernetes (skill, category="Container orchestration software")
-    │ similar (weight=0.82)
-    ▼
+    | similar (weight=0.82)
+    v
 Amazon Web Services AWS software (skill, category="Cloud platform software")
 ```
 
@@ -78,19 +78,19 @@ Amazon Web Services AWS software (skill, category="Cloud platform software")
 ### 1.4 Key Build Decisions
 
 | Decision | Rationale |
-|----------|-----------|
-| **SOC 15-xxxx only** | Focus on software/IT roles; avoids noise from unrelated occupations |
-| **Hot Technology \|\| In Demand** | Keep only market-relevant tools; drops academic/legacy skills |
-| **STOP_SKILLS exclusion** | Generic office tools (Word, PowerPoint) have high frequency but zero signal |
-| **Context-enriched embeddings** | `"Docker (Development environment software)"` > `"Docker"` alone — category sharpens similarity |
-| **Top-k (k=5) + min_sim=0.30** | Sparse graph; each skill connects to its 5 nearest neighbors above threshold |
-| **Undirected similar edges** | Similarity is symmetric; enables bidirectional bridging |
+|---|---|
+| **SOC 15-xxxx only** | Focus on software and IT roles; avoids noise from unrelated occupations |
+| **Hot Technology OR In Demand** | Keeps market-relevant tools and removes many academic or legacy skills |
+| **STOP_SKILLS exclusion** | Generic office tools such as Word and PowerPoint are high-frequency but low-signal |
+| **Context-enriched embeddings** | `"Docker (Development environment software)"` is more informative than `"Docker"` alone |
+| **Top-k: k=5, min_sim=0.30** | Keeps a sparse graph; each skill links to up to five nearest neighbors above the threshold |
+| **Undirected similar edges** | Similarity is symmetric and supports bidirectional bridge discovery |
 
 ---
 
 ### 1.5 Output Artifact
 
-- **File:** `data/skill_graph.pkl` (git-ignored)
+- **File:** `data/skill_graph.pkl`
 - **Format:** NetworkX `Graph` pickle
 - **Reload:** `nx.read_gpickle("data/skill_graph.pkl")`
 
@@ -100,259 +100,358 @@ Amazon Web Services AWS software (skill, category="Cloud platform software")
 
 ### 2.1 Semantic Bridgeability
 
-The `similar` edges encode **skill proximity** — not just co-occurrence, but *semantic relatedness* via embeddings.
+The `similar` edges encode **skill proximity**: semantic relatedness inferred through embedding similarity, rather than mere co-occurrence.
 
-**Example:** A candidate knows `Docker`. The graph knows:
+Example: if a candidate knows `Docker`, the graph may provide:
+
 - `Docker` --0.87--> `Kubernetes`
 - `Docker` --0.72--> `Amazon ECS`
-- `Docker` --0.45--> `Jenkins` (CI/CD adjacency, not container runtime)
+- `Docker` --0.45--> `Jenkins`
 
-This enables **bridgeable gaps**: if a JD requires `Kubernetes` and the candidate has `Docker`, the gap is *bridgeable* (1 hop, high similarity) — the candidate can likely learn it quickly.
+If a job description requires `Kubernetes` and the candidate has `Docker`, the system can classify Kubernetes as a bridgeable gap because it is one hop away with high similarity.
 
 ### 2.2 Distance Metric
 
-For scoring, we convert similarity → **distance**:
+For scoring, similarity is converted to distance:
 
-```
+```text
 distance = 1 - similarity
 ```
 
 | Similarity | Distance | Interpretation |
-|------------|----------|----------------|
-| 0.90 | 0.10 | Near-identical (e.g., `K8s` ↔ `Kubernetes`) |
-| 0.70 | 0.30 | Strongly related (e.g., `Docker` ↔ `Kubernetes`) |
-| 0.50 | 0.50 | Moderately related (e.g., `React` ↔ `Vue.js`) |
-| 0.30 | 0.70 | Weakly related (threshold floor) |
+|---:|---:|---|
+| 0.90 | 0.10 | Near-identical, such as `K8s` and `Kubernetes` |
+| 0.70 | 0.30 | Strongly related, such as `Docker` and `Kubernetes` |
+| 0.50 | 0.50 | Moderately related, such as `React` and `Vue.js` |
+| 0.30 | 0.70 | Weakly related; graph threshold floor |
 
-### 2.3 Dual View: Weighted Distance + Hop Count
+### 2.3 Dual View: Weighted Distance and Hop Count
 
-The graph supports **two independent path metrics**:
+The graph supports two independent path metrics:
 
+```text
+Docker --0.87--> Kubernetes --0.82--> AWS
+
+Weighted distance = (1 - 0.87) + (1 - 0.82)
+                  = 0.13 + 0.18
+                  = 0.31
+
+Hop count = 2
 ```
-                    weighted distance          hop count
-Docker ──0.87──► Kubernetes ──0.82──► AWS
-  │                                    │
-  └── distance: 0.13 + 0.18 = 0.31     └── hops: 2
-```
 
-- **Weighted distance** = sum of (1 - similarity) along path → used for *bridge credit*
-- **Hop count** = number of edges → used for *max_hops ablation* (B4.3)
+- **Weighted distance:** Sum of `1 - similarity` across a path. Used to calculate bridge credit.
+- **Hop count:** Number of graph edges in a path. Used to enforce `max_hops` ablations.
 
 ---
 
-## 3. Candidate Ranking & Scoring
+## 3. Candidate Ranking and Scoring
 
 ### 3.1 Pipeline Overview
 
 ```mermaid
 flowchart TD
-    A[Raw Resume Text] --> B[reader.py: chunk_text<br/>400 words, 50 overlap]
-    C[Raw JD Text] --> B
-    B --> D[extractor.py: Gemini Flash<br/>structured output schema]
-    D --> E[ExtractionResult:<br/>List[ExtractedSkill{skill, weight, context}]]
-    E --> F[entity_linker.py: cascade resolution]
-    F --> G[LinkedProfile:<br/>{canonical_node: proficiency_weight}]
-    G --> H[Matcher.match()]
-    H --> I[MatchResult:<br/>total, direct, bridge, penalty, gaps]
-    I --> J[Matcher.rank()<br/>sorted by total desc]
+    A["Raw Resume Text"] --> B["reader.py: chunk_text<br/>400 words, 50-word overlap"]
+    C["Raw JD Text"] --> B
+    B --> D["extractor.py: Gemini Flash<br/>structured output schema"]
+    D --> E["ExtractionResult<br/>List of ExtractedSkill objects"]
+    E --> F["entity_linker.py<br/>cascade resolution"]
+    F --> G["LinkedProfile<br/>canonical_node to proficiency_weight"]
+    G --> H["Matcher.match()"]
+    H --> I["MatchResult<br/>total, direct, bridge, penalty, gaps"]
+    I --> J["Matcher.rank()<br/>sorted by total descending"]
 ```
 
 ---
 
 ### 3.2 Phase A1: Skill Extraction
 
-**Input:** Plain text (resume or JD)  
-**Output:** `ExtractionResult` with `ExtractedSkill` objects:
+**Input:** Plain text from a resume or job description.
+
+**Output:** `ExtractionResult` containing `ExtractedSkill` objects.
 
 ```python
 @dataclass
 class ExtractedSkill:
-    skill: str          # free-text skill phrase
-    weight: float       # proficiency ∈ [0.5, 1.5] (validated by Pydantic)
-    context: str        # supporting sentence from source text
+    skill: str
+    weight: float
+    context: str
 ```
 
-**Key behaviors:**
-- Chunking: ~400 words with 50-word overlap (prevents boundary losses)
-- Schema validation: LLM output MUST match schema; invalid → retry (max 3)
-- Deduplication: `merge_skills()` collapses case variants, keeps highest weight + its context
+Field meanings:
+
+| Field | Meaning |
+|---|---|
+| `skill` | Free-text skill phrase extracted from the document |
+| `weight` | Proficiency or demand value in the range `[0.5, 1.5]` |
+| `context` | Supporting sentence from the source document |
+
+Key behaviors:
+
+- Chunking uses approximately 400 words with a 50-word overlap to reduce boundary losses.
+- Pydantic validates structured LLM output.
+- Invalid extraction output is retried up to three times.
+- `merge_skills()` collapses case variants and keeps the highest weight and its associated context.
 
 ---
 
-### 3.3 Phase A2: Entity Linking (Canonicalization)
+### 3.3 Phase A2: Entity Linking
 
-**Cascade resolution (deterministic order):**
+The linker resolves raw extracted phrases to canonical graph nodes using a deterministic cascade.
 
+```text
+Input: "k8s"
+
+1. Alias table
+   "k8s" -> "Kubernetes"
+   score = 1.0
+   method = METHOD_ALIAS
+
+2. Surface index
+   Normalized lookup using vendor stripping and acronym-aware matching.
+   score = 1.0
+   method = METHOD_SURFACE
+
+3. Embedding search
+   Select the nearest graph skill if score >= min_score.
+
+4. Unresolved result
+   node = None
+   method = METHOD_UNRESOLVED
+   logged to JSONL for ontology expansion.
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  INPUT: "k8s"                                               │
-├─────────────────────────────────────────────────────────────┤
-│  1. ALIAS TABLE     → "Kubernetes" (score=1.0, METHOD_ALIAS)│
-│     └─ Hand-maintained: k8s→Kubernetes, JS→JavaScript, etc. │
-├─────────────────────────────────────────────────────────────┤
-│  2. SURFACE INDEX   → "Kubernetes" (score=1.0, METHOD_SURFACE)│
-│     └─ Normalized match: vendor-stripped, acronym-aware     │
-├─────────────────────────────────────────────────────────────┤
-│  3. EMBEDDING       → best cosine match (score≥min_score)   │
-│     └─ FAIL: METHOD_UNRESOLVED, node=None, logged to JSONL  │
-└─────────────────────────────────────────────────────────────┘
+
+Example alias mappings:
+
+```text
+k8s -> Kubernetes
+JS  -> JavaScript
+py  -> Python
 ```
 
-**Output:** `LinkedProfile` with:
-- `skills: dict[canonical_node, proficiency_weight]` — weights preserved!
-- `results: List[LinkResult]` — full provenance (method, score)
-- `unresolved: List[LinkResult]` — logged for ontology expansion
+The resulting `LinkedProfile` contains:
+
+- `skills: dict[canonical_node, proficiency_weight]`
+- `results: List[LinkResult]`
+- `unresolved: List[LinkResult]`
+
+Weights are preserved after canonicalization.
 
 ---
 
-### 3.4 Phase A3/A4: Graph Scoring
+### 3.4 Phase A3 and A4: Graph Scoring
 
 #### 3.4.1 Reachability Computation
 
-For a candidate's canonical skill set `C = {s₁, s₂, ...}`, we run **one multi-source Dijkstra** on the skill graph:
+For candidate canonical skill set \( C = \{s_1, s_2, \ldots\} \), run multi-source Dijkstra over the skill graph.
 
 ```python
-dist, hops, via = nx.multi_source_dijkstra(skill_graph, C, weight="distance")
-# Also run unweighted for hop count
-hops, _ = nx.multi_source_dijkstra(skill_graph, C, weight=None)
+dist, paths = nx.multi_source_dijkstra(
+    skill_graph,
+    sources=list(candidate_skills),
+    weight="distance",
+)
+
+hops, hop_paths = nx.multi_source_dijkstra(
+    skill_graph,
+    sources=list(candidate_skills),
+    weight=None,
+)
 ```
 
-**Result per JD skill `j`:**
-| Metric | Source |
-|--------|--------|
-| `distance` | Min weighted distance from any `c ∈ C` |
-| `hops` | Min hop count from any `c ∈ C` |
-| `via` | The specific candidate skill `c` that achieves the minimum |
+For each job-description skill, this provides:
 
----
+| Metric | Meaning |
+|---|---|
+| `distance` | Minimum weighted semantic distance from a candidate skill |
+| `hops` | Minimum number of edges from a candidate skill |
+| `via` | Candidate skill that supplies the best bridge path |
 
 #### 3.4.2 Gap Classification
 
-For each JD skill `j` with demand weight `w_j`:
+For each job-description skill \( j \) with demand weight \( w_j \):
 
-| Condition | Classification | Score Contribution |
-|-----------|----------------|-------------------|
-| `j ∈ C` | **Direct match** | `w_j × proficiency_credit(cand_weight)` |
-| `j ∉ C` AND `distance ≤ bridge_cutoff` AND `hops ≤ max_hops` | **Bridgeable gap** | `+ w_j × (1 - distance) × bridge_credit_scale - w_j × bridgeable_penalty` |
-| Otherwise | **True gap** | `- w_j × unreachable_penalty` |
+| Condition | Classification | Contribution |
+|---|---|---|
+| `j in C` | Direct match | `w_j * proficiency_credit(candidate_weight)` |
+| Not direct, `distance <= bridge_cutoff`, and `hops <= max_hops` | Bridgeable gap | Bridge credit minus optional bridgeable penalty |
+| Otherwise | True gap | Optional unreachable penalty |
 
-**Proficiency credit function:**
 ```python
-def proficiency_credit(cand_weight):
-    if not use_weights: return 1.0
-    return clamp(cand_weight / proficiency_reference, min_proficiency_credit, 1.0)
-```
-- Default: `proficiency_reference=1.0` → weight 1.0 = full credit, 0.5 = half credit
-- Weights > reference are **capped at 1.0** (no runaway scores)
+def proficiency_credit(candidate_weight: float) -> float:
+    if not use_weights:
+        return 1.0
 
----
+    credit = candidate_weight / proficiency_reference
+    return clamp(credit, min_proficiency_credit, 1.0)
+```
+
+Default behavior:
+
+- `proficiency_reference = 1.0`
+- Candidate weight `1.0` receives full credit.
+- Candidate weight `0.5` receives half credit.
+- Candidate weights above `1.0` are capped at `1.0`.
 
 #### 3.4.3 Final Score Formula
 
+```text
+total_demand = sum(w_j) if use_weights else count(JD skills)
+
+direct_match_score =
+    sum(w_j * proficiency_credit(candidate_weight))
+
+bridge_score =
+    sum(w_j * (1 - distance) * bridge_credit_scale)
+
+gap_penalty =
+    sum(w_j * bridgeable_penalty for bridged skills)
+    +
+    sum(w_j * unreachable_penalty for true gaps)
+
+total =
+    (direct_match_score + bridge_score - gap_penalty)
+    / total_demand
 ```
-total_demand = Σ w_j  (if use_weights) else count(JD skills)
 
-direct_match_score  = Σ[w_j × proficiency_credit] for matched skills
-bridge_score        = Σ[w_j × (1 - distance) × bridge_credit_scale] for bridged skills
-gap_penalty         = Σ[w_j × bridgeable_penalty] for bridged + Σ[w_j × unreachable_penalty] for true gaps
+The expected score range is:
 
-total = (direct_match_score + bridge_score - gap_penalty) / total_demand
+```text
+[-unreachable_penalty, 1.0]
 ```
 
-**Score range:** `[-unreachable_penalty, 1.0]` (typically `[0, 1]` with defaults)
+With default zero penalties, normal scores generally fall between `0.0` and `1.0`.
 
----
-
-#### 3.4.4 MatchResult — Explainable Output
+#### 3.4.4 Explainable Match Result
 
 ```python
 @dataclass
 class MatchResult:
-    total: float                    # final score
-    direct_match_score: float       # component 1
-    bridge_score: float             # component 2
-    gap_penalty: float              # component 3
-    total_demand: float             # denominator
-    matched_skills: List[str]       # canonical nodes held
-    bridged_skills: List[Gap]       # each: skill, via, distance, hops, demand
-    missing_skills: List[Gap]       # true gaps
-    name: str                       # candidate name (for ranking)
+    total: float
+    direct_match_score: float
+    bridge_score: float
+    gap_penalty: float
+    total_demand: float
+    matched_skills: list[str]
+    bridged_skills: list[Gap]
+    missing_skills: list[Gap]
+    name: str
 ```
 
-**Legacy dict access supported:** `r["score"]`, `r["matched"]`, `r["gaps"]`
+Each `Gap` records the job-description skill, bridge source skill, path distance, path hops, and demand weight.
+
+Legacy dictionary-style access remains supported:
+
+```python
+result["score"]
+result["matched"]
+result["gaps"]
+```
 
 ---
 
-### 3.5 Ranking (FR5)
+### 3.5 Ranking
 
 ```python
-ranked = Matcher(G).rank(
-    jd_skills=jd_profile.skills,          # {canonical_node: demand_weight}
-    candidates={                          # name → {canonical_node: proficiency_weight}
+ranked = Matcher(graph).rank(
+    jd_skills=jd_profile.skills,
+    candidates={
         "Aisha": aisha_profile.skills,
-        "Ravi":  ravi_profile.skills,
+        "Ravi": ravi_profile.skills,
     },
-    top_k=10
+    top_k=10,
 )
 ```
 
-**Tie-breaking:** Alphabetical by name (deterministic, NFR7)
+Candidates are ordered by total score in descending order.
+
+When scores are equal, names are sorted alphabetically for deterministic output.
 
 ---
 
-## 4. Ablation Knobs (Phase B4 Ready)
+## 4. Ablation Knobs
 
-All tunables live in `ScoringParams` — **no code changes needed** for ablation:
+All scoring tunables live in `ScoringParams`; no source-code changes are needed for ablation experiments.
 
 | Parameter | Default | B4 Variant | Effect |
-|-----------|---------|------------|--------|
-| `use_weights` | `True` | `False` | Uniform weights (B4.1) |
-| `enable_bridging` | `True` | `False` | Direct-match only (B4.2) |
-| `max_hops` | `None` | `1` / `2` | Hop radius (B4.3) |
-| `bridge_cutoff` | `0.6` | sweep | Distance threshold |
-| `bridgeable_penalty` | `0.0` | `>0` | Small penalty for bridged gaps |
-| `unreachable_penalty` | `0.0` | `>0` | Full penalty for true gaps |
+|---|---:|---|---|
+| `use_weights` | `True` | `False` | Uses uniform demand and proficiency weights |
+| `enable_bridging` | `True` | `False` | Enables direct-match-only scoring |
+| `max_hops` | `None` | `1` or `2` | Restricts bridge path radius |
+| `bridge_cutoff` | `0.6` | Sweep values | Maximum semantic distance accepted as bridgeable |
+| `bridgeable_penalty` | `0.0` | Greater than `0.0` | Penalizes partial bridgeable gaps |
+| `unreachable_penalty` | `0.0` | Greater than `0.0` | Penalizes true gaps |
 
 ---
 
 ## 5. Example: DevOps Role Scoring
 
-**JD (demand weights):**
-```
-Kubernetes: 1.5, Docker: 1.5, AWS: 1.5, Terraform: 1.0,
-Jenkins: 1.0, Python: 1.0, Linux: 1.0, Prometheus: 0.5
+### Job Description Demand Weights
+
+```text
+Kubernetes: 1.5
+Docker: 1.5
+AWS: 1.5
+Terraform: 1.0
+Jenkins: 1.0
+Python: 1.0
+Linux: 1.0
+Prometheus: 0.5
+
 Total demand = 9.0
 ```
 
-**Candidate: Ravi (Backend) — canonical skills after linking:**
-```
-Docker: 1.0, Jenkins: 1.0, AWS: 1.0, Python: 1.0, Linux: 1.0
+### Candidate: Ravi
+
+Canonical skills after entity linking:
+
+```text
+Docker: 1.0
+Jenkins: 1.0
+AWS: 1.0
+Python: 1.0
+Linux: 1.0
 ```
 
-**Graph paths (simplified):**
-| JD Skill | In Candidate? | Distance | Via | Hops | Classification |
-|----------|---------------|----------|-----|------|----------------|
-| Kubernetes | No | 0.13 | Docker | 1 | Bridged |
+### Graph-Based Classification
+
+| JD Skill | Candidate Has It? | Distance | Via | Hops | Classification |
+|---|---|---:|---|---:|---|
+| Kubernetes | No | 0.13 | Docker | 1 | Bridgeable |
 | Docker | Yes | — | — | — | Direct |
 | AWS | Yes | — | — | — | Direct |
-| Terraform | No | 0.35 | AWS | 2 | Bridged |
+| Terraform | No | 0.35 | AWS | 2 | Bridgeable |
 | Jenkins | Yes | — | — | — | Direct |
 | Python | Yes | — | — | — | Direct |
 | Linux | Yes | — | — | — | Direct |
-| Prometheus | No | 0.65 | Linux | 2 | True gap (dist > 0.6) |
+| Prometheus | No | 0.65 | Linux | 2 | True gap |
 
-**Score breakdown:**
-```
-direct_match_score = 1.5(Docker) + 1.5(AWS) + 1.0(Jenkins) + 1.0(Python) + 1.0(Linux) = 6.0
-bridge_score       = 1.5×(1-0.13) + 1.0×(1-0.35) = 1.305 + 0.65 = 1.955
-gap_penalty        = 0 (defaults)
-total_demand       = 9.0
+### Score Breakdown
 
-total = (6.0 + 1.955) / 9.0 = 0.884
+```text
+direct_match_score =
+    1.5 for Docker
+    + 1.5 for AWS
+    + 1.0 for Jenkins
+    + 1.0 for Python
+    + 1.0 for Linux
+    = 6.0
+
+bridge_score =
+    1.5 * (1 - 0.13)
+    + 1.0 * (1 - 0.35)
+    = 1.305 + 0.650
+    = 1.955
+
+gap_penalty = 0.0
+total_demand = 9.0
+
+total = (6.0 + 1.955 - 0.0) / 9.0
+      = 0.884
 ```
 
-**MatchResult.explain():**
-```
+Example `MatchResult.explain()` output:
+
+```text
 fit=0.884  (direct 6.00 + bridge 1.96 - penalty 0.00) / demand 9.00
   matched   : AWS, Docker, Jenkins, Linux, Python
   bridged   : Kubernetes <- Docker (d=0.13, 1 hop)
@@ -365,27 +464,27 @@ fit=0.884  (direct 6.00 + bridge 1.96 - penalty 0.00) / demand 9.00
 ## 6. Files Reference
 
 | File | Purpose |
-|------|---------|
-| `src/synapse/graph/build_graph.py` | Graph construction from O*NET |
-| `src/synapse/matching/aliases.py` | Normalization, alias table, surface index |
-| `src/synapse/matching/entity_linker.py` | Cascade linking, weight preservation |
-| `src/synapse/matching/matcher.py` | Scoring, reachability, ranking |
-| `src/synapse/ingest/reader.py` | Document reading + chunking |
+|---|---|
+| `src/synapse/graph/build_graph.py` | Builds the graph from O*NET data |
+| `src/synapse/matching/aliases.py` | Normalization, alias table, and surface index |
+| `src/synapse/matching/entity_linker.py` | Cascade linking and weight preservation |
+| `src/synapse/matching/matcher.py` | Scoring, reachability, and ranking |
+| `src/synapse/ingest/reader.py` | Document reading and chunking |
 | `src/synapse/ingest/extractor.py` | LLM extraction with schema validation |
-| `src/synapse/ingest/schemas.py` | Pydantic models |
-| `data/skill_graph.pkl` | Serialized graph (git-ignored) |
-| `tests/test_*.py` | 56 unit tests (all passing) |
+| `src/synapse/ingest/schemas.py` | Pydantic schemas |
+| `data/skill_graph.pkl` | Serialized NetworkX graph; git-ignored |
+| `tests/test_*.py` | Unit test suite; 56 tests passing |
 
 ---
 
 ## 7. Phase C Migration Notes
 
 | Component | Current | Phase C Target |
-|-----------|---------|----------------|
-| Embedder | `sentence-transformers` (torch) | `fastembed` (ONNX, CPU-only) |
-| Graph storage | NetworkX + pickle | Neo4j AuraDB Free |
-| Linker threshold | `DEFAULT_MIN_SCORE=0.60` | Calibrated via `scripts/calibrate_link_threshold.py` |
-| Dynamic MERGE | Not implemented | Guarded by same canonicalization + threshold check |
+|---|---|---|
+| Embedder | `sentence-transformers` using PyTorch | `fastembed` using ONNX on CPU |
+| Graph storage | NetworkX with pickle serialization | Neo4j AuraDB Free |
+| Linker threshold | `DEFAULT_MIN_SCORE = 0.60` | Calibrated by `scripts/calibrate_link_threshold.py` |
+| Dynamic `MERGE` | Not implemented | Guarded by canonicalization and threshold validation |
 
 ---
 
