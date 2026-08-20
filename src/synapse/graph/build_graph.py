@@ -2,7 +2,6 @@ import pandas as pd
 import networkx as nx
 from sentence_transformers import SentenceTransformer, util
 
-
 ONET_DIR = "data/taxonomies/onet/db_30_3_text"
 
 # Generic office/productivity tools: high frequency, low signal. We exclude them.
@@ -10,6 +9,33 @@ STOP_SKILLS = {
     "Microsoft Office software", "Microsoft PowerPoint", "Microsoft Word",
     "Microsoft Outlook", "Microsoft Visio", "Microsoft Project",
 }
+
+# --- NEW: Custom Seed List for Modern Tech ---
+# The category provides context to the embedder for more accurate semantic links.
+CUSTOM_SKILLS = [
+    # Deep Learning & ML
+    {"skill": "PyTorch", "category": "Deep Learning Framework"},
+    {"skill": "TensorFlow", "category": "Deep Learning Framework"},
+    {"skill": "Keras", "category": "Deep Learning Framework"},
+    {"skill": "XGBoost", "category": "Gradient Boosting Library"},
+    {"skill": "CatBoost", "category": "Gradient Boosting Library"},
+    {"skill": "LightGBM", "category": "Gradient Boosting Library"},
+    {"skill": "Optuna", "category": "Hyperparameter Optimization"},
+    
+    # NLP & LLMs
+    {"skill": "LangChain", "category": "LLM Orchestration"},
+    {"skill": "Llama", "category": "Large Language Model"},
+    {"skill": "Mistral", "category": "Large Language Model"},
+    {"skill": "BERT", "category": "Transformer Model"},
+    {"skill": "DistilBERT", "category": "Transformer Model"},
+    {"skill": "Hugging Face", "category": "AI Ecosystem"},
+    
+    # Frameworks & App Dev
+    {"skill": "FastAPI", "category": "Web Framework"},
+    {"skill": "React Native", "category": "Mobile Development"},
+    {"skill": "Docker", "category": "Containerization"},
+]
+# ---------------------------------------------
 
 def build_skill_graph(onet_dir: str = ONET_DIR) -> nx.Graph:
     """Build a role<->skill knowledge graph from O*NET (software domain)."""
@@ -26,14 +52,14 @@ def build_skill_graph(onet_dir: str = ONET_DIR) -> nx.Graph:
 
     G = nx.Graph()
 
-    # 3. Add role nodes. node_type lets us distinguish roles from skills later.
+    
     for _, row in occ.iterrows():
         G.add_node(row["Title"], node_type="role", soc=row["O*NET-SOC Code"])
 
-    # 4. Look-up: SOC code -> role title (skills reference roles by code).
+  
     code_to_title = dict(zip(occ["O*NET-SOC Code"], occ["Title"]))
 
-    # 5. Add skill nodes and role--skill edges.
+    #  Add skill nodes and role--skill edges.
     for _, row in sw.iterrows():
         role = code_to_title.get(row["O*NET-SOC Code"])
         if role is None:
@@ -41,6 +67,17 @@ def build_skill_graph(onet_dir: str = ONET_DIR) -> nx.Graph:
         skill = row["Workplace Example"]
         G.add_node(skill, node_type="skill", category=row["Element Name"])
         G.add_edge(role, skill, relation="requires")
+
+    # --- NEW: Inject Custom Skills ---
+    # We add them as orphaned skills (no 'requires' edge to a specific role)
+    # add_semantic_edges only needs the node to exist to map similarities.
+    for item in CUSTOM_SKILLS:
+        G.add_node(
+            item["skill"], 
+            node_type="skill", 
+            category=item["category"]
+        )
+    # ---------------------------------
 
     return G
 
@@ -67,8 +104,6 @@ def add_semantic_edges(G, model_name="all-MiniLM-L6-v2", k=5, min_sim=0.30):
                 G.add_edge(skill, other, relation="similar", weight=round(score, 3))
     return G
 
-
-
 if __name__ == "__main__":
     G = build_skill_graph()
     G = add_semantic_edges(G)
@@ -79,9 +114,10 @@ if __name__ == "__main__":
     print(f"Graph: {G.number_of_nodes()} nodes, {G.number_of_edges()} edges")
     print(f"  roles: {len(roles)} | skills: {len(skills)} | skill-skill edges: {len(sim_edges)}")
 
-    # Demo the differentiator: what does the graph think is most like Docker?
-    docker_like = [(nbr, d["weight"]) for nbr, d in G["Docker"].items()
-                   if d.get("relation") == "similar"]
-    print("\nMost similar to Docker:")
-    for skill, w in sorted(docker_like, key=lambda x: -x[1]):
+    # Demo the differentiator: what does the graph think is most like PyTorch?
+    pytorch_like = [(nbr, d["weight"]) for nbr, d in G["Docker"].items()
+                    if d.get("relation") == "similar"]
+    
+    print("\nMost similar to PyTorch:")
+    for skill, w in sorted(pytorch_like, key=lambda x: -x[1]):
         print(f"  {skill:30s} {w}")
