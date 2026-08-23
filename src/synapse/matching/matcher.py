@@ -15,6 +15,24 @@ Changes from the previous version, all additive:
     gap_penalty, matched_skills, bridged_skills, missing_skills} while still
     supporting r["score"] / r["matched"] / r["gaps"] indexing.
 
+--- FIXES IN THIS REVISION ---
+
+  * BUG: `_reachability()` read cutoffs off `self.params`, ignoring the `params`
+    object handed to `match()`. Consequence: `match(..., params=...)` could only
+    ever make bridging *stricter*, never looser - a raised `bridge_cutoff` was
+    silently discarded, and `get_bridgeable_gaps(max_hops=2)` did not widen the
+    hop radius. Every B4.3 sweep run through those entry points was a no-op.
+    `params` is now threaded all the way down.
+
+  * The Dijkstra exploration bound is now separate from the scoring decision.
+    `search_cutoff` bounds how far the traversal walks (a performance knob);
+    `bridge_cutoff` decides what counts as bridgeable (a scoring knob). Folding
+    them together is what let a pruned node report `distance=inf, hops=1` - a
+    gap that was simultaneously one hop away and infinitely far.
+
+  * Every gap now carries a `reason` code, so "not bridged" is always
+    attributable to a specific condition rather than inferred (NFR6).
+
 Defaults are chosen so `Matcher(G).match(jd, cand)` reproduces the old numbers
 exactly. Any deviation in Phase B results is then attributable to a parameter
 you changed on purpose.
@@ -30,6 +48,15 @@ import networkx as nx
 DEFAULT_BRIDGE_CUTOFF = 0.6
 
 
+def _unit_weight(u, v, d):
+    """Every edge costs 1, so Dijkstra returns hop count.
+
+    Explicit rather than relying on `weight=None`, which happens to work only
+    because networkx falls through to `data.get(None, 1)`.
+    """
+    return 1
+
+
 @dataclass(frozen=True)
 class ScoringParams:
     """Every tunable in one place. Phase B4 sweeps instances of this."""
@@ -43,6 +70,13 @@ class ScoringParams:
     unreachable_penalty: float = 0.0     # full penalty for a true gap
     proficiency_reference: float = 1.0   # proficiency at or above this = full credit
     min_proficiency_credit: float = 0.0
+
+    # Traversal bound, NOT a scoring decision. None = explore the whole component,
+    # which is cheap at Phase A scale (~200 skill nodes) and keeps the true
+    # distance available for explanations even when it exceeds `bridge_cutoff`.
+    # Phase C can set this to bound Neo4j path queries on a larger graph; set it
+    # comfortably above any `bridge_cutoff` you intend to sweep.
+    search_cutoff: float | None = None
 
     def proficiency_credit(self, weight: float) -> float:
         """Map a candidate's proficiency weight to credit in [min, 1.0].
@@ -64,6 +98,7 @@ class Gap:
     hops: int | None
     bridgeable: bool
     demand: float = 1.0
+    reason: str = ""     # why this landed where it did - see _gap_reason()
 
     def __getitem__(self, key):  # legacy dict access (app.py reads g["skill"] etc.)
         return getattr(self, key)
@@ -134,7 +169,9 @@ class MatchResult:
         for g in self.bridged_skills:
             lines.append(f"  bridged   : {g.skill} <- {g.via} (d={g.distance:.2f}, {g.hops} hop)")
         for g in self.missing_skills:
-            lines.append(f"  missing   : {g.skill}")
+            # The reason code turns "missing" from an assertion into evidence.
+            near = f" [nearest {g.via} d={g.distance:.2f}]" if g.via else ""
+            lines.append(f"  missing   : {g.skill} ({g.reason}){near}")
         return "\n".join(lines)
 
 
@@ -162,30 +199,48 @@ class Matcher:
 
         # Skill-only view; each edge's 'distance' = 1 - similarity.
         self.skill_graph = nx.Graph()
+        # Seed with every skill node first, so a skill with no 'similar' edge is
+        # an explicit isolated node rather than silently absent. Isolated nodes
+        # change no score - they reach only themselves - but they make
+        # "why didn't this bridge?" answerable.
+        self.skill_graph.add_nodes_from(
+            n for n, d in G.nodes(data=True) if d.get("node_type") == "skill"
+        )
         for u, v, d in G.edges(data=True):
             if d.get("relation") == "similar":
                 self.skill_graph.add_edge(u, v, distance=1 - d["weight"])
 
+    @property
+    def orphan_skills(self) -> list[str]:
+        """Skills with no 'similar' edge. These can never be bridged to or from."""
+        return sorted(n for n in self.skill_graph if self.skill_graph.degree(n) == 0)
+
     # ------------------------------------------------------------------ reachability
 
-    def _reachability(self, sources: Sequence[str]) -> tuple[dict, dict, dict]:
+    def _reachability(
+        self,
+        sources: Sequence[str],
+        params: ScoringParams | None = None,
+    ) -> tuple[dict, dict, dict]:
         """Weighted distance, hop count and via-node from a set of held skills.
 
         Weighted distance and hop count are computed separately on purpose: the
         cheapest weighted path is not always the shortest in hops, and B4.3 asks
         about hops specifically.
+
+        Traversal is bounded by `search_cutoff` (perf), never by `bridge_cutoff`
+        (scoring) - see the module docstring. The caller filters.
         """
+        p = params or self.params
         present = [s for s in sources if s in self.skill_graph]
         if not present:
             return {}, {}, {}
 
-        cutoff = self.params.bridge_cutoff
         dist, paths = nx.multi_source_dijkstra(
-            self.skill_graph, present, weight="distance", cutoff=cutoff
+            self.skill_graph, present, weight="distance", cutoff=p.search_cutoff
         )
-        hop_cutoff = self.params.max_hops
         hops, _ = nx.multi_source_dijkstra(
-            self.skill_graph, present, weight=None, cutoff=hop_cutoff
+            self.skill_graph, present, weight=_unit_weight
         )
         via = {node: path[0] for node, path in paths.items()}
         return dist, hops, via
@@ -196,6 +251,20 @@ class Matcher:
         if skill not in dist:
             return None, float("inf")
         return via.get(skill), dist[skill]
+
+    @staticmethod
+    def _gap_reason(p: ScoringParams, d: float, h: int | None,
+                    within_distance: bool, within_hops: bool) -> str:
+        """Name the single condition that blocked this bridge."""
+        if not p.enable_bridging:
+            return "bridging_disabled"
+        if d == float("inf"):
+            return "no_path"                # different component, or orphan node
+        if not within_distance:
+            return f"beyond_distance(d={d:.2f}>{p.bridge_cutoff})"
+        if not within_hops:
+            return f"beyond_hops({h}>{p.max_hops})"
+        return "bridgeable"
 
     # ------------------------------------------------------------------ scoring
 
@@ -221,8 +290,10 @@ class Matcher:
             demand = jd[skill] if p.use_weights else 1.0
             direct += demand * p.proficiency_credit(cand[skill])
 
+        # `p`, not `self.params` - this is the fix.
         dist, hops, via = (
-            self._reachability(list(cand)) if (p.enable_bridging and missing) else ({}, {}, {})
+            self._reachability(list(cand), params=p)
+            if (p.enable_bridging and missing) else ({}, {}, {})
         )
 
         bridged: list[Gap] = []
@@ -236,7 +307,10 @@ class Matcher:
             h = hops.get(skill)
             within_distance = p.bridge_cutoff is None or d <= p.bridge_cutoff
             within_hops = p.max_hops is None or (h is not None and h <= p.max_hops)
-            bridgeable = p.enable_bridging and d != float("inf") and within_distance and within_hops
+            bridgeable = (
+                p.enable_bridging and d != float("inf")
+                and within_distance and within_hops
+            )
 
             gap = Gap(
                 skill=skill,
@@ -245,6 +319,7 @@ class Matcher:
                 hops=h,
                 bridgeable=bridgeable,
                 demand=demand,
+                reason=self._gap_reason(p, d, h, within_distance, within_hops),
             )
             if bridgeable:
                 credit = max(0.0, 1 - d) * p.bridge_credit_scale
@@ -267,6 +342,56 @@ class Matcher:
             bridged_skills=sorted(bridged, key=lambda g: g.distance),
             missing_skills=sorted(unreachable, key=lambda g: g.skill),
         )
+
+    # ------------------------------------------------------------------- diagnostics
+
+    def debug_bridge(
+        self,
+        held: Iterable[str],
+        target: str,
+        params: ScoringParams | None = None,
+    ) -> str:
+        """Explain, edge by edge, why `target` is or isn't reachable from `held`.
+
+        Use this before changing any constant - it distinguishes "the edge is
+        missing" from "the edge exists but the cutoff rejects it", which need
+        opposite fixes.
+        """
+        p = params or self.params
+        held = list(held)
+        out = [f"target: {target!r}   held: {held}"]
+
+        if target not in self.G:
+            return "\n".join(out + [f"  {target!r} is NOT A NODE in the graph "
+                                    "-> entity-linking problem, not a bridging one"])
+        if target not in self.skill_graph:
+            return "\n".join(out + [f"  {target!r} is in G but not typed as a skill"])
+        if self.skill_graph.degree(target) == 0:
+            return "\n".join(out + [f"  {target!r} is an ORPHAN (no 'similar' edges) "
+                                    "-> the graph builder never linked it"])
+
+        absent = [s for s in held if s not in self.skill_graph]
+        if absent:
+            out.append(f"  held skills not in the skill graph (ignored): {absent}")
+
+        dist, hops, _ = self._reachability(held, params=p)
+        if target not in dist:
+            return "\n".join(out + ["  no path in any held skill's component"])
+
+        _, path = nx.multi_source_dijkstra(
+            self.skill_graph, [s for s in held if s in self.skill_graph],
+            target=target, weight="distance",
+        )
+        out.append(f"  path: {' -> '.join(path)}")
+        for a, b in zip(path, path[1:]):
+            ed = self.skill_graph[a][b]["distance"]
+            out.append(f"    {a} -> {b}: sim={1 - ed:.3f}  distance={ed:.3f}")
+        out.append(f"  total distance = {dist[target]:.3f} | hops = {hops.get(target)}")
+        out.append(f"  bridge_cutoff  = {p.bridge_cutoff} -> "
+                   f"{'PASS' if p.bridge_cutoff is None or dist[target] <= p.bridge_cutoff else 'FAIL'}")
+        out.append(f"  max_hops       = {p.max_hops} -> "
+                   f"{'PASS' if p.max_hops is None or (hops.get(target) or 99) <= p.max_hops else 'FAIL'}")
+        return "\n".join(out)
 
     # ------------------------------------------------------------------- FR4 / FR5
 
@@ -307,13 +432,21 @@ if __name__ == "__main__":
     import sys
 
     sys.path.insert(0, "src")
-    from synapse.graph.build_graph import add_semantic_edges, build_skill_graph
+    from synapse.graph.build_graph import (
+        add_seed_edges, add_semantic_edges, build_skill_graph,
+    )
     from synapse.matching.entity_linker import EntityLinker
 
-    G = add_semantic_edges(build_skill_graph())
+    G = add_seed_edges(add_semantic_edges(build_skill_graph()))
     skills = [n for n, d in G.nodes(data=True) if d["node_type"] == "skill"]
     node_texts = {n: f"{n} ({G.nodes[n].get('category', '')})" for n in skills}
     linker = EntityLinker(skills, node_texts=node_texts)
+
+    m = Matcher(G)
+    print("\n=== BRIDGE DEBUG: the reported failure ===")
+    print(m.debug_bridge(["PyTorch"], "TensorFlow"))
+    print("\n=== BRIDGE DEBUG: the known-good control ===")
+    print(m.debug_bridge(["Docker"], "Kubernetes"))
 
     jd = linker.link_many([
         ("Kubernetes", 1.5), ("Docker", 1.5), ("AWS", 1.5), ("Terraform", 1.0),
@@ -330,6 +463,6 @@ if __name__ == "__main__":
     candidates = {n: linker.link_many(raw).skills for n, raw in candidates_raw.items()}
 
     print("\n=== CANDIDATE RANKING for the DevOps role ===\n")
-    for i, r in enumerate(Matcher(G).rank(jd, candidates), 1):
+    for i, r in enumerate(m.rank(jd, candidates), 1):
         print(f"{i}. {r.name}")
         print(r.explain(), "\n")

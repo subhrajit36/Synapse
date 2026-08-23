@@ -4,3 +4,11 @@ streamlit==1.38.0
 networkx==3.2.1
 pypdf==4.3.1
 python-docx==1.1.2
+
+# LLM extraction (Phase A1) - optional, requires GEMINI_API_KEY
+google-genai==1.5.0
+pydantic==2.9.2
+
+# Embeddings for entity linking (Phase A2) - dev phase uses sentence-transformers
+# Phase C1 will swap this for fastembed (no torch)
+sentence-transformers==3.0.1

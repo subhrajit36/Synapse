@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 # ExtractionResult so Phase B numbers stay attributable to a specific prompt.
 PROMPT_VERSION = "a1-v1"
 
-DEFAULT_MODEL = os.getenv("SYNAPSE_GEMINI_MODEL", "gemini-2.5-flash")
+DEFAULT_MODEL = os.getenv("SYNAPSE_GEMINI_MODEL", "gemini-3.6-flash")
 
 SYSTEM_INSTRUCTION = """\
 You extract skills from hiring documents (resumes and job descriptions).
@@ -136,6 +136,14 @@ class SkillExtractor:
         a convenience, not our correctness guarantee.
         """
         import json
+        cleaned_payload = payload.strip()
+        if cleaned_payload.startswith("```json"):
+            cleaned_payload = cleaned_payload[7:]
+        if cleaned_payload.startswith("```"):
+            cleaned_payload = cleaned_payload[3:]
+        if cleaned_payload.endswith("```"):
+            cleaned_payload = cleaned_payload[:-3]
+        cleaned_payload = cleaned_payload.strip()
 
         data = json.loads(payload)
         if isinstance(data, dict):  # tolerate {"skills": [...]} shaped drift
@@ -146,14 +154,37 @@ class SkillExtractor:
 
     # ------------------------------------------------------------------- public
 
+    def _is_retryable(self, exc: Exception) -> bool:
+        """Determine if an error is worth retrying vs. failing fast."""
+        # Authentication/quota errors are permanent - don't retry
+        error_str = str(exc).lower()
+        fatal_keywords = [
+            "api_key", "apikey", "authentication", "unauthorized", "401", "403",
+            "quota", "billing", "permission denied", "invalid argument",
+        ]
+        if any(kw in error_str for kw in fatal_keywords):
+            return False
+        # Transient errors: retry
+        transient_keywords = [
+            "timeout", "connection", "network", "503", "502", "504", "rate limit",
+            "429", "temporary", "unavailable",
+        ]
+        if any(kw in error_str for kw in transient_keywords):
+            return True
+        # Default: retry on unexpected errors
+        return True
+
     def extract_from_text(self, text: str) -> list[ExtractedSkill]:
         """Extract from one chunk, retrying on transport errors and bad schemas."""
         last_error: Exception | None = None
         for attempt in range(self.max_retries):
             try:
                 return self._validate(self._generate(text))
-            except Exception as exc:  # noqa: BLE001 - retry policy is uniform
+            except Exception as exc:  # noqa: BLE001
                 last_error = exc
+                if not self._is_retryable(exc):
+                    logger.error("Non-retryable error: %s", exc)
+                    raise ExtractionError(f"Non-retryable extraction error: {exc}") from exc
                 delay = min(2**attempt, 30) + random.uniform(0, 0.5)
                 logger.warning(
                     "Extraction attempt %d/%d failed (%s); retrying in %.1fs",
