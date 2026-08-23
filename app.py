@@ -1,24 +1,44 @@
+import pickle
 import sys
+from pathlib import Path
+
 sys.path.insert(0, "src")
 
 import streamlit as st
-from synapse.matching.matcher import Matcher
+from synapse.matching.matcher import Matcher, ScoringParams
 from synapse.matching.entity_linker import EntityLinker
 from synapse.ingest.resume import read_resume
-from synapse.ingest.extractor import SkillExtractor as LLMExtractor
 from synapse.ingest.skill_extractor import SkillExtractor as GazetteerExtractor
-from synapse.graph.build_graph import add_semantic_edges, build_skill_graph
 
 st.set_page_config(page_title="Synapse", page_icon="🧠", layout="wide")
 
 GRAPH_PATH = "data/skill_graph.pkl"
 
+# Scoring config selected by the Phase B4 sweep on the TRAIN split only and
+# reported on heldout (src/synapse/eval/ABLATION.md). Using the defaults here
+# would ship the weaker settings: on the heldout split these take the
+# bridgeable-vs-weak decision from 0.417 to 0.859.
+TUNED = ScoringParams(bridge_cutoff=0.7, bridge_credit_scale=2.0,
+                      unreachable_penalty=0.0, max_hops=2)
+
 
 @st.cache_resource
 def load_engine():
-    """Load the enriched graph; set up matcher + extractors + entity linker."""
-    # Load base graph and add semantic edges (skill-similarity links)
-    G = add_semantic_edges(build_skill_graph())
+    """Load the prebuilt graph; set up matcher + extractors + entity linker.
+
+    The graph is built OFFLINE by scripts/build_graph_artifact.py and committed
+    as a small pickle. Rebuilding it here would re-read the 110MB O*NET dump and
+    re-embed every skill on each cold start - slow, and it drags pandas into the
+    serving path for no benefit. Loading the artifact also guarantees the app
+    scores against the exact graph Phase B evaluated.
+    """
+    if not Path(GRAPH_PATH).exists():
+        st.error(f"Missing {GRAPH_PATH}. Build it first:\n\n"
+                 "`python scripts/build_graph_artifact.py`")
+        st.stop()
+    with open(GRAPH_PATH, "rb") as f:
+        G = pickle.load(f)
+
     skills = [n for n, d in G.nodes(data=True) if d["node_type"] == "skill"]
     node_texts = {n: f"{n} ({G.nodes[n].get('category', '')})" for n in skills}
 
@@ -33,21 +53,28 @@ def load_engine():
     # Gazetteer extractor: fast string-match fallback (no API key needed)
     gazetteer = GazetteerExtractor(skills)
 
-    # LLM extractor: Gemini Flash with structured output (requires GEMINI_API_KEY)
+    # LLM extractor: Gemini Flash with structured output (requires GEMINI_API_KEY).
+    # Imported lazily and guarded: this module pulls google-genai + pydantic, which
+    # are optional extras. A module-level import here crashed the whole app with
+    # ModuleNotFoundError when they were absent - an optional feature must degrade
+    # to the gazetteer, not take the page down.
     llm_extractor = None
     try:
+        from synapse.ingest.extractor import SkillExtractor as LLMExtractor
         llm_extractor = LLMExtractor()
-    except ValueError:
-        pass  # No API key; will use gazetteer
+    except (ImportError, ValueError):
+        pass  # missing dependency or no API key; the gazetteer covers both
 
-    return Matcher(G), linker, llm_extractor, gazetteer, len(skills)
+    return Matcher(G, params=TUNED), linker, llm_extractor, gazetteer, len(skills)
 
 
 matcher, linker, llm_extractor, gazetteer, n_skills = load_engine()
 
 st.title("🧠 Synapse — Relationship-Aware Talent Matching")
 st.caption(f"Knowledge graph of {n_skills} software skills · ranks candidates by "
-           "bridgeable-gap reasoning, not keyword overlap.")
+           "bridgeable-gap reasoning, not keyword overlap. · Scoring config "
+           f"tuned on a held-out benchmark (bridge_cutoff={TUNED.bridge_cutoff}, "
+           f"credit_scale={TUNED.bridge_credit_scale}, max_hops={TUNED.max_hops}).")
 
 col1, col2 = st.columns(2)
 with col1:
