@@ -11,6 +11,33 @@ STOP_SKILLS = {
     "Microsoft Outlook", "Microsoft Visio", "Microsoft Project",
 }
 
+# Generic O*NET category *descriptors* that arrive as "Workplace Example" values
+# but are taxonomy buckets, not tools (e.g. the real skills are MySQL, Git, React
+# -- not "...database management system software"). The edge-construction audit
+# (data/eval/edge_construction_audit.md) showed these become high-degree hubs that
+# are "similar" to everything: "Relational database management system software"
+# (sim-degree 19) out-scored the MySQL<->PostgreSQL pair itself. Since scoring
+# bridges via shortest path over 'similar' edges, such a hub is a low-distance
+# shortcut that makes unrelated skills look falsely bridgeable -- it corrupts the
+# exact signal Phase B must validate (and violates NFR6 traceability). Excluded.
+GENERIC_SKILLS = {
+    "Relational database management system software",
+    "Web application software",
+    "Web application framework software",
+    "Web server software",
+    "JavaScript framework software",
+    "Statistical software",
+    "Software development tools",
+    "Vector database software",
+    "Version control software",
+    "Content management systems CMS",
+    "Firewall software",
+    "Chatbot software",
+    "Operational Data Store ODS software",
+    "Geographic information system GIS software",
+    "Geographic information system GIS systems",
+}
+
 # --- Custom Seed List for Modern Tech ---
 CUSTOM_SKILLS = [
     # Deep Learning & ML
@@ -92,9 +119,10 @@ def build_skill_graph(onet_dir: str = ONET_DIR, verbose: bool = True) -> nx.Grap
     occ = occ[occ["O*NET-SOC Code"].str.startswith("15-")]
     sw = sw[sw["O*NET-SOC Code"].str.startswith("15-")]
 
-    # 2. Keep only market-relevant tools, minus generic office tools.
+    # 2. Keep only market-relevant tools, minus generic office tools and
+    #    generic category-descriptor buckets (see STOP_SKILLS / GENERIC_SKILLS).
     sw = sw[(sw["Hot Technology"] == "Y") | (sw["In Demand"] == "Y")]
-    sw = sw[~sw["Workplace Example"].isin(STOP_SKILLS)]
+    sw = sw[~sw["Workplace Example"].isin(STOP_SKILLS | GENERIC_SKILLS)]
 
     G = nx.Graph()
 

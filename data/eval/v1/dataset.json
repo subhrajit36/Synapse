@@ -1,0 +1,8063 @@
+{
+  "version": "v1",
+  "seed": 42,
+  "n_jds": 30,
+  "n_pairs": 600,
+  "grade_scale": {
+    "strong": 3,
+    "bridgeable": 2,
+    "weak": 1,
+    "irrelevant": 0
+  },
+  "jds": [
+    {
+      "jd_id": "devops_0",
+      "domain": "devops",
+      "jd_skills": {
+        "Ansible software": 1.0,
+        "Bash": 1.0,
+        "Git": 1.5,
+        "Jenkins CI": 1.5,
+        "Kubernetes": 1.0,
+        "Linux": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "devops_0__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux"
+          ]
+        },
+        {
+          "cand_id": "devops_0__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_0__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux"
+          ]
+        },
+        {
+          "cand_id": "devops_0__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux"
+          ]
+        },
+        {
+          "cand_id": "devops_0__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Linux"
+          ]
+        },
+        {
+          "cand_id": "devops_0__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_0__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_0__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_0__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Linux"
+          ]
+        },
+        {
+          "cand_id": "devops_0__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_0__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Git",
+            "Kubernetes",
+            "Python",
+            "Vue.js",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "devops_0__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Jenkins CI",
+            "Node.js",
+            "React",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "devops_0__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Bash",
+            "Cascading style sheets CSS",
+            "Kubernetes",
+            "LightGBM",
+            "TensorFlow",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "devops_0__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "MySQL",
+            "PostgreSQL",
+            "Python"
+          ]
+        },
+        {
+          "cand_id": "devops_0__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Git",
+            "Keras",
+            "MySQL",
+            "TensorFlow",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "devops_0__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "Kubernetes",
+            "LightGBM",
+            "Python",
+            "React",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "devops_0__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "LightGBM",
+            "MySQL",
+            "React",
+            "Tableau",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "devops_0__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "LightGBM",
+            "NumPy",
+            "Vue.js",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "devops_0__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Keras",
+            "MySQL",
+            "Spring Boot",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "devops_0__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Keras",
+            "PostgreSQL",
+            "Python",
+            "R",
+            "Tableau"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "devops_1",
+      "domain": "devops",
+      "jd_skills": {
+        "Amazon Web Services AWS software": 1.5,
+        "Ansible software": 1.0,
+        "Bash": 1.0,
+        "Jenkins CI": 1.0,
+        "Linux": 1.0,
+        "Red Hat OpenShift": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "devops_1__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_1__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_1__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Jenkins CI",
+            "Linux",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_1__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_1__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Microsoft Azure software"
+          ]
+        },
+        {
+          "cand_id": "devops_1__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Microsoft Azure software"
+          ]
+        },
+        {
+          "cand_id": "devops_1__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Microsoft Azure software"
+          ]
+        },
+        {
+          "cand_id": "devops_1__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Microsoft Azure software"
+          ]
+        },
+        {
+          "cand_id": "devops_1__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Microsoft Azure software"
+          ]
+        },
+        {
+          "cand_id": "devops_1__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Jenkins CI",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_1__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Spark",
+            "LightGBM",
+            "Node.js",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "devops_1__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Linux",
+            "R",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "devops_1__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Hypertext markup language HTML",
+            "Linux",
+            "R",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "devops_1__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Keras",
+            "PyTorch",
+            "React",
+            "Structured query language SQL",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "devops_1__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Oracle Java",
+            "PostgreSQL",
+            "Red Hat OpenShift",
+            "Tableau",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "devops_1__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Jenkins CI",
+            "LightGBM",
+            "Linux",
+            "NumPy"
+          ]
+        },
+        {
+          "cand_id": "devops_1__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Hadoop",
+            "LightGBM",
+            "React",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "devops_1__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "LightGBM",
+            "Tableau",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "devops_1__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Cascading style sheets CSS",
+            "NumPy",
+            "RESTful API"
+          ]
+        },
+        {
+          "cand_id": "devops_1__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Keras",
+            "MySQL",
+            "R",
+            "TensorFlow"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "devops_2",
+      "domain": "devops",
+      "jd_skills": {
+        "Amazon Web Services AWS software": 1.0,
+        "Ansible software": 1.0,
+        "Bash": 1.5,
+        "Git": 1.0,
+        "Jenkins CI": 1.5,
+        "Kubernetes": 1.0,
+        "Prometheus": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "devops_2__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_2__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_2__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_2__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_2__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Microsoft Azure software",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_2__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Microsoft Azure software",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_2__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Microsoft Azure software",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_2__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_2__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_2__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_2__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Git",
+            "PyTorch",
+            "TypeScript",
+            "Vue.js",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "devops_2__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Apache Spark",
+            "Keras",
+            "Prometheus",
+            "Spring Boot",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "devops_2__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Kubernetes",
+            "R",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "devops_2__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Cascading style sheets CSS",
+            "JavaScript",
+            "LightGBM",
+            "Structured query language SQL",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "devops_2__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Spark",
+            "Jenkins CI",
+            "Spring Boot",
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "cand_id": "devops_2__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Keras",
+            "MySQL",
+            "NumPy",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "devops_2__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Hypertext markup language HTML",
+            "LightGBM",
+            "MySQL",
+            "NumPy",
+            "PostgreSQL",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "devops_2__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Hadoop",
+            "Cascading style sheets CSS",
+            "Node.js",
+            "NumPy",
+            "Python",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "devops_2__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "React",
+            "Spring Boot",
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "cand_id": "devops_2__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Hypertext markup language HTML",
+            "MySQL",
+            "Oracle Java",
+            "RESTful API"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "devops_3",
+      "domain": "devops",
+      "jd_skills": {
+        "Amazon Web Services AWS software": 1.5,
+        "Bash": 1.0,
+        "Kubernetes": 1.0,
+        "Linux": 1.5,
+        "Prometheus": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "devops_3__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Kubernetes",
+            "Linux",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_3__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "Docker",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_3__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "Docker",
+            "Kubernetes",
+            "Linux",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_3__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "Kubernetes",
+            "Linux",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_3__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_3__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Bash",
+            "Docker",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_3__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_3__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Bash",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_3__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_3__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Bash",
+            "Docker",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_3__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Figma",
+            "Oracle Java",
+            "Prometheus",
+            "PyTorch",
+            "React",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "devops_3__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "JavaScript",
+            "PyTorch",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "devops_3__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "NumPy",
+            "PyTorch",
+            "TensorFlow",
+            "Vue.js",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "devops_3__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Kubernetes",
+            "TypeScript",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "devops_3__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Keras",
+            "Linux",
+            "Oracle Java",
+            "Python"
+          ]
+        },
+        {
+          "cand_id": "devops_3__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Keras",
+            "PostgreSQL",
+            "Prometheus",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "devops_3__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "MySQL",
+            "Oracle Java",
+            "Tableau",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "devops_3__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Hadoop",
+            "Figma",
+            "NumPy",
+            "PostgreSQL",
+            "React",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "devops_3__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Figma",
+            "JavaScript",
+            "MySQL",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "devops_3__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "NumPy",
+            "Oracle Java",
+            "PyTorch",
+            "Structured query language SQL",
+            "Vue.js",
+            "pandas"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "devops_4",
+      "domain": "devops",
+      "jd_skills": {
+        "Amazon Web Services AWS software": 1.0,
+        "Ansible software": 1.0,
+        "Bash": 1.0,
+        "Git": 1.5,
+        "Jenkins CI": 1.0,
+        "Kubernetes": 1.0,
+        "Prometheus": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "devops_4__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_4__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_4__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_4__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_4__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_4__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Microsoft Azure software",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_4__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Microsoft Azure software",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_4__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Microsoft Azure software",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_4__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Microsoft Azure software",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_4__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_4__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "R",
+            "Structured query language SQL",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "devops_4__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Keras",
+            "Spring Boot",
+            "Tableau",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "devops_4__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Hypertext markup language HTML",
+            "Prometheus",
+            "Tableau",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "devops_4__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "LightGBM",
+            "Prometheus",
+            "PyTorch",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "devops_4__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "LightGBM",
+            "Prometheus",
+            "Python",
+            "RESTful API",
+            "React"
+          ]
+        },
+        {
+          "cand_id": "devops_4__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Python",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "devops_4__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "NumPy",
+            "Python",
+            "RESTful API",
+            "React",
+            "Structured query language SQL",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "devops_4__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "JavaScript",
+            "Python",
+            "R",
+            "React",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "devops_4__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "LightGBM",
+            "MySQL",
+            "RESTful API",
+            "Tableau",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "devops_4__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "LightGBM",
+            "MySQL",
+            "Python",
+            "Tableau"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "devops_5",
+      "domain": "devops",
+      "jd_skills": {
+        "Amazon Web Services AWS software": 1.5,
+        "Ansible software": 1.0,
+        "Git": 1.5,
+        "Jenkins CI": 1.0,
+        "Linux": 1.0,
+        "Prometheus": 1.0,
+        "Red Hat OpenShift": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "devops_5__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_5__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_5__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_5__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_5__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_5__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_5__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_5__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_5__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_5__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Ansible software",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Microsoft Azure software",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "devops_5__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Keras",
+            "NumPy",
+            "PostgreSQL",
+            "Python"
+          ]
+        },
+        {
+          "cand_id": "devops_5__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Git",
+            "Jenkins CI",
+            "MySQL",
+            "PyTorch",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "devops_5__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Spark",
+            "Cascading style sheets CSS",
+            "LightGBM",
+            "Oracle Java",
+            "Prometheus",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "devops_5__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Keras",
+            "LightGBM",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "devops_5__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Figma",
+            "R",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "devops_5__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "Jenkins CI",
+            "MySQL",
+            "Oracle Java",
+            "Structured query language SQL",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "devops_5__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "JavaScript",
+            "Node.js",
+            "TypeScript",
+            "Vue.js",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "devops_5__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Hadoop",
+            "Node.js",
+            "PostgreSQL",
+            "Spring Boot",
+            "TensorFlow",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "devops_5__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Keras",
+            "LightGBM",
+            "Spring Boot",
+            "Tableau",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "devops_5__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Node.js",
+            "TensorFlow",
+            "TypeScript",
+            "XGBoost"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "ml_0",
+      "domain": "ml",
+      "jd_skills": {
+        "NumPy": 1.0,
+        "Python": 1.0,
+        "TensorFlow": 1.5,
+        "XGBoost": 1.5,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "ml_0__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "NumPy",
+            "Python",
+            "TensorFlow",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_0__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Keras",
+            "NumPy",
+            "Python",
+            "TensorFlow",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_0__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "NumPy",
+            "Python",
+            "TensorFlow",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_0__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Keras",
+            "NumPy",
+            "Python",
+            "TensorFlow",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_0__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Keras",
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_0__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "Keras",
+            "NumPy",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_0__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Keras",
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_0__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "Keras",
+            "NumPy",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_0__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "Keras",
+            "LightGBM",
+            "NumPy",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_0__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_0__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Python",
+            "RESTful API",
+            "Red Hat OpenShift",
+            "Tableau",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_0__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Hypertext markup language HTML",
+            "Kubernetes",
+            "NumPy",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "ml_0__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "Jenkins CI",
+            "PostgreSQL",
+            "Spring Boot",
+            "TensorFlow",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_0__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Docker",
+            "Figma",
+            "Spring Boot",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_0__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Node.js",
+            "NumPy",
+            "Python",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "ml_0__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Hypertext markup language HTML",
+            "TensorFlow",
+            "TypeScript",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_0__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "Jenkins CI"
+          ]
+        },
+        {
+          "cand_id": "ml_0__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "PostgreSQL",
+            "Structured query language SQL",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "ml_0__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "RESTful API",
+            "Red Hat OpenShift",
+            "Structured query language SQL",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "ml_0__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Spark",
+            "Hypertext markup language HTML",
+            "Prometheus",
+            "Vue.js"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "ml_1",
+      "domain": "ml",
+      "jd_skills": {
+        "Keras": 1.0,
+        "NumPy": 1.5,
+        "Python": 1.0,
+        "XGBoost": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "ml_1__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Keras",
+            "NumPy",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_1__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Keras",
+            "NumPy",
+            "Python",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_1__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Keras",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_1__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Keras",
+            "NumPy",
+            "Python",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_1__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "ml_1__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "LightGBM",
+            "NumPy",
+            "Python",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "ml_1__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "ml_1__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "Python"
+          ]
+        },
+        {
+          "cand_id": "ml_1__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "ml_1__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "NumPy",
+            "Python",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "ml_1__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Linux",
+            "Prometheus",
+            "Python",
+            "React",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "ml_1__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Apache Hadoop",
+            "Bash",
+            "Git",
+            "NumPy",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "ml_1__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Hypertext markup language HTML",
+            "MySQL",
+            "Prometheus",
+            "Python",
+            "Spring Boot",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "ml_1__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Hypertext markup language HTML",
+            "Kubernetes",
+            "Oracle Java",
+            "Red Hat OpenShift",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_1__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "JavaScript",
+            "Keras",
+            "Linux",
+            "Spring Boot",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_1__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Keras",
+            "React",
+            "TypeScript",
+            "Vue.js",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_1__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Git",
+            "Prometheus",
+            "React",
+            "Structured query language SQL",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_1__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Node.js",
+            "Oracle Java",
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "cand_id": "ml_1__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Git",
+            "Linux",
+            "MySQL",
+            "Prometheus",
+            "RESTful API"
+          ]
+        },
+        {
+          "cand_id": "ml_1__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Hadoop",
+            "JavaScript",
+            "Jenkins CI",
+            "Linux",
+            "Node.js"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "ml_2",
+      "domain": "ml",
+      "jd_skills": {
+        "NumPy": 1.5,
+        "Python": 1.5,
+        "TensorFlow": 1.0,
+        "XGBoost": 1.0,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "ml_2__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Keras",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "TensorFlow",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_2__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "NumPy",
+            "Python",
+            "TensorFlow",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_2__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Keras",
+            "NumPy",
+            "Python",
+            "TensorFlow",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_2__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "TensorFlow",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_2__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "Keras",
+            "NumPy",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_2__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "Keras",
+            "NumPy",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_2__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_2__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Keras",
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_2__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Keras",
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_2__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "Keras",
+            "LightGBM",
+            "NumPy",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_2__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Docker",
+            "Kubernetes",
+            "Oracle Java",
+            "Python",
+            "R",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_2__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Linux",
+            "NumPy",
+            "Structured query language SQL",
+            "Tableau",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "ml_2__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Hypertext markup language HTML",
+            "Spring Boot",
+            "TensorFlow",
+            "TypeScript",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_2__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "Jenkins CI",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "Structured query language SQL",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_2__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Prometheus",
+            "Red Hat OpenShift",
+            "TensorFlow",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_2__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "Node.js",
+            "Python",
+            "Spring Boot",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_2__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Kubernetes",
+            "RESTful API",
+            "React",
+            "Tableau",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "ml_2__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "JavaScript",
+            "Oracle Java",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "ml_2__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "MySQL",
+            "Oracle Java",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "ml_2__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "Linux",
+            "Spring Boot",
+            "Vue.js"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "ml_3",
+      "domain": "ml",
+      "jd_skills": {
+        "Keras": 1.0,
+        "NumPy": 1.5,
+        "Python": 1.0,
+        "XGBoost": 1.5,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "ml_3__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Keras",
+            "LightGBM",
+            "NumPy",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_3__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Keras",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "TensorFlow",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_3__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Keras",
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_3__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Keras",
+            "LightGBM",
+            "NumPy",
+            "Python",
+            "TensorFlow",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_3__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "LightGBM",
+            "NumPy",
+            "Python",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_3__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "LightGBM",
+            "NumPy",
+            "Python",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_3__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "LightGBM",
+            "NumPy",
+            "Python",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_3__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "LightGBM",
+            "NumPy",
+            "Python",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_3__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_3__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_3__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Jenkins CI",
+            "MySQL",
+            "NumPy",
+            "Prometheus",
+            "Python"
+          ]
+        },
+        {
+          "cand_id": "ml_3__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Hypertext markup language HTML",
+            "Kubernetes",
+            "Python",
+            "Vue.js",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_3__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "Keras",
+            "NumPy",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "ml_3__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Keras",
+            "Prometheus",
+            "React",
+            "Vue.js",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_3__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Hypertext markup language HTML",
+            "Node.js",
+            "Structured query language SQL",
+            "Tableau",
+            "TypeScript",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_3__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Figma",
+            "R",
+            "RESTful API",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_3__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "React",
+            "Spring Boot",
+            "Structured query language SQL",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "ml_3__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Apache Spark",
+            "Hypertext markup language HTML",
+            "MySQL",
+            "RESTful API",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "ml_3__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Jenkins CI",
+            "Prometheus",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "ml_3__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Linux",
+            "Spring Boot"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "ml_4",
+      "domain": "ml",
+      "jd_skills": {
+        "Python": 1.0,
+        "TensorFlow": 1.5,
+        "XGBoost": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "ml_4__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "LightGBM",
+            "Python",
+            "TensorFlow",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_4__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Python",
+            "TensorFlow",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_4__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "PyTorch",
+            "Python",
+            "TensorFlow",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_4__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Python",
+            "TensorFlow",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_4__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Keras",
+            "LightGBM",
+            "PyTorch",
+            "Python"
+          ]
+        },
+        {
+          "cand_id": "ml_4__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "Keras",
+            "NumPy",
+            "Python"
+          ]
+        },
+        {
+          "cand_id": "ml_4__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "PyTorch",
+            "Python"
+          ]
+        },
+        {
+          "cand_id": "ml_4__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "NumPy",
+            "PyTorch",
+            "Python"
+          ]
+        },
+        {
+          "cand_id": "ml_4__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "LightGBM",
+            "PyTorch",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_4__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "LightGBM",
+            "PyTorch",
+            "Python",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_4__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Linux",
+            "RESTful API",
+            "Spring Boot",
+            "TensorFlow",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_4__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Red Hat OpenShift",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "ml_4__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Figma",
+            "Jenkins CI",
+            "TensorFlow",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "ml_4__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Git",
+            "Kubernetes",
+            "TensorFlow",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "ml_4__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "RESTful API",
+            "React",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "ml_4__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Figma",
+            "Prometheus",
+            "Python",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "ml_4__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Hadoop",
+            "PostgreSQL",
+            "Structured query language SQL",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "ml_4__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Docker",
+            "Prometheus",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "ml_4__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "JavaScript",
+            "Structured query language SQL",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "ml_4__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "Git",
+            "PostgreSQL",
+            "TypeScript",
+            "Vue.js"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "ml_5",
+      "domain": "ml",
+      "jd_skills": {
+        "LightGBM": 1.5,
+        "NumPy": 1.5,
+        "TensorFlow": 1.0,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "ml_5__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_5__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "LightGBM",
+            "NumPy",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_5__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "LightGBM",
+            "NumPy",
+            "PyTorch",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_5__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "LightGBM",
+            "NumPy",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_5__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Keras",
+            "NumPy",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_5__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_5__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "Keras",
+            "NumPy",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_5__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "NumPy",
+            "PyTorch",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_5__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_5__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "CatBoost",
+            "Keras",
+            "NumPy",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_5__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Linux",
+            "MySQL",
+            "NumPy",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "ml_5__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "JavaScript",
+            "Linux",
+            "NumPy",
+            "Red Hat OpenShift",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_5__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Node.js",
+            "NumPy",
+            "RESTful API",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "ml_5__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "LightGBM",
+            "Linux",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "ml_5__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "NumPy",
+            "PostgreSQL",
+            "Prometheus",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "ml_5__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Linux",
+            "RESTful API",
+            "Spring Boot",
+            "TypeScript",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "ml_5__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Apache Spark",
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "Python",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "ml_5__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Docker",
+            "Figma",
+            "Node.js",
+            "Oracle Java",
+            "RESTful API"
+          ]
+        },
+        {
+          "cand_id": "ml_5__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Jenkins CI",
+            "PostgreSQL",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "ml_5__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "Linux",
+            "Prometheus",
+            "Structured query language SQL",
+            "TypeScript"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "frontend_0",
+      "domain": "frontend",
+      "jd_skills": {
+        "Cascading style sheets CSS": 1.5,
+        "Figma": 1.0,
+        "Hypertext markup language HTML": 1.5,
+        "JavaScript": 1.0,
+        "React": 1.0,
+        "TypeScript": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "frontend_0__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Keras",
+            "RESTful API",
+            "React"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "Keras",
+            "Node.js",
+            "NumPy",
+            "Python",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Linux",
+            "Node.js",
+            "React"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Kubernetes",
+            "PostgreSQL",
+            "RESTful API",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Git",
+            "JavaScript",
+            "Kubernetes",
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Spark",
+            "Hypertext markup language HTML",
+            "LightGBM",
+            "Oracle Java"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Docker",
+            "MySQL",
+            "Node.js",
+            "Prometheus",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "PostgreSQL",
+            "Prometheus",
+            "RESTful API",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Apache Hadoop",
+            "MySQL",
+            "Spring Boot",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "frontend_0__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Hadoop",
+            "LightGBM",
+            "NumPy",
+            "XGBoost"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "frontend_1",
+      "domain": "frontend",
+      "jd_skills": {
+        "Cascading style sheets CSS": 1.0,
+        "Figma": 1.5,
+        "Hypertext markup language HTML": 1.0,
+        "JavaScript": 1.0,
+        "TypeScript": 1.5,
+        "Vue.js": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "frontend_1__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Docker",
+            "Git",
+            "Keras"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "R",
+            "Structured query language SQL",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "NumPy",
+            "PyTorch",
+            "R",
+            "RESTful API",
+            "TypeScript",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Hypertext markup language HTML",
+            "NumPy",
+            "Oracle Java",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Hypertext markup language HTML",
+            "Linux",
+            "PostgreSQL",
+            "PyTorch",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Hypertext markup language HTML",
+            "Linux",
+            "NumPy",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Hadoop",
+            "PostgreSQL",
+            "Python",
+            "R",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "NumPy",
+            "Prometheus",
+            "PyTorch",
+            "Spring Boot",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "NumPy",
+            "PyTorch",
+            "R",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "frontend_1__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "LightGBM",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "frontend_2",
+      "domain": "frontend",
+      "jd_skills": {
+        "Cascading style sheets CSS": 1.0,
+        "Figma": 1.0,
+        "Hypertext markup language HTML": 1.5,
+        "JavaScript": 1.0,
+        "React": 1.0,
+        "TypeScript": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "frontend_2__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Python",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "JavaScript",
+            "LightGBM",
+            "RESTful API",
+            "React",
+            "Tableau",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Kubernetes",
+            "Linux",
+            "Node.js",
+            "PostgreSQL",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Git",
+            "Jenkins CI",
+            "Oracle Java",
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Kubernetes",
+            "Tableau",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "PostgreSQL",
+            "React",
+            "Spring Boot",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "LightGBM",
+            "MySQL",
+            "Python",
+            "Structured query language SQL",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Docker",
+            "Red Hat OpenShift",
+            "Structured query language SQL",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Docker",
+            "Node.js",
+            "NumPy",
+            "Spring Boot",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "frontend_2__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Jenkins CI",
+            "NumPy",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "frontend_3",
+      "domain": "frontend",
+      "jd_skills": {
+        "Cascading style sheets CSS": 1.0,
+        "Figma": 1.0,
+        "Hypertext markup language HTML": 1.5,
+        "JavaScript": 1.0,
+        "TypeScript": 1.0,
+        "Vue.js": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "frontend_3__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "JavaScript",
+            "Linux",
+            "MySQL",
+            "PostgreSQL"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "JavaScript",
+            "Jenkins CI",
+            "Linux"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "Kubernetes"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Figma",
+            "NumPy",
+            "Oracle Java",
+            "Python",
+            "Vue.js",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Cascading style sheets CSS",
+            "Git",
+            "Prometheus",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Apache Spark",
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "Kubernetes"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Node.js",
+            "Python",
+            "R",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Oracle Java",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Jenkins CI",
+            "PostgreSQL",
+            "Prometheus",
+            "PyTorch",
+            "R"
+          ]
+        },
+        {
+          "cand_id": "frontend_3__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "Kubernetes",
+            "Linux",
+            "Node.js",
+            "Python"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "frontend_4",
+      "domain": "frontend",
+      "jd_skills": {
+        "Cascading style sheets CSS": 1.5,
+        "Figma": 1.5,
+        "JavaScript": 1.0,
+        "TypeScript": 1.0,
+        "Vue.js": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "frontend_4__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Kubernetes",
+            "MySQL",
+            "PostgreSQL",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Git",
+            "JavaScript",
+            "Kubernetes",
+            "Linux",
+            "Structured query language SQL",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "JavaScript",
+            "Linux",
+            "Node.js",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Linux",
+            "Oracle Java",
+            "Red Hat OpenShift",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Node.js",
+            "Python",
+            "TensorFlow",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "LightGBM",
+            "RESTful API",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Kubernetes",
+            "Node.js",
+            "NumPy",
+            "Python",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Linux",
+            "NumPy",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Keras",
+            "Linux",
+            "Node.js",
+            "Python",
+            "R",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "frontend_4__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Hadoop",
+            "MySQL",
+            "R",
+            "RESTful API"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "frontend_5",
+      "domain": "frontend",
+      "jd_skills": {
+        "Cascading style sheets CSS": 1.5,
+        "Figma": 1.0,
+        "Hypertext markup language HTML": 1.5,
+        "JavaScript": 1.0,
+        "TypeScript": 1.0,
+        "Vue.js": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "frontend_5__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Kubernetes",
+            "Python",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Cascading style sheets CSS",
+            "Figma",
+            "NumPy",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "RESTful API",
+            "Tableau",
+            "Vue.js",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Hypertext markup language HTML",
+            "Kubernetes",
+            "Prometheus",
+            "Vue.js",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Linux",
+            "R",
+            "Red Hat OpenShift",
+            "Tableau",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Cascading style sheets CSS",
+            "Jenkins CI",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Linux",
+            "NumPy",
+            "Prometheus",
+            "PyTorch"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Hadoop",
+            "Bash",
+            "Kubernetes",
+            "MySQL",
+            "Python",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Spring Boot",
+            "Structured query language SQL",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "frontend_5__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Hadoop",
+            "Bash",
+            "LightGBM",
+            "NumPy",
+            "R",
+            "pandas"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "backend_0",
+      "domain": "backend",
+      "jd_skills": {
+        "MySQL": 1.0,
+        "Node.js": 1.5,
+        "Oracle Java": 1.5,
+        "Python": 1.0,
+        "RESTful API": 1.0,
+        "Spring Boot": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "backend_0__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_0__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_0__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_0__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_0__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_0__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_0__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_0__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_0__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_0__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_0__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Git",
+            "MySQL",
+            "PyTorch",
+            "React",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "backend_0__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Hypertext markup language HTML",
+            "MySQL",
+            "Prometheus",
+            "RESTful API",
+            "React",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "backend_0__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Hypertext markup language HTML",
+            "Keras",
+            "LightGBM",
+            "Node.js",
+            "Python",
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "cand_id": "backend_0__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Kubernetes",
+            "LightGBM",
+            "Linux",
+            "Node.js"
+          ]
+        },
+        {
+          "cand_id": "backend_0__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "Node.js",
+            "RESTful API",
+            "Structured query language SQL",
+            "Tableau",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "backend_0__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "JavaScript",
+            "Node.js",
+            "NumPy",
+            "Prometheus",
+            "Python"
+          ]
+        },
+        {
+          "cand_id": "backend_0__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Figma",
+            "Git",
+            "LightGBM"
+          ]
+        },
+        {
+          "cand_id": "backend_0__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Apache Spark",
+            "Hypertext markup language HTML",
+            "Keras"
+          ]
+        },
+        {
+          "cand_id": "backend_0__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "JavaScript",
+            "Kubernetes",
+            "PyTorch",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "backend_0__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Docker",
+            "Linux",
+            "NumPy",
+            "TensorFlow"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "backend_1",
+      "domain": "backend",
+      "jd_skills": {
+        "Node.js": 1.0,
+        "Oracle Java": 1.0,
+        "PostgreSQL": 1.0,
+        "Python": 1.0,
+        "RESTful API": 1.5,
+        "Spring Boot": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "backend_1__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_1__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_1__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_1__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_1__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_1__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_1__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_1__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_1__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_1__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_1__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "Jenkins CI",
+            "Node.js",
+            "Prometheus",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "backend_1__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Keras",
+            "NumPy",
+            "Oracle Java",
+            "Spring Boot",
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "cand_id": "backend_1__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "NumPy",
+            "Python",
+            "R",
+            "RESTful API",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "backend_1__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "JavaScript",
+            "Keras",
+            "PostgreSQL",
+            "R",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "backend_1__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Linux",
+            "NumPy",
+            "PostgreSQL",
+            "Prometheus",
+            "RESTful API",
+            "Structured query language SQL",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "backend_1__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "JavaScript",
+            "Kubernetes",
+            "Node.js",
+            "Python",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "backend_1__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Hypertext markup language HTML",
+            "React",
+            "Structured query language SQL",
+            "Tableau",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "backend_1__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Git",
+            "Linux",
+            "PyTorch",
+            "React",
+            "TensorFlow",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "backend_1__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Cascading style sheets CSS",
+            "Figma",
+            "Linux",
+            "PyTorch",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "backend_1__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Keras",
+            "R",
+            "React",
+            "Tableau",
+            "TensorFlow"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "backend_2",
+      "domain": "backend",
+      "jd_skills": {
+        "MySQL": 1.5,
+        "Node.js": 1.0,
+        "Oracle Java": 1.0,
+        "Python": 1.0,
+        "RESTful API": 1.5,
+        "Spring Boot": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "backend_2__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_2__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_2__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_2__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_2__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_2__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_2__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_2__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_2__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_2__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_2__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Oracle Java",
+            "Prometheus",
+            "Python",
+            "Tableau",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "backend_2__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Jenkins CI",
+            "Keras",
+            "MySQL",
+            "Prometheus",
+            "RESTful API",
+            "Vue.js",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "backend_2__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Hypertext markup language HTML",
+            "Oracle Java",
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "cand_id": "backend_2__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Git",
+            "Linux",
+            "Oracle Java",
+            "Prometheus",
+            "Python",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "backend_2__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Figma",
+            "MySQL",
+            "Node.js",
+            "PyTorch",
+            "Red Hat OpenShift",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "backend_2__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Apache Spark",
+            "Kubernetes",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_2__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Linux",
+            "Red Hat OpenShift",
+            "Structured query language SQL",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "backend_2__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Cascading style sheets CSS",
+            "Kubernetes",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "backend_2__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Docker",
+            "Hypertext markup language HTML",
+            "Linux",
+            "React",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "backend_2__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Apache Hadoop",
+            "Hypertext markup language HTML",
+            "React",
+            "TensorFlow"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "backend_3",
+      "domain": "backend",
+      "jd_skills": {
+        "MySQL": 1.5,
+        "Node.js": 1.0,
+        "Oracle Java": 1.0,
+        "Python": 1.5,
+        "RESTful API": 1.0,
+        "Spring Boot": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "backend_3__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_3__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_3__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_3__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_3__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_3__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_3__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_3__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_3__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_3__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_3__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Keras",
+            "Kubernetes",
+            "NumPy",
+            "RESTful API",
+            "Vue.js",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "backend_3__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Bash",
+            "Cascading style sheets CSS",
+            "JavaScript",
+            "Linux",
+            "MySQL",
+            "Python"
+          ]
+        },
+        {
+          "cand_id": "backend_3__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Keras",
+            "LightGBM",
+            "MySQL",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "backend_3__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Git",
+            "Oracle Java",
+            "PyTorch",
+            "React",
+            "Spring Boot",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "backend_3__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "LightGBM",
+            "Node.js",
+            "Red Hat OpenShift",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_3__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Hypertext markup language HTML",
+            "Node.js",
+            "NumPy",
+            "Python",
+            "Structured query language SQL",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "backend_3__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Figma",
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "R",
+            "React"
+          ]
+        },
+        {
+          "cand_id": "backend_3__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "LightGBM",
+            "Linux",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "backend_3__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Jenkins CI",
+            "Kubernetes",
+            "Linux",
+            "Prometheus",
+            "Structured query language SQL",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "backend_3__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Docker",
+            "Figma",
+            "R",
+            "Red Hat OpenShift",
+            "TensorFlow",
+            "Vue.js"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "backend_4",
+      "domain": "backend",
+      "jd_skills": {
+        "MySQL": 1.5,
+        "Node.js": 1.5,
+        "Python": 1.0,
+        "RESTful API": 1.0,
+        "Spring Boot": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "backend_4__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_4__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_4__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_4__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_4__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_4__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_4__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_4__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_4__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_4__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_4__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "Kubernetes",
+            "MySQL"
+          ]
+        },
+        {
+          "cand_id": "backend_4__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Keras",
+            "LightGBM",
+            "RESTful API",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "backend_4__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "MySQL",
+            "Prometheus",
+            "RESTful API",
+            "React",
+            "Red Hat OpenShift",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "backend_4__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Figma",
+            "Keras",
+            "MySQL",
+            "Node.js",
+            "NumPy",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "backend_4__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "LightGBM",
+            "MySQL",
+            "Prometheus",
+            "Red Hat OpenShift",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "backend_4__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Jenkins CI",
+            "LightGBM",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_4__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Docker",
+            "Git",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "backend_4__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Kubernetes",
+            "Red Hat OpenShift",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "backend_4__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Hadoop",
+            "Apache Spark",
+            "Docker",
+            "Figma",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "backend_4__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "LightGBM",
+            "R",
+            "Red Hat OpenShift",
+            "Structured query language SQL",
+            "pandas"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "backend_5",
+      "domain": "backend",
+      "jd_skills": {
+        "Node.js": 1.0,
+        "PostgreSQL": 1.0,
+        "Python": 1.5,
+        "RESTful API": 1.5,
+        "Spring Boot": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "backend_5__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_5__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_5__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_5__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Node.js",
+            "Oracle Java",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_5__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Database",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_5__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Java",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_5__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Oracle Database",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_5__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_5__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Node.js",
+            "Oracle Database",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_5__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "backend_5__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Kubernetes",
+            "NumPy",
+            "PostgreSQL",
+            "Prometheus",
+            "RESTful API"
+          ]
+        },
+        {
+          "cand_id": "backend_5__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Git",
+            "JavaScript",
+            "RESTful API"
+          ]
+        },
+        {
+          "cand_id": "backend_5__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Prometheus",
+            "RESTful API",
+            "Tableau",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "backend_5__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Keras",
+            "Node.js",
+            "R",
+            "Red Hat OpenShift"
+          ]
+        },
+        {
+          "cand_id": "backend_5__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Linux",
+            "PostgreSQL",
+            "Prometheus",
+            "Red Hat OpenShift",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "backend_5__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Spark",
+            "Docker",
+            "Python",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "backend_5__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "Linux",
+            "R",
+            "Structured query language SQL",
+            "TensorFlow",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "backend_5__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "JavaScript",
+            "Keras",
+            "Prometheus"
+          ]
+        },
+        {
+          "cand_id": "backend_5__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Jenkins CI",
+            "Keras",
+            "LightGBM",
+            "Prometheus",
+            "React"
+          ]
+        },
+        {
+          "cand_id": "backend_5__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "NumPy",
+            "pandas"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "data_0",
+      "domain": "data",
+      "jd_skills": {
+        "Apache Spark": 1.0,
+        "Python": 1.0,
+        "R": 1.0,
+        "Structured query language SQL": 1.5,
+        "Tableau": 1.5,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "data_0__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_0__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_0__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_0__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_0__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_0__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_0__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_0__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_0__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_0__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_0__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "NumPy",
+            "Tableau",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "data_0__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Docker",
+            "Hypertext markup language HTML",
+            "PyTorch",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "data_0__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Git",
+            "NumPy",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_0__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Spark",
+            "Node.js",
+            "Prometheus",
+            "PyTorch",
+            "R",
+            "RESTful API"
+          ]
+        },
+        {
+          "cand_id": "data_0__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "JavaScript",
+            "Linux",
+            "NumPy",
+            "Red Hat OpenShift",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "data_0__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Cascading style sheets CSS",
+            "Figma",
+            "Linux",
+            "RESTful API",
+            "Tableau",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "data_0__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Docker",
+            "Git",
+            "Hypertext markup language HTML",
+            "NumPy"
+          ]
+        },
+        {
+          "cand_id": "data_0__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "JavaScript",
+            "Kubernetes",
+            "LightGBM",
+            "NumPy",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "data_0__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Kubernetes",
+            "LightGBM",
+            "MySQL",
+            "PostgreSQL"
+          ]
+        },
+        {
+          "cand_id": "data_0__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "RESTful API",
+            "React"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "data_1",
+      "domain": "data",
+      "jd_skills": {
+        "Apache Hadoop": 1.5,
+        "Python": 1.5,
+        "R": 1.0,
+        "Structured query language SQL": 1.0,
+        "Tableau": 1.0,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "data_1__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_1__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_1__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_1__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_1__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_1__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_1__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_1__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_1__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_1__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_1__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Hypertext markup language HTML",
+            "PostgreSQL",
+            "R",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "data_1__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "LightGBM",
+            "Red Hat OpenShift",
+            "Spring Boot",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_1__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "Kubernetes",
+            "Linux",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "data_1__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Keras",
+            "LightGBM",
+            "Prometheus",
+            "R",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "data_1__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Kubernetes",
+            "LightGBM",
+            "Oracle Java",
+            "Structured query language SQL",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_1__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Jenkins CI",
+            "LightGBM",
+            "Prometheus",
+            "Python",
+            "Spring Boot",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "data_1__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Docker",
+            "JavaScript",
+            "React"
+          ]
+        },
+        {
+          "cand_id": "data_1__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Docker",
+            "PyTorch",
+            "React",
+            "Red Hat OpenShift",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "data_1__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "Cascading style sheets CSS",
+            "Keras",
+            "Kubernetes"
+          ]
+        },
+        {
+          "cand_id": "data_1__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "JavaScript",
+            "Kubernetes",
+            "MySQL",
+            "Spring Boot"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "data_2",
+      "domain": "data",
+      "jd_skills": {
+        "Apache Spark": 1.0,
+        "Python": 1.0,
+        "R": 1.5,
+        "Structured query language SQL": 1.5,
+        "Tableau": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "data_2__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "data_2__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "data_2__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_2__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "data_2__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_2__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_2__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_2__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "data_2__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_2__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "data_2__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "MySQL",
+            "Node.js",
+            "Prometheus",
+            "PyTorch",
+            "Python",
+            "R"
+          ]
+        },
+        {
+          "cand_id": "data_2__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Keras",
+            "LightGBM",
+            "Python",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "data_2__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Linux",
+            "PyTorch",
+            "R",
+            "Structured query language SQL",
+            "TypeScript",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "data_2__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Node.js",
+            "Prometheus",
+            "R",
+            "React"
+          ]
+        },
+        {
+          "cand_id": "data_2__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Jenkins CI",
+            "PyTorch",
+            "Python",
+            "React",
+            "Red Hat OpenShift",
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "cand_id": "data_2__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "LightGBM",
+            "Python",
+            "Tableau",
+            "TensorFlow",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "data_2__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Git",
+            "Kubernetes",
+            "PostgreSQL",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_2__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Figma",
+            "Oracle Java",
+            "RESTful API",
+            "Spring Boot",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_2__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Git",
+            "Jenkins CI",
+            "MySQL",
+            "React",
+            "TensorFlow",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_2__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Linux",
+            "TensorFlow",
+            "TypeScript",
+            "Vue.js",
+            "XGBoost"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "data_3",
+      "domain": "data",
+      "jd_skills": {
+        "Apache Spark": 1.5,
+        "Python": 1.0,
+        "R": 1.5,
+        "Structured query language SQL": 1.0,
+        "Tableau": 1.0,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "data_3__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_3__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_3__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_3__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_3__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_3__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_3__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_3__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_3__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_3__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_3__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Docker",
+            "Kubernetes",
+            "Node.js",
+            "NumPy",
+            "Structured query language SQL",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "data_3__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Cascading style sheets CSS",
+            "R",
+            "Red Hat OpenShift",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "data_3__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Keras",
+            "MySQL",
+            "R",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "data_3__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "MySQL",
+            "R",
+            "React",
+            "Red Hat OpenShift",
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "cand_id": "data_3__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Apache Spark",
+            "Cascading style sheets CSS",
+            "R",
+            "React",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "data_3__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "R",
+            "RESTful API",
+            "Red Hat OpenShift",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "data_3__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "Keras",
+            "NumPy",
+            "Oracle Java"
+          ]
+        },
+        {
+          "cand_id": "data_3__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Hypertext markup language HTML",
+            "LightGBM",
+            "Linux",
+            "MySQL",
+            "PyTorch",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "data_3__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "Linux",
+            "PyTorch",
+            "RESTful API"
+          ]
+        },
+        {
+          "cand_id": "data_3__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Git",
+            "Prometheus",
+            "Red Hat OpenShift",
+            "XGBoost"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "data_4",
+      "domain": "data",
+      "jd_skills": {
+        "Apache Hadoop": 1.5,
+        "Python": 1.0,
+        "R": 1.0,
+        "Structured query language SQL": 1.5,
+        "Tableau": 1.0,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "data_4__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_4__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_4__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_4__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_4__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_4__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_4__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_4__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_4__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_4__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_4__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Hadoop",
+            "Docker",
+            "LightGBM",
+            "NumPy",
+            "Python",
+            "React"
+          ]
+        },
+        {
+          "cand_id": "data_4__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "LightGBM",
+            "Linux",
+            "Node.js",
+            "PyTorch",
+            "Python",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "data_4__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Jenkins CI",
+            "Node.js",
+            "Tableau"
+          ]
+        },
+        {
+          "cand_id": "data_4__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Kubernetes",
+            "Prometheus",
+            "R",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "data_4__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "LightGBM",
+            "Structured query language SQL",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "data_4__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "React",
+            "Structured query language SQL",
+            "TypeScript",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_4__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "PostgreSQL",
+            "TensorFlow"
+          ]
+        },
+        {
+          "cand_id": "data_4__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Jenkins CI"
+          ]
+        },
+        {
+          "cand_id": "data_4__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "Jenkins CI",
+            "MySQL",
+            "PostgreSQL",
+            "Red Hat OpenShift",
+            "Spring Boot"
+          ]
+        },
+        {
+          "cand_id": "data_4__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "JavaScript",
+            "NumPy",
+            "Oracle Java",
+            "PostgreSQL"
+          ]
+        }
+      ]
+    },
+    {
+      "jd_id": "data_5",
+      "domain": "data",
+      "jd_skills": {
+        "Apache Hadoop": 1.0,
+        "Python": 1.0,
+        "R": 1.0,
+        "Structured query language SQL": 1.5,
+        "Tableau": 1.0,
+        "pandas": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "data_5__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_5__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_5__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_5__strong_3",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Hadoop",
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_5__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_5__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_5__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_5__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_5__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_5__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "R",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_5__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "JavaScript",
+            "PyTorch",
+            "Python",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "data_5__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Hypertext markup language HTML",
+            "React",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_5__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "JavaScript",
+            "PostgreSQL",
+            "PyTorch",
+            "Python",
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "cand_id": "data_5__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "PyTorch",
+            "Structured query language SQL",
+            "TensorFlow",
+            "XGBoost",
+            "pandas"
+          ]
+        },
+        {
+          "cand_id": "data_5__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "Kubernetes",
+            "React",
+            "Red Hat OpenShift",
+            "Structured query language SQL",
+            "XGBoost"
+          ]
+        },
+        {
+          "cand_id": "data_5__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "R",
+            "Red Hat OpenShift",
+            "Spring Boot",
+            "Structured query language SQL",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "data_5__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Kubernetes",
+            "MySQL",
+            "PyTorch",
+            "RESTful API",
+            "React"
+          ]
+        },
+        {
+          "cand_id": "data_5__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Git",
+            "JavaScript",
+            "LightGBM",
+            "Linux",
+            "Node.js",
+            "Vue.js"
+          ]
+        },
+        {
+          "cand_id": "data_5__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Jenkins CI",
+            "Keras",
+            "Oracle Java",
+            "PostgreSQL",
+            "TypeScript"
+          ]
+        },
+        {
+          "cand_id": "data_5__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Node.js",
+            "PostgreSQL",
+            "TensorFlow",
+            "Vue.js"
+          ]
+        }
+      ]
+    }
+  ]
+}

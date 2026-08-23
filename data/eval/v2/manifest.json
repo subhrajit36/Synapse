@@ -1,0 +1,80 @@
+{
+  "version": "v2",
+  "seed": 42,
+  "n_jds": 30,
+  "n_pairs": 540,
+  "splits": {
+    "train": 15,
+    "heldout": 15
+  },
+  "content_sha256": "21677c440a88343f",
+  "substitution_groups": [
+    [
+      "Docker",
+      "Kubernetes",
+      "Red Hat OpenShift"
+    ],
+    [
+      "Amazon Web Services AWS software",
+      "Microsoft Azure software",
+      "Oracle Cloud software"
+    ],
+    [
+      "GitHub",
+      "GitLab",
+      "Atlassian Bitbucket"
+    ],
+    [
+      "Linux",
+      "UNIX",
+      "Red Hat Enterprise Linux"
+    ],
+    [
+      "Bash",
+      "UNIX Shell",
+      "Shell script"
+    ],
+    [
+      "Ansible software",
+      "Puppet",
+      "Chef"
+    ],
+    [
+      "PyTorch",
+      "TensorFlow",
+      "Keras"
+    ],
+    [
+      "XGBoost",
+      "LightGBM",
+      "CatBoost"
+    ],
+    [
+      "MySQL",
+      "PostgreSQL",
+      "Oracle Database"
+    ],
+    [
+      "MongoDB",
+      "Apache Cassandra",
+      "Redis"
+    ],
+    [
+      "React",
+      "Vue.js"
+    ],
+    [
+      "Apache Spark",
+      "Apache Hadoop"
+    ],
+    [
+      "Tableau",
+      "Microsoft Power BI"
+    ],
+    [
+      "Structured query language SQL",
+      "Oracle PL/SQL",
+      "Transact-SQL"
+    ]
+  ]
+}

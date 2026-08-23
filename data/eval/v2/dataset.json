@@ -1,0 +1,7505 @@
+{
+  "version": "v2",
+  "seed": 42,
+  "n_jds": 30,
+  "n_pairs": 540,
+  "grade_scale": {
+    "strong": 3,
+    "bridgeable": 2,
+    "weak": 1,
+    "irrelevant": 0
+  },
+  "splits": {
+    "train": 15,
+    "heldout": 15
+  },
+  "jds": [
+    {
+      "jd_id": "devops_0",
+      "domain": "devops",
+      "jd_skills": {
+        "Ansible software": 1.0,
+        "Bash": 1.0,
+        "Docker": 1.0,
+        "Git": 1.5,
+        "Jenkins CI": 1.5,
+        "Prometheus": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "devops_0__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Prometheus"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "devops_0__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Prometheus",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "devops_0__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Jenkins CI",
+            "Puppet",
+            "Red Hat OpenShift",
+            "Shell script"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_0__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Jenkins CI",
+            "Kubernetes",
+            "Puppet",
+            "UNIX Shell"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_0__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Chef",
+            "Kubernetes",
+            "Splunk Enterprise",
+            "UNIX Shell"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_0__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Chef",
+            "Git",
+            "Red Hat OpenShift",
+            "Shell script"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_0__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Chef",
+            "Git",
+            "Red Hat OpenShift",
+            "Shell script",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_0__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Kubernetes",
+            "Puppet",
+            "Splunk Enterprise",
+            "UNIX Shell"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_0__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Django",
+            "Git",
+            "Jenkins CI",
+            "Prometheus",
+            "Spring Boot",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_0__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Git",
+            "GitHub",
+            "Jenkins CI",
+            "Prometheus",
+            "PyTorch",
+            "Python"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_0__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "Prometheus",
+            "React",
+            "Tableau",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_0__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Jenkins CI",
+            "Node.js",
+            "RESTful API",
+            "Tableau"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_0__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Cascading style sheets CSS",
+            "Git",
+            "JavaScript",
+            "Jenkins CI",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_0__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Jenkins CI",
+            "Prometheus",
+            "Spring Boot",
+            "XGBoost"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_0__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "GitHub",
+            "MongoDB",
+            "React",
+            "Spring Boot",
+            "Tableau"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_0__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Hypertext markup language HTML",
+            "MySQL",
+            "PostgreSQL",
+            "Spring Boot",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_0__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Django",
+            "NumPy",
+            "Python",
+            "React",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_0__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "JavaScript",
+            "Node.js"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "devops_1",
+      "domain": "devops",
+      "jd_skills": {
+        "Amazon Web Services AWS software": 1.5,
+        "Ansible software": 1.0,
+        "Bash": 1.5,
+        "Git": 1.0,
+        "Jenkins CI": 1.0,
+        "Splunk Enterprise": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "devops_1__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "devops_1__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Bash",
+            "Git",
+            "Jenkins CI",
+            "Prometheus",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "devops_1__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Oracle Cloud software",
+            "Puppet",
+            "Shell script"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_1__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Jenkins CI",
+            "Oracle Cloud software",
+            "Prometheus",
+            "Puppet",
+            "Shell script"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_1__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Git",
+            "Oracle Cloud software",
+            "Puppet",
+            "UNIX Shell"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_1__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Oracle Cloud software",
+            "Puppet",
+            "UNIX Shell"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_1__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Git",
+            "Microsoft Azure software",
+            "Puppet",
+            "UNIX Shell"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_1__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Chef",
+            "Microsoft Azure software",
+            "Shell script"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_1__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Jenkins CI",
+            "MongoDB",
+            "Splunk Enterprise",
+            "Tableau",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_1__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Django",
+            "Git",
+            "Jenkins CI",
+            "Splunk Enterprise",
+            "Spring Boot",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_1__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "Node.js",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_1__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Git",
+            "Jenkins CI",
+            "RESTful API",
+            "Splunk Enterprise",
+            "Structured query language SQL",
+            "Tableau"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_1__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Django",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "React",
+            "Splunk Enterprise",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_1__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "JavaScript",
+            "Jenkins CI",
+            "Splunk Enterprise",
+            "Tableau",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_1__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Cascading style sheets CSS",
+            "JavaScript",
+            "PostgreSQL",
+            "Python",
+            "XGBoost"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_1__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Docker",
+            "MySQL",
+            "Tableau"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_1__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "PyTorch",
+            "React",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_1__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "Django",
+            "React",
+            "XGBoost"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "devops_2",
+      "domain": "devops",
+      "jd_skills": {
+        "Amazon Web Services AWS software": 1.5,
+        "Bash": 1.0,
+        "Docker": 1.5,
+        "Jenkins CI": 1.0,
+        "Prometheus": 1.0,
+        "Splunk Enterprise": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "devops_2__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "Docker",
+            "Git",
+            "Jenkins CI",
+            "Prometheus",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "devops_2__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "Docker",
+            "Jenkins CI",
+            "Prometheus",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "devops_2__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Kubernetes",
+            "Oracle Cloud software",
+            "Shell script",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_2__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Oracle Cloud software",
+            "Red Hat OpenShift",
+            "Splunk Enterprise",
+            "UNIX Shell"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_2__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Git",
+            "Kubernetes",
+            "Oracle Cloud software",
+            "Shell script"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_2__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Git",
+            "Microsoft Azure software",
+            "Red Hat OpenShift",
+            "Shell script"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_2__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Kubernetes",
+            "Oracle Cloud software",
+            "Prometheus",
+            "UNIX Shell"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_2__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Git",
+            "Jenkins CI",
+            "Kubernetes",
+            "Oracle Cloud software",
+            "Shell script"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_2__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "GitHub",
+            "Jenkins CI",
+            "MySQL",
+            "Prometheus",
+            "Splunk Enterprise",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_2__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Figma",
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "Prometheus",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_2__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Jenkins CI",
+            "Prometheus",
+            "PyTorch",
+            "Python",
+            "TypeScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_2__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "JavaScript",
+            "PostgreSQL",
+            "Prometheus",
+            "Splunk Enterprise",
+            "TypeScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_2__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "GitHub",
+            "Jenkins CI",
+            "Prometheus",
+            "React",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_2__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Jenkins CI",
+            "Prometheus",
+            "Python",
+            "React",
+            "Splunk Enterprise",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_2__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Node.js",
+            "PyTorch",
+            "Python",
+            "React",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_2__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "GitHub",
+            "JavaScript",
+            "MongoDB",
+            "Python",
+            "RESTful API",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_2__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "JavaScript",
+            "MongoDB",
+            "Python",
+            "RESTful API",
+            "React",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_2__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "JavaScript",
+            "MongoDB",
+            "MySQL",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "devops_3",
+      "domain": "devops",
+      "jd_skills": {
+        "Ansible software": 1.5,
+        "Docker": 1.0,
+        "Git": 1.0,
+        "GitHub": 1.0,
+        "Jenkins CI": 1.5,
+        "Splunk Enterprise": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "devops_3__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Ansible software",
+            "Docker",
+            "Git",
+            "GitHub",
+            "Jenkins CI",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "devops_3__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Ansible software",
+            "Docker",
+            "Git",
+            "GitHub",
+            "Jenkins CI",
+            "Prometheus",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "devops_3__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Chef",
+            "GitLab",
+            "Kubernetes"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_3__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Kubernetes",
+            "Puppet"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_3__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Kubernetes",
+            "Puppet"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_3__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Chef",
+            "Red Hat OpenShift",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_3__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Prometheus",
+            "Puppet",
+            "Red Hat OpenShift"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_3__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Puppet",
+            "Red Hat OpenShift"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_3__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Jenkins CI",
+            "NumPy",
+            "Splunk Enterprise",
+            "Spring Boot",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_3__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Jenkins CI",
+            "PostgreSQL",
+            "Python",
+            "Splunk Enterprise",
+            "XGBoost"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_3__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Jenkins CI",
+            "MySQL",
+            "Splunk Enterprise",
+            "Spring Boot",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_3__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Git",
+            "Jenkins CI",
+            "MongoDB",
+            "MySQL",
+            "RESTful API",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_3__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "NumPy",
+            "React",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_3__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Git",
+            "Jenkins CI",
+            "MySQL",
+            "Splunk Enterprise",
+            "Structured query language SQL",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_3__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "JavaScript",
+            "MongoDB",
+            "Python",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_3__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "RESTful API",
+            "React",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_3__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "MongoDB",
+            "Node.js",
+            "PyTorch",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_3__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "PostgreSQL",
+            "Python",
+            "React",
+            "Spring Boot",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "devops_4",
+      "domain": "devops",
+      "jd_skills": {
+        "Ansible software": 1.5,
+        "Bash": 1.5,
+        "Git": 1.0,
+        "GitHub": 1.0,
+        "Jenkins CI": 1.0,
+        "Prometheus": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "devops_4__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "GitHub",
+            "Jenkins CI",
+            "Prometheus",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "devops_4__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Git",
+            "GitHub",
+            "Jenkins CI",
+            "Prometheus"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "devops_4__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Chef",
+            "Prometheus",
+            "Shell script",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_4__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Puppet",
+            "Splunk Enterprise",
+            "UNIX Shell"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_4__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Puppet",
+            "UNIX Shell"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_4__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Puppet",
+            "Shell script",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_4__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Puppet",
+            "Splunk Enterprise",
+            "UNIX Shell"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_4__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Prometheus",
+            "Puppet",
+            "Shell script"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_4__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Figma",
+            "Git",
+            "Jenkins CI",
+            "MySQL"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_4__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Jenkins CI",
+            "MongoDB",
+            "PostgreSQL",
+            "Prometheus",
+            "React",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_4__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Git",
+            "Jenkins CI",
+            "MongoDB",
+            "Node.js",
+            "Prometheus",
+            "Tableau"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_4__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Figma",
+            "Git",
+            "Prometheus",
+            "RESTful API",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_4__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Git",
+            "Jenkins CI",
+            "NumPy",
+            "Prometheus",
+            "PyTorch",
+            "RESTful API"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_4__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Jenkins CI",
+            "MySQL",
+            "Prometheus",
+            "PyTorch",
+            "RESTful API",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_4__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Cascading style sheets CSS",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_4__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Django",
+            "Node.js",
+            "PostgreSQL",
+            "React"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_4__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Hypertext markup language HTML",
+            "PyTorch",
+            "Python",
+            "React",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_4__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Python",
+            "RESTful API",
+            "Tableau",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "devops_5",
+      "domain": "devops",
+      "jd_skills": {
+        "Amazon Web Services AWS software": 1.0,
+        "Ansible software": 1.0,
+        "Git": 1.5,
+        "GitHub": 1.5,
+        "Jenkins CI": 1.0,
+        "Splunk Enterprise": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "devops_5__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Git",
+            "GitHub",
+            "Jenkins CI",
+            "Prometheus",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "devops_5__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Git",
+            "GitHub",
+            "Jenkins CI",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "devops_5__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Git",
+            "Oracle Cloud software",
+            "Prometheus",
+            "Puppet"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_5__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Chef",
+            "Microsoft Azure software",
+            "Prometheus",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_5__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Chef",
+            "Oracle Cloud software",
+            "Prometheus"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_5__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Microsoft Azure software",
+            "Puppet"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_5__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Oracle Cloud software",
+            "Prometheus",
+            "Puppet",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_5__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Chef",
+            "GitLab",
+            "Jenkins CI",
+            "Microsoft Azure software",
+            "Prometheus"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "devops_5__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Jenkins CI",
+            "Splunk Enterprise",
+            "Tableau"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_5__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "JavaScript",
+            "Jenkins CI",
+            "Python",
+            "Splunk Enterprise",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_5__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Git",
+            "Jenkins CI",
+            "MySQL",
+            "Splunk Enterprise",
+            "Spring Boot",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_5__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Jenkins CI",
+            "MongoDB",
+            "PyTorch",
+            "Splunk Enterprise",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "devops_5__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Django",
+            "Git",
+            "JavaScript",
+            "Jenkins CI",
+            "PostgreSQL",
+            "Splunk Enterprise",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_5__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "Jenkins CI",
+            "MongoDB",
+            "PostgreSQL",
+            "Splunk Enterprise",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "devops_5__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Structured query language SQL",
+            "Tableau",
+            "XGBoost"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_5__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "JavaScript",
+            "MySQL",
+            "NumPy",
+            "RESTful API",
+            "Tableau",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_5__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Django",
+            "Docker",
+            "Hypertext markup language HTML",
+            "MongoDB",
+            "Tableau"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "devops_5__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Docker",
+            "NumPy",
+            "Python",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "ml_0",
+      "domain": "ml",
+      "jd_skills": {
+        "Apache Spark": 1.5,
+        "NumPy": 1.0,
+        "PyTorch": 1.0,
+        "Python": 1.0,
+        "XGBoost": 1.5,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "ml_0__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Spark",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "ml_0__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "TensorFlow"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_0__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "LightGBM",
+            "Python",
+            "TensorFlow"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_0__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Keras",
+            "LightGBM"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_0__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "Python",
+            "TensorFlow"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_0__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "Keras",
+            "NumPy"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_0__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "LightGBM",
+            "TensorFlow"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_0__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "NumPy",
+            "Python",
+            "RESTful API",
+            "TypeScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_0__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "NumPy",
+            "Python",
+            "Splunk Enterprise",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_0__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Hypertext markup language HTML",
+            "NumPy",
+            "Prometheus",
+            "Python"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_0__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Linux",
+            "Node.js",
+            "NumPy",
+            "Python",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_0__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "MongoDB",
+            "Node.js",
+            "NumPy",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_0__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "NumPy",
+            "Python",
+            "Splunk Enterprise",
+            "Structured query language SQL",
+            "TypeScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_0__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "GitHub",
+            "MongoDB",
+            "MySQL",
+            "React"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_0__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Linux",
+            "MySQL",
+            "Splunk Enterprise",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_0__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "Git",
+            "Hypertext markup language HTML",
+            "RESTful API"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_0__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "PostgreSQL",
+            "Prometheus",
+            "React",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "ml_1",
+      "domain": "ml",
+      "jd_skills": {
+        "Apache Spark": 1.0,
+        "NumPy": 1.5,
+        "PyTorch": 1.0,
+        "Python": 1.0,
+        "XGBoost": 1.5,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "ml_1__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Spark",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "ml_1__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "NumPy",
+            "TensorFlow"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_1__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "TensorFlow"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_1__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Keras",
+            "LightGBM",
+            "pandas"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_1__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Keras",
+            "LightGBM",
+            "NumPy"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_1__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "LightGBM",
+            "TensorFlow",
+            "pandas"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_1__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "Keras",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_1__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Django",
+            "NumPy",
+            "Python",
+            "RESTful API",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_1__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Linux",
+            "MongoDB",
+            "MySQL",
+            "NumPy",
+            "Splunk Enterprise",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_1__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "JavaScript",
+            "Linux",
+            "NumPy",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_1__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Jenkins CI",
+            "NumPy",
+            "Python",
+            "RESTful API",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_1__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Docker",
+            "Git",
+            "NumPy",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_1__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Django",
+            "Linux",
+            "NumPy",
+            "Python",
+            "Structured query language SQL",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_1__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "Node.js",
+            "PostgreSQL",
+            "Splunk Enterprise",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_1__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Apache Airflow",
+            "Jenkins CI",
+            "Linux",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_1__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Hypertext markup language HTML",
+            "MongoDB",
+            "Prometheus"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_1__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Jenkins CI",
+            "Linux",
+            "Prometheus",
+            "React",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "ml_2",
+      "domain": "ml",
+      "jd_skills": {
+        "Apache Spark": 1.0,
+        "NumPy": 1.5,
+        "PyTorch": 1.0,
+        "Python": 1.0,
+        "XGBoost": 1.5,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "ml_2__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Spark",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "ml_2__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "Python",
+            "TensorFlow"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_2__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Keras",
+            "LightGBM",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_2__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "Keras",
+            "NumPy"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_2__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "TensorFlow"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_2__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Keras",
+            "LightGBM"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_2__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "Keras",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_2__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "GitHub",
+            "NumPy",
+            "Python",
+            "Splunk Enterprise",
+            "Structured query language SQL",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_2__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "GitHub",
+            "JavaScript",
+            "NumPy",
+            "Python",
+            "React"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_2__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "NumPy",
+            "Python",
+            "React",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_2__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Django",
+            "GitHub",
+            "JavaScript",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_2__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "Figma",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_2__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Jenkins CI",
+            "NumPy",
+            "Python",
+            "RESTful API",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_2__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Django",
+            "RESTful API",
+            "Spring Boot",
+            "Tableau"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_2__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Linux",
+            "MongoDB",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_2__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "MongoDB",
+            "RESTful API",
+            "Splunk Enterprise",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_2__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "MongoDB",
+            "Structured query language SQL",
+            "Tableau",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "ml_3",
+      "domain": "ml",
+      "jd_skills": {
+        "Apache Spark": 1.0,
+        "NumPy": 1.5,
+        "PyTorch": 1.0,
+        "Python": 1.0,
+        "XGBoost": 1.5,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "ml_3__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Spark",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "ml_3__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "TensorFlow"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_3__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "Keras"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_3__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Keras",
+            "LightGBM"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_3__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "LightGBM",
+            "TensorFlow"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_3__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Keras",
+            "LightGBM",
+            "NumPy"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_3__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Keras",
+            "LightGBM",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_3__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "JavaScript",
+            "Linux",
+            "NumPy",
+            "RESTful API",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_3__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Node.js",
+            "Python",
+            "Splunk Enterprise",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_3__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "JavaScript",
+            "Jenkins CI",
+            "NumPy",
+            "Python",
+            "React",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_3__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "JavaScript",
+            "NumPy",
+            "Python",
+            "Structured query language SQL",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_3__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "JavaScript",
+            "PostgreSQL",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_3__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Django",
+            "NumPy",
+            "Python",
+            "React",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_3__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "MongoDB",
+            "Spring Boot",
+            "Tableau"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_3__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Docker",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_3__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Git",
+            "Jenkins CI",
+            "MySQL",
+            "PostgreSQL",
+            "React"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_3__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "GitHub",
+            "JavaScript",
+            "Tableau"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "ml_4",
+      "domain": "ml",
+      "jd_skills": {
+        "Apache Spark": 1.0,
+        "NumPy": 1.0,
+        "PyTorch": 1.5,
+        "Python": 1.0,
+        "XGBoost": 1.5,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "ml_4__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Spark",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "ml_4__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Keras",
+            "LightGBM",
+            "NumPy"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_4__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Keras",
+            "LightGBM"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_4__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "Keras"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_4__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "LightGBM",
+            "Python",
+            "TensorFlow"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_4__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "Keras",
+            "pandas"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_4__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "LightGBM",
+            "NumPy",
+            "TensorFlow"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_4__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Hypertext markup language HTML",
+            "Python",
+            "Splunk Enterprise",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_4__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Django",
+            "NumPy",
+            "Python",
+            "React",
+            "Spring Boot",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_4__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "NumPy",
+            "Python",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_4__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "NumPy",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_4__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "NumPy",
+            "Python",
+            "Spring Boot",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_4__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "MongoDB",
+            "NumPy",
+            "Python",
+            "React",
+            "Splunk Enterprise",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_4__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Django",
+            "JavaScript",
+            "PostgreSQL",
+            "Prometheus",
+            "React"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_4__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Bash",
+            "Linux",
+            "Node.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_4__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Django",
+            "Figma",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_4__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Docker",
+            "Git",
+            "GitHub",
+            "Node.js"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "ml_5",
+      "domain": "ml",
+      "jd_skills": {
+        "Apache Spark": 1.0,
+        "NumPy": 1.0,
+        "PyTorch": 1.0,
+        "Python": 1.5,
+        "XGBoost": 1.0,
+        "pandas": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "ml_5__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Spark",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "ml_5__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "NumPy",
+            "TensorFlow"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_5__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "LightGBM",
+            "Python",
+            "TensorFlow"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_5__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "LightGBM",
+            "TensorFlow"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_5__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "TensorFlow"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_5__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "Keras",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_5__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "CatBoost",
+            "Python",
+            "TensorFlow"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "ml_5__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Git",
+            "JavaScript",
+            "NumPy",
+            "Python",
+            "Structured query language SQL",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_5__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "NumPy",
+            "PostgreSQL",
+            "Prometheus",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_5__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "MongoDB",
+            "Node.js",
+            "NumPy",
+            "PostgreSQL",
+            "Python",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_5__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "Jenkins CI",
+            "NumPy",
+            "Python",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_5__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Jenkins CI",
+            "Node.js",
+            "NumPy",
+            "Python",
+            "RESTful API",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "ml_5__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Hypertext markup language HTML",
+            "NumPy",
+            "Spring Boot",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "ml_5__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "MongoDB",
+            "Node.js",
+            "RESTful API"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_5__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Django",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "Prometheus",
+            "RESTful API"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_5__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "PostgreSQL",
+            "Prometheus",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "ml_5__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "MySQL",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "frontend_0",
+      "domain": "frontend",
+      "jd_skills": {
+        "Figma": 1.0,
+        "GitHub": 1.5,
+        "Hypertext markup language HTML": 1.0,
+        "React": 1.0,
+        "TypeScript": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "frontend_0__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Figma",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_0__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Figma",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_0__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_0__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "TypeScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_0__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "JavaScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_0__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "JavaScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_0__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "TypeScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_0__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_0__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_0__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Hypertext markup language HTML",
+            "Linux",
+            "MongoDB",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_0__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Figma",
+            "Hypertext markup language HTML",
+            "Python",
+            "TypeScript",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_0__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Django",
+            "Figma",
+            "Hypertext markup language HTML",
+            "Node.js",
+            "Prometheus"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_0__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Hypertext markup language HTML",
+            "Linux",
+            "MongoDB",
+            "PostgreSQL",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_0__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Django",
+            "Figma",
+            "Hypertext markup language HTML",
+            "MongoDB",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_0__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Hypertext markup language HTML",
+            "Linux",
+            "MongoDB",
+            "TypeScript",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_0__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Django",
+            "Docker",
+            "Node.js",
+            "Splunk Enterprise",
+            "Spring Boot",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_0__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "MongoDB",
+            "Node.js",
+            "PyTorch",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_0__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Django",
+            "MongoDB",
+            "Prometheus"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_0__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Git",
+            "Jenkins CI",
+            "Node.js"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "frontend_1",
+      "domain": "frontend",
+      "jd_skills": {
+        "Figma": 1.5,
+        "GitHub": 1.0,
+        "JavaScript": 1.0,
+        "React": 1.5,
+        "TypeScript": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "frontend_1__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Figma",
+            "GitHub",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_1__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Figma",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_1__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "GitHub",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_1__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Figma",
+            "GitLab",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_1__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "TypeScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_1__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "GitLab",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_1__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Figma",
+            "Hypertext markup language HTML",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_1__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Hypertext markup language HTML",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_1__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_1__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "JavaScript",
+            "NumPy",
+            "Python",
+            "Structured query language SQL",
+            "XGBoost"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_1__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Docker",
+            "Figma",
+            "JavaScript",
+            "Jenkins CI",
+            "TypeScript",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_1__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Docker",
+            "Figma",
+            "Git",
+            "JavaScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_1__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Figma",
+            "Splunk Enterprise",
+            "Structured query language SQL",
+            "Tableau",
+            "TypeScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_1__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "Figma",
+            "Git",
+            "PostgreSQL",
+            "Python",
+            "TypeScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_1__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "JavaScript",
+            "MongoDB",
+            "RESTful API",
+            "XGBoost"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_1__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Git",
+            "Linux",
+            "MongoDB",
+            "Splunk Enterprise",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_1__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "NumPy",
+            "PyTorch"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_1__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Django",
+            "NumPy",
+            "Python",
+            "RESTful API",
+            "Spring Boot",
+            "XGBoost"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_1__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "MySQL",
+            "Node.js",
+            "Spring Boot",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "frontend_2",
+      "domain": "frontend",
+      "jd_skills": {
+        "Cascading style sheets CSS": 1.0,
+        "GitHub": 1.0,
+        "Hypertext markup language HTML": 1.5,
+        "JavaScript": 1.5,
+        "React": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "frontend_2__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_2__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_2__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_2__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "TypeScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_2__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "JavaScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_2__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Figma",
+            "GitLab",
+            "JavaScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_2__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Hypertext markup language HTML",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_2__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Figma",
+            "Hypertext markup language HTML",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_2__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "JavaScript",
+            "TypeScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_2__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Cascading style sheets CSS",
+            "JavaScript",
+            "Structured query language SQL",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_2__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Bash",
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "Tableau"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_2__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "Splunk Enterprise",
+            "Spring Boot",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_2__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "NumPy",
+            "Python"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_2__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "PyTorch",
+            "Structured query language SQL",
+            "Tableau"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_2__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Docker",
+            "Git",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_2__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Jenkins CI",
+            "MySQL",
+            "Node.js",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_2__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Git",
+            "Linux",
+            "PostgreSQL",
+            "RESTful API",
+            "Tableau"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_2__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Apache Airflow",
+            "Node.js",
+            "Spring Boot",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_2__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Node.js",
+            "Prometheus",
+            "Python",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "frontend_3",
+      "domain": "frontend",
+      "jd_skills": {
+        "Cascading style sheets CSS": 1.0,
+        "Figma": 1.5,
+        "GitHub": 1.0,
+        "Hypertext markup language HTML": 1.0,
+        "React": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "frontend_3__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "React"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_3__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_3__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_3__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Cascading style sheets CSS",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_3__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Figma",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_3__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Figma",
+            "GitLab",
+            "JavaScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_3__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "GitLab",
+            "TypeScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_3__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "GitLab",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_3__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Figma",
+            "GitLab",
+            "TypeScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_3__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "Linux",
+            "NumPy",
+            "Prometheus"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_3__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Hypertext markup language HTML",
+            "Prometheus",
+            "Spring Boot",
+            "XGBoost"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_3__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Cascading style sheets CSS",
+            "Figma",
+            "Linux",
+            "Node.js"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_3__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "MongoDB",
+            "NumPy",
+            "Splunk Enterprise",
+            "Spring Boot"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_3__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Django",
+            "Figma",
+            "Hypertext markup language HTML",
+            "MongoDB",
+            "Prometheus"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_3__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "MongoDB",
+            "Node.js"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_3__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Docker",
+            "MySQL",
+            "Python",
+            "RESTful API"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_3__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Python",
+            "Structured query language SQL",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_3__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Docker",
+            "Linux",
+            "PostgreSQL",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_3__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Linux",
+            "Prometheus",
+            "Spring Boot",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "frontend_4",
+      "domain": "frontend",
+      "jd_skills": {
+        "GitHub": 1.0,
+        "Hypertext markup language HTML": 1.0,
+        "JavaScript": 1.5,
+        "React": 1.0,
+        "TypeScript": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "frontend_4__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Figma",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_4__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "GitHub",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_4__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_4__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_4__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Figma",
+            "GitLab",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_4__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "TypeScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_4__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "TypeScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_4__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_4__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Cascading style sheets CSS",
+            "GitLab",
+            "Hypertext markup language HTML",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_4__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Node.js",
+            "RESTful API",
+            "Splunk Enterprise",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_4__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "RESTful API",
+            "Splunk Enterprise",
+            "Structured query language SQL",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_4__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Django",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Linux"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_4__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Node.js",
+            "RESTful API",
+            "Splunk Enterprise",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_4__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Linux",
+            "Prometheus",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_4__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "JavaScript",
+            "MySQL",
+            "Prometheus",
+            "TypeScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_4__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Docker",
+            "Node.js",
+            "PyTorch",
+            "Python"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_4__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "NumPy",
+            "PostgreSQL",
+            "Prometheus",
+            "Structured query language SQL",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_4__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Airflow",
+            "Django",
+            "RESTful API",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_4__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Git",
+            "Jenkins CI",
+            "Linux"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "frontend_5",
+      "domain": "frontend",
+      "jd_skills": {
+        "Cascading style sheets CSS": 1.0,
+        "Figma": 1.5,
+        "GitHub": 1.5,
+        "JavaScript": 1.0,
+        "React": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "frontend_5__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "GitHub",
+            "JavaScript",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_5__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "GitHub",
+            "JavaScript",
+            "React"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_5__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "React"
+          ],
+          "exact_overlap": 5
+        },
+        {
+          "cand_id": "frontend_5__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_5__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Cascading style sheets CSS",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_5__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "TypeScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_5__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Atlassian Bitbucket",
+            "Figma",
+            "Hypertext markup language HTML",
+            "Vue.js"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "frontend_5__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_5__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "GitLab",
+            "TypeScript",
+            "Vue.js"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_5__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Cascading style sheets CSS",
+            "Docker",
+            "Figma",
+            "NumPy",
+            "Tableau"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_5__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Figma",
+            "JavaScript",
+            "Jenkins CI",
+            "Spring Boot"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_5__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Cascading style sheets CSS",
+            "Figma",
+            "JavaScript",
+            "Node.js",
+            "Spring Boot"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_5__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Spark",
+            "Cascading style sheets CSS",
+            "Figma",
+            "JavaScript",
+            "Tableau"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_5__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Git",
+            "PyTorch",
+            "RESTful API"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "frontend_5__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Cascading style sheets CSS",
+            "Figma",
+            "JavaScript",
+            "NumPy",
+            "Tableau"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "frontend_5__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Apache Spark",
+            "Git",
+            "Node.js",
+            "XGBoost"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_5__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Linux",
+            "MongoDB",
+            "MySQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_5__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Bash",
+            "Spring Boot",
+            "Structured query language SQL",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "frontend_5__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Django",
+            "PostgreSQL",
+            "RESTful API",
+            "Splunk Enterprise",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "backend_0",
+      "domain": "backend",
+      "jd_skills": {
+        "Django": 1.5,
+        "Docker": 1.0,
+        "MongoDB": 1.5,
+        "PostgreSQL": 1.0,
+        "Python": 1.0,
+        "RESTful API": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "backend_0__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Django",
+            "Docker",
+            "MongoDB",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "RESTful API"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_0__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Django",
+            "Docker",
+            "MongoDB",
+            "PostgreSQL",
+            "Python",
+            "RESTful API"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_0__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Django",
+            "Docker",
+            "MongoDB",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_0__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Django",
+            "Oracle Database",
+            "Red Hat OpenShift"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_0__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "MySQL",
+            "Python",
+            "Red Hat OpenShift",
+            "Redis"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_0__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Kubernetes",
+            "MySQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_0__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Oracle Database",
+            "Red Hat OpenShift"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_0__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Django",
+            "Oracle Database",
+            "Red Hat OpenShift",
+            "Redis",
+            "Spring Boot"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_0__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Django",
+            "Kubernetes",
+            "Oracle Database",
+            "Redis",
+            "Spring Boot"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_0__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Django",
+            "GitHub",
+            "Jenkins CI",
+            "Python",
+            "RESTful API",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_0__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Django",
+            "RESTful API",
+            "React"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_0__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Cascading style sheets CSS",
+            "Django",
+            "Jenkins CI",
+            "Linux",
+            "RESTful API"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_0__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Git",
+            "JavaScript",
+            "NumPy",
+            "Python",
+            "RESTful API"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_0__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Django",
+            "Python",
+            "RESTful API",
+            "React",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_0__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Django",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Prometheus",
+            "RESTful API"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_0__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Jenkins CI",
+            "Prometheus",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_0__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Git",
+            "Hypertext markup language HTML",
+            "Structured query language SQL",
+            "Tableau"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_0__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "Jenkins CI",
+            "PyTorch",
+            "Splunk Enterprise",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_0__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "Git",
+            "NumPy"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "backend_1",
+      "domain": "backend",
+      "jd_skills": {
+        "Docker": 1.0,
+        "MongoDB": 1.5,
+        "Node.js": 1.0,
+        "PostgreSQL": 1.0,
+        "Python": 1.5,
+        "RESTful API": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "backend_1__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Django",
+            "Docker",
+            "MongoDB",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "RESTful API"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_1__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Docker",
+            "MongoDB",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "RESTful API"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_1__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Docker",
+            "MongoDB",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_1__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Kubernetes",
+            "MySQL",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_1__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Django",
+            "Kubernetes",
+            "MySQL",
+            "Node.js",
+            "Redis"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_1__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Kubernetes",
+            "Oracle Database",
+            "Redis"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_1__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Kubernetes",
+            "MySQL",
+            "Redis"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_1__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Kubernetes",
+            "MySQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_1__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Kubernetes",
+            "Oracle Database",
+            "RESTful API"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_1__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Node.js",
+            "Prometheus",
+            "Python",
+            "RESTful API",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_1__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Cascading style sheets CSS",
+            "Node.js",
+            "Prometheus",
+            "Python"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_1__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Linux",
+            "Node.js",
+            "NumPy",
+            "Python",
+            "RESTful API",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_1__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "GitHub",
+            "Node.js",
+            "Prometheus",
+            "Python"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_1__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Node.js",
+            "NumPy",
+            "PyTorch",
+            "RESTful API",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_1__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "NumPy",
+            "Python",
+            "RESTful API",
+            "TypeScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_1__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Git",
+            "Jenkins CI",
+            "Linux",
+            "Splunk Enterprise",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_1__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Jenkins CI",
+            "PyTorch",
+            "React",
+            "Splunk Enterprise",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_1__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Cascading style sheets CSS",
+            "GitHub",
+            "JavaScript",
+            "Linux"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_1__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Git",
+            "GitHub",
+            "PyTorch",
+            "React"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "backend_2",
+      "domain": "backend",
+      "jd_skills": {
+        "Docker": 1.0,
+        "MongoDB": 1.0,
+        "Node.js": 1.5,
+        "PostgreSQL": 1.0,
+        "Python": 1.5,
+        "RESTful API": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "backend_2__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Docker",
+            "MongoDB",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_2__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Docker",
+            "MongoDB",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "RESTful API"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_2__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Django",
+            "Docker",
+            "MongoDB",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "RESTful API"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_2__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "MySQL",
+            "RESTful API",
+            "Red Hat OpenShift",
+            "Spring Boot"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_2__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Kubernetes",
+            "Oracle Database"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_2__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Kubernetes",
+            "MySQL",
+            "Redis"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_2__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Oracle Database",
+            "Red Hat OpenShift"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_2__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "MySQL",
+            "Red Hat OpenShift",
+            "Redis"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_2__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "MySQL",
+            "Node.js",
+            "Red Hat OpenShift",
+            "Redis"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_2__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Linux",
+            "Node.js",
+            "NumPy",
+            "Prometheus",
+            "Python",
+            "RESTful API"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_2__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Jenkins CI",
+            "Linux",
+            "Python",
+            "RESTful API",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_2__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Apache Airflow",
+            "Hypertext markup language HTML",
+            "Node.js",
+            "Python",
+            "RESTful API"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_2__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "Linux",
+            "Node.js",
+            "Python",
+            "RESTful API",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_2__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "NumPy",
+            "Python",
+            "RESTful API",
+            "TypeScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_2__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Node.js",
+            "NumPy",
+            "Python",
+            "RESTful API",
+            "Splunk Enterprise",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_2__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Git",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "Splunk Enterprise",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_2__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Linux",
+            "PyTorch",
+            "Splunk Enterprise",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_2__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Jenkins CI",
+            "NumPy"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_2__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Hypertext markup language HTML",
+            "Tableau",
+            "TypeScript",
+            "XGBoost"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "backend_3",
+      "domain": "backend",
+      "jd_skills": {
+        "Docker": 1.5,
+        "MongoDB": 1.5,
+        "Node.js": 1.0,
+        "PostgreSQL": 1.0,
+        "Python": 1.0,
+        "Spring Boot": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "backend_3__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Django",
+            "Docker",
+            "MongoDB",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "Spring Boot"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_3__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Docker",
+            "MongoDB",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "Spring Boot"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_3__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Docker",
+            "MongoDB",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_3__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Kubernetes",
+            "Oracle Database",
+            "Redis"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_3__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Django",
+            "Kubernetes",
+            "Oracle Database",
+            "Redis"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_3__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Kubernetes",
+            "MySQL",
+            "Node.js",
+            "Redis"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_3__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Django",
+            "Kubernetes",
+            "Oracle Database"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_3__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Oracle Database",
+            "RESTful API",
+            "Red Hat OpenShift",
+            "Redis"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_3__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Kubernetes",
+            "Oracle Database",
+            "RESTful API",
+            "Redis",
+            "Spring Boot"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_3__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "GitHub",
+            "JavaScript",
+            "Jenkins CI",
+            "Node.js",
+            "Python",
+            "Spring Boot"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_3__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Git",
+            "Hypertext markup language HTML",
+            "Node.js",
+            "Python",
+            "Spring Boot"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_3__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Node.js",
+            "NumPy",
+            "Prometheus",
+            "Python",
+            "Spring Boot"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_3__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Hypertext markup language HTML",
+            "Node.js",
+            "Python",
+            "Spring Boot",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_3__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Figma",
+            "Git",
+            "Node.js",
+            "Python",
+            "Spring Boot"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_3__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "GitHub",
+            "Jenkins CI",
+            "Node.js",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_3__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Linux",
+            "React",
+            "TypeScript",
+            "XGBoost"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_3__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Git",
+            "Jenkins CI",
+            "PyTorch",
+            "Tableau"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_3__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Jenkins CI",
+            "PyTorch",
+            "Splunk Enterprise",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_3__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "backend_4",
+      "domain": "backend",
+      "jd_skills": {
+        "Django": 1.0,
+        "Docker": 1.0,
+        "MongoDB": 1.0,
+        "PostgreSQL": 1.0,
+        "RESTful API": 1.5,
+        "Spring Boot": 1.5
+      },
+      "candidates": [
+        {
+          "cand_id": "backend_4__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Django",
+            "Docker",
+            "MongoDB",
+            "PostgreSQL",
+            "RESTful API",
+            "Spring Boot"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_4__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Django",
+            "Docker",
+            "MongoDB",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_4__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Django",
+            "Docker",
+            "MongoDB",
+            "Node.js",
+            "PostgreSQL",
+            "RESTful API",
+            "Spring Boot"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_4__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Node.js",
+            "Oracle Database",
+            "Red Hat OpenShift"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_4__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Django",
+            "Kubernetes",
+            "Oracle Database",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_4__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "MySQL",
+            "Node.js",
+            "Red Hat OpenShift",
+            "Spring Boot"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_4__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Oracle Database",
+            "Python",
+            "Red Hat OpenShift",
+            "Redis"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_4__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Django",
+            "MySQL",
+            "Red Hat OpenShift"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_4__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Django",
+            "Oracle Database",
+            "Red Hat OpenShift",
+            "Redis"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_4__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Bash",
+            "Cascading style sheets CSS",
+            "JavaScript",
+            "RESTful API",
+            "Spring Boot",
+            "XGBoost"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_4__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "JavaScript",
+            "RESTful API",
+            "Spring Boot",
+            "Tableau"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_4__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "PyTorch",
+            "RESTful API",
+            "Splunk Enterprise",
+            "Spring Boot"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_4__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Django",
+            "Linux",
+            "NumPy",
+            "PyTorch",
+            "RESTful API"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_4__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Django",
+            "Figma",
+            "JavaScript",
+            "Python",
+            "Spring Boot"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_4__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Django",
+            "Git",
+            "Jenkins CI",
+            "Spring Boot",
+            "XGBoost"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_4__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Spark",
+            "Bash",
+            "Linux",
+            "Python",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_4__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "Prometheus"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_4__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "JavaScript",
+            "NumPy",
+            "Python",
+            "Structured query language SQL",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_4__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Figma",
+            "Jenkins CI",
+            "Linux",
+            "PyTorch"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "backend_5",
+      "domain": "backend",
+      "jd_skills": {
+        "Django": 1.0,
+        "Docker": 1.0,
+        "MongoDB": 1.5,
+        "PostgreSQL": 1.5,
+        "Python": 1.0,
+        "Spring Boot": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "backend_5__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Django",
+            "Docker",
+            "MongoDB",
+            "PostgreSQL",
+            "Python",
+            "RESTful API",
+            "Spring Boot"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_5__strong_1",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Django",
+            "Docker",
+            "MongoDB",
+            "PostgreSQL",
+            "Python",
+            "Spring Boot"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_5__strong_2",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Django",
+            "Docker",
+            "MongoDB",
+            "Node.js",
+            "PostgreSQL",
+            "Python",
+            "Spring Boot"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "backend_5__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Kubernetes",
+            "MySQL",
+            "Redis"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_5__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Kubernetes",
+            "MySQL",
+            "Python",
+            "RESTful API",
+            "Redis"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_5__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Kubernetes",
+            "MySQL",
+            "RESTful API"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_5__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Django",
+            "MySQL",
+            "Red Hat OpenShift",
+            "Redis"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_5__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Cassandra",
+            "Kubernetes",
+            "Node.js",
+            "Oracle Database",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_5__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "MySQL",
+            "Python",
+            "RESTful API",
+            "Red Hat OpenShift",
+            "Redis"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "backend_5__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Spark",
+            "Bash",
+            "Django",
+            "Python",
+            "Spring Boot",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_5__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Django",
+            "Prometheus",
+            "PyTorch",
+            "Spring Boot",
+            "Structured query language SQL",
+            "XGBoost"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_5__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "Python",
+            "Spring Boot",
+            "Tableau",
+            "XGBoost"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "backend_5__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Apache Airflow",
+            "Django",
+            "GitHub",
+            "Python",
+            "Spring Boot",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_5__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Django",
+            "Git",
+            "NumPy",
+            "Python",
+            "Spring Boot",
+            "XGBoost"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_5__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Cascading style sheets CSS",
+            "Django",
+            "Python",
+            "Spring Boot",
+            "TypeScript"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "backend_5__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "JavaScript",
+            "PyTorch",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_5__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "GitHub",
+            "JavaScript",
+            "React"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_5__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Git",
+            "Linux",
+            "Splunk Enterprise",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "backend_5__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Apache Airflow",
+            "Prometheus",
+            "PyTorch",
+            "Structured query language SQL"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "data_0",
+      "domain": "data",
+      "jd_skills": {
+        "Apache Airflow": 1.5,
+        "Apache Spark": 1.0,
+        "MySQL": 1.0,
+        "Python": 1.5,
+        "Tableau": 1.0,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "data_0__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Airflow",
+            "Apache Spark",
+            "MySQL",
+            "Python",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "data_0__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Airflow",
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle Database"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_0__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle Database"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_0__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "PostgreSQL",
+            "pandas"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_0__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle Database",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_0__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "PostgreSQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_0__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "PostgreSQL",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_0__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Bash",
+            "Docker",
+            "Node.js",
+            "Python",
+            "Spring Boot",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_0__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Apache Airflow",
+            "GitHub",
+            "MongoDB",
+            "PyTorch",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_0__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "JavaScript",
+            "Node.js",
+            "Python",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_0__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Apache Airflow",
+            "React",
+            "Splunk Enterprise",
+            "Spring Boot",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_0__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Bash",
+            "Docker",
+            "Git",
+            "Prometheus",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_0__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Figma",
+            "Git",
+            "Jenkins CI",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_0__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Figma",
+            "Hypertext markup language HTML",
+            "JavaScript",
+            "Jenkins CI",
+            "Prometheus",
+            "XGBoost"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_0__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Cascading style sheets CSS",
+            "PyTorch",
+            "Splunk Enterprise",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_0__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Git",
+            "Node.js",
+            "React",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_0__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "GitHub",
+            "JavaScript",
+            "Linux",
+            "PyTorch",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "data_1",
+      "domain": "data",
+      "jd_skills": {
+        "Apache Airflow": 1.0,
+        "Apache Spark": 1.0,
+        "Python": 1.5,
+        "Structured query language SQL": 1.5,
+        "Tableau": 1.0,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "data_1__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Airflow",
+            "Apache Spark",
+            "Python",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "data_1__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle PL/SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_1__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Transact-SQL",
+            "pandas"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_1__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle PL/SQL",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_1__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Transact-SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_1__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle PL/SQL",
+            "pandas"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_1__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Airflow",
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Transact-SQL"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_1__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Node.js",
+            "Prometheus",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_1__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "Figma",
+            "PyTorch",
+            "Python",
+            "TypeScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_1__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "Hypertext markup language HTML",
+            "Python",
+            "RESTful API",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_1__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "JavaScript",
+            "Node.js",
+            "Python",
+            "RESTful API",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_1__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Airflow",
+            "Docker",
+            "JavaScript",
+            "MongoDB",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_1__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Django",
+            "Jenkins CI",
+            "Python",
+            "Splunk Enterprise",
+            "TypeScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_1__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Hypertext markup language HTML",
+            "Jenkins CI",
+            "Node.js",
+            "NumPy",
+            "XGBoost"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_1__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Docker",
+            "Prometheus",
+            "RESTful API",
+            "React"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_1__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Django",
+            "Figma",
+            "GitHub",
+            "Prometheus"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_1__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "PostgreSQL",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "train"
+    },
+    {
+      "jd_id": "data_2",
+      "domain": "data",
+      "jd_skills": {
+        "Apache Airflow": 1.5,
+        "Apache Spark": 1.0,
+        "Python": 1.0,
+        "Structured query language SQL": 1.0,
+        "Tableau": 1.5,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "data_2__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Airflow",
+            "Apache Spark",
+            "Python",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "data_2__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Transact-SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_2__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle PL/SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_2__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Python",
+            "Transact-SQL"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_2__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Transact-SQL",
+            "pandas"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_2__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle PL/SQL",
+            "pandas"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_2__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle PL/SQL",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_2__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Figma",
+            "Node.js",
+            "Python",
+            "RESTful API",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_2__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Django",
+            "PyTorch",
+            "Python",
+            "RESTful API",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_2__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "JavaScript",
+            "Python",
+            "Splunk Enterprise",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_2__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "Django",
+            "Linux",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_2__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Docker",
+            "Python",
+            "RESTful API",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_2__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Django",
+            "NumPy",
+            "Python",
+            "Splunk Enterprise",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_2__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "MongoDB",
+            "PostgreSQL",
+            "Prometheus",
+            "React",
+            "Splunk Enterprise"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_2__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Jenkins CI",
+            "MongoDB",
+            "PostgreSQL",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_2__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Jenkins CI",
+            "Linux",
+            "NumPy",
+            "XGBoost"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_2__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Cascading style sheets CSS",
+            "Django",
+            "MongoDB",
+            "PyTorch",
+            "Spring Boot",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "data_3",
+      "domain": "data",
+      "jd_skills": {
+        "Apache Airflow": 1.5,
+        "Apache Spark": 1.0,
+        "Python": 1.0,
+        "Structured query language SQL": 1.5,
+        "Tableau": 1.0,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "data_3__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Airflow",
+            "Apache Spark",
+            "Python",
+            "Structured query language SQL",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "data_3__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Transact-SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_3__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Airflow",
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Transact-SQL"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_3__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle PL/SQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_3__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle PL/SQL",
+            "pandas"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_3__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Airflow",
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle PL/SQL"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_3__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Python",
+            "Transact-SQL"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_3__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Bash",
+            "Hypertext markup language HTML",
+            "Prometheus",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_3__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Linux",
+            "Node.js",
+            "PyTorch",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_3__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Bash",
+            "Cascading style sheets CSS",
+            "PostgreSQL",
+            "Prometheus",
+            "Python"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_3__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Linux",
+            "Node.js",
+            "PyTorch",
+            "Python",
+            "Spring Boot",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_3__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "NumPy",
+            "PyTorch",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_3__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "JavaScript",
+            "Jenkins CI",
+            "MongoDB",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_3__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Git",
+            "GitHub",
+            "Hypertext markup language HTML",
+            "Prometheus",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_3__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "JavaScript",
+            "Linux",
+            "Splunk Enterprise",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_3__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Docker",
+            "JavaScript",
+            "NumPy",
+            "Prometheus"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_3__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Docker",
+            "Figma",
+            "GitHub",
+            "PyTorch",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "data_4",
+      "domain": "data",
+      "jd_skills": {
+        "Apache Airflow": 1.5,
+        "Apache Spark": 1.0,
+        "MySQL": 1.5,
+        "Python": 1.0,
+        "Tableau": 1.0,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "data_4__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Airflow",
+            "Apache Spark",
+            "MySQL",
+            "Python",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "data_4__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle Database",
+            "pandas"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_4__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "PostgreSQL",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_4__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "PostgreSQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_4__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Airflow",
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "PostgreSQL"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_4__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle Database"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_4__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle Database",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_4__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Figma",
+            "Python",
+            "RESTful API",
+            "React",
+            "Spring Boot",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_4__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "NumPy",
+            "Prometheus",
+            "Python",
+            "Spring Boot",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_4__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Django",
+            "Docker",
+            "JavaScript",
+            "Python",
+            "Splunk Enterprise",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_4__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Docker",
+            "Git",
+            "JavaScript",
+            "Python",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_4__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "GitHub",
+            "Jenkins CI",
+            "Node.js",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_4__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Django",
+            "Git",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_4__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Docker",
+            "Figma",
+            "GitHub",
+            "Linux",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_4__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Cascading style sheets CSS",
+            "NumPy",
+            "PyTorch"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_4__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Bash",
+            "Linux",
+            "Prometheus"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_4__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Django",
+            "GitHub",
+            "React"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    },
+    {
+      "jd_id": "data_5",
+      "domain": "data",
+      "jd_skills": {
+        "Apache Airflow": 1.0,
+        "Apache Spark": 1.0,
+        "MySQL": 1.0,
+        "Python": 1.5,
+        "Tableau": 1.5,
+        "pandas": 1.0
+      },
+      "candidates": [
+        {
+          "cand_id": "data_5__strong_0",
+          "tier": "strong",
+          "grade": 3,
+          "skills": [
+            "Apache Airflow",
+            "Apache Spark",
+            "MySQL",
+            "Python",
+            "Tableau",
+            "pandas"
+          ],
+          "exact_overlap": 6
+        },
+        {
+          "cand_id": "data_5__bridgeable_0",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle Database"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_5__bridgeable_1",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "PostgreSQL",
+            "pandas"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_5__bridgeable_2",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "PostgreSQL"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_5__bridgeable_3",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Airflow",
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "Oracle Database"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_5__bridgeable_4",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Airflow",
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "PostgreSQL"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_5__bridgeable_5",
+          "tier": "bridgeable",
+          "grade": 2,
+          "skills": [
+            "Apache Hadoop",
+            "Microsoft Power BI",
+            "PostgreSQL",
+            "Python"
+          ],
+          "exact_overlap": 1
+        },
+        {
+          "cand_id": "data_5__weak_0",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Ansible software",
+            "Apache Airflow",
+            "JavaScript",
+            "Node.js",
+            "Python",
+            "TypeScript",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_5__weak_1",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Bash",
+            "Linux",
+            "NumPy",
+            "PyTorch",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_5__weak_2",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "Git",
+            "Python",
+            "TypeScript"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_5__weak_3",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Cascading style sheets CSS",
+            "Node.js",
+            "Python",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 3
+        },
+        {
+          "cand_id": "data_5__weak_4",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Docker",
+            "JavaScript",
+            "Python",
+            "Splunk Enterprise",
+            "XGBoost",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_5__weak_5",
+          "tier": "weak",
+          "grade": 1,
+          "skills": [
+            "Apache Airflow",
+            "Figma",
+            "Hypertext markup language HTML",
+            "NumPy",
+            "Splunk Enterprise",
+            "pandas"
+          ],
+          "exact_overlap": 2
+        },
+        {
+          "cand_id": "data_5__irrelevant_0",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Ansible software",
+            "Cascading style sheets CSS",
+            "Figma",
+            "Git",
+            "Spring Boot"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_5__irrelevant_1",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Docker",
+            "GitHub",
+            "JavaScript",
+            "MongoDB",
+            "RESTful API"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_5__irrelevant_2",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Amazon Web Services AWS software",
+            "Ansible software",
+            "Git",
+            "Linux"
+          ],
+          "exact_overlap": 0
+        },
+        {
+          "cand_id": "data_5__irrelevant_3",
+          "tier": "irrelevant",
+          "grade": 0,
+          "skills": [
+            "Bash",
+            "Django",
+            "Jenkins CI",
+            "NumPy",
+            "React",
+            "TypeScript"
+          ],
+          "exact_overlap": 0
+        }
+      ],
+      "split": "heldout"
+    }
+  ]
+}

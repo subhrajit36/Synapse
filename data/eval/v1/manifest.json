@@ -1,0 +1,46 @@
+{
+  "version": "v1",
+  "seed": 42,
+  "n_jds": 30,
+  "n_pairs": 600,
+  "content_sha256": "aa45b515a6e6408a",
+  "substitution_groups": [
+    [
+      "Docker",
+      "Kubernetes",
+      "Red Hat OpenShift"
+    ],
+    [
+      "Amazon Web Services AWS software",
+      "Microsoft Azure software"
+    ],
+    [
+      "PyTorch",
+      "TensorFlow",
+      "Keras"
+    ],
+    [
+      "XGBoost",
+      "LightGBM",
+      "CatBoost"
+    ],
+    [
+      "MySQL",
+      "PostgreSQL",
+      "Oracle Database"
+    ],
+    [
+      "React",
+      "Vue.js"
+    ],
+    [
+      "GitHub",
+      "GitLab",
+      "Atlassian Bitbucket"
+    ],
+    [
+      "Apache Spark",
+      "Apache Hadoop"
+    ]
+  ]
+}
