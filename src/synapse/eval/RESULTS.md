@@ -13,9 +13,9 @@ Synapse uses the config selected by the B4 sweep on train only: `bridge_cutoff=0
 | Synapse (tuned) | 0.739 | 0.923 | 0.907 | 1.000 |
 | Synapse (no bridging) | 0.000 | 0.824 | 0.427 | 1.000 |
 | TF-IDF | 0.002 | 0.824 | 0.427 | 1.000 |
-| cosine-only | 0.430 | 0.905 | 0.680 | 1.000 |
+| cosine-only | 0.459 | 0.913 | 0.667 | 1.000 |
 
-**Synapse lift vs cosine-only:** bridge>weak +0.309, nDCG@10 +0.018, P@5 +0.227, MRR +0.000.
+**Synapse lift vs cosine-only:** bridge>weak +0.280, nDCG@10 +0.010, P@5 +0.240, MRR +0.000.
 
 **Bridgeable-gap precision:** of 462 gaps labeled bridgeable, 47.8% bridge to a genuine substitute (curated ground truth, independent of the graph).
 
@@ -26,9 +26,9 @@ Synapse uses the config selected by the B4 sweep on train only: `bridge_cutoff=0
 | Synapse (tuned) | 0.859 | 0.922 | 0.960 | 0.933 |
 | Synapse (no bridging) | 0.000 | 0.819 | 0.373 | 1.000 |
 | TF-IDF | 0.002 | 0.819 | 0.373 | 1.000 |
-| cosine-only | 0.406 | 0.899 | 0.600 | 1.000 |
+| cosine-only | 0.454 | 0.908 | 0.667 | 1.000 |
 
-**Synapse lift vs cosine-only:** bridge>weak +0.454, nDCG@10 +0.023, P@5 +0.360, MRR -0.067.
+**Synapse lift vs cosine-only:** bridge>weak +0.406, nDCG@10 +0.014, P@5 +0.293, MRR -0.067.
 
 **Bridgeable-gap precision:** of 455 gaps labeled bridgeable, 48.8% bridge to a genuine substitute (curated ground truth, independent of the graph).
 
@@ -36,7 +36,7 @@ Synapse uses the config selected by the B4 sweep on train only: `bridge_cutoff=0
 
 **The graph, not the embeddings, does the work.** `Synapse (no bridging)` is the identical pipeline with graph traversal switched off: it scores 0.000 on the boundary decision, indistinguishable from TF-IDF (0.002). Switching bridging on takes the same code to 0.859. Since embeddings, extraction and scoring are unchanged between those two rows, the lift is attributable to shortest-path reasoning over skill adjacency and nothing else.
 
-**It beats the strong baseline too.** `cosine-only` embeds the same skill text with the same model, so it already captures some adjacency - it scores 0.406, far above TF-IDF. Synapse still improves on it by +0.454 on the boundary decision and +0.360 on P@5. Explicit graph structure therefore adds signal that pooled embedding similarity does not.
+**It beats the strong baseline too.** `cosine-only` embeds the same skill text with the same model, so it already captures some adjacency - it scores 0.454, far above TF-IDF. Synapse still improves on it by +0.406 on the boundary decision and +0.293 on P@5. Explicit graph structure therefore adds signal that pooled embedding similarity does not.
 
 **Held-out, not tuned-on.** Parameters were selected on train (bridge>weak 0.739); the heldout split reports 0.859 without being consulted during selection, so the gain is not an artifact of the search.
 

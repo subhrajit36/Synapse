@@ -6,8 +6,8 @@
 google-genai==1.29.0
 pydantic==2.9.2
 
-# Phase A2/A3 — dev-phase embeddings + graph build (replaced by FastEmbed in C1)
-sentence-transformers==3.0.1
+# Phase A2/A3 — graph build (FastEmbed for embeddings in C1)
+fastembed==0.8.0
 pandas==2.2.2
 numpy==1.26.4
 
