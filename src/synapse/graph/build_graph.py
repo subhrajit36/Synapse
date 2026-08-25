@@ -1,7 +1,15 @@
 import pandas as pd
 import networkx as nx
 from collections import Counter, defaultdict
-from sentence_transformers import SentenceTransformer, util
+import numpy as np
+
+# Use FastEmbed for ONNX CPU-only embeddings (Phase C1)
+# Falls back to sentence-transformers for dev if fastembed not available
+try:
+    from fastembed import TextEmbedding
+    FASTEMBED_AVAILABLE = True
+except ImportError:
+    FASTEMBED_AVAILABLE = False
 
 ONET_DIR = "data/taxonomies/onet/db_30_3_text"
 
@@ -187,7 +195,7 @@ def _embed_text(G: nx.Graph, node: str) -> str:
 
 def add_semantic_edges(
     G,
-    model_name="all-MiniLM-L6-v2",
+    model_name="BAAI/bge-small-en-v1.5",
     k=5,
     min_sim=0.30,
     strong_sim=0.60,
@@ -203,8 +211,8 @@ def add_semantic_edges(
     Pass 2 exists because a fixed top-k budget gets consumed inside dense
     clusters, silently dropping genuine high-similarity pairs at rank k+1.
 
-    Set `strong_sim=None` and `use_embed_category=False` to reproduce the
-    original edge set (frozen baseline for the B4 ablation).
+    Uses FastEmbed (ONNX, CPU-only) by default. Set `model_name` to a
+    sentence-transformers model to use the old backend (dev only).
     """
     skills = [n for n, d in G.nodes(data=True) if d.get("node_type") == "skill"]
     if len(skills) < 2:
@@ -215,10 +223,31 @@ def add_semantic_edges(
     else:
         texts = [f"{s} ({G.nodes[s].get('category', '')})" for s in skills]
 
-    model = model or SentenceTransformer(model_name)
-    emb = model.encode(texts, convert_to_tensor=True, show_progress_bar=True)
-    sim = util.cos_sim(emb, emb)
-    sim.fill_diagonal_(-1.0)              # never connect a skill to itself
+    # Use FastEmbed if available and model is a FastEmbed model
+    use_fastembed = FASTEMBED_AVAILABLE and model_name.startswith("BAAI/")
+
+    if use_fastembed:
+        # FastEmbed: encode as passages (no query prefix for corpus)
+        if model is None:
+            model = TextEmbedding(model_name=model_name)
+        embeddings = np.array(list(model.embed(texts)), dtype=np.float32)
+    else:
+        # sentence-transformers fallback
+        if model is None:
+            from sentence_transformers import SentenceTransformer
+            model = SentenceTransformer(model_name)
+        embeddings = model.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
+
+    # Store embeddings in node attributes for Neo4j migration
+    for i, skill in enumerate(skills):
+        G.nodes[skill]["embedding"] = embeddings[i]
+
+    # Compute cosine similarity
+    # Normalize embeddings
+    norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
+    embeddings = embeddings / np.clip(norms, 1e-12, None)
+    sim = embeddings @ embeddings.T
+    np.fill_diagonal(sim, -1.0)  # never connect a skill to itself
 
     pairs: dict[tuple[str, str], float] = {}
 
@@ -227,16 +256,24 @@ def add_semantic_edges(
         if score > pairs.get(key, -1.0):
             pairs[key] = score
 
-    top = sim.topk(min(k, len(skills) - 1), dim=1)
+    # Top-k neighbors
+    n_neighbors = min(k, len(skills) - 1)
     for i in range(len(skills)):
-        for score, j in zip(top.values[i].tolist(), top.indices[i].tolist()):
+        # Get top-k similarities
+        top_indices = np.argpartition(sim[i], -n_neighbors)[-n_neighbors:]
+        top_indices = top_indices[np.argsort(sim[i][top_indices])[::-1]]
+        for j in top_indices:
+            score = float(sim[i][j])
             if score >= min_sim:
                 offer(i, j, score)
 
+    # Threshold-based: all pairs above strong_sim
     if strong_sim is not None:
-        for i, j in (sim >= strong_sim).nonzero(as_tuple=False).tolist():
-            if i < j:                      # symmetric matrix; take one triangle
-                offer(i, j, float(sim[i][j]))
+        for i in range(len(skills)):
+            for j in range(i + 1, len(skills)):
+                score = float(sim[i][j])
+                if score >= strong_sim:
+                    offer(i, j, score)
 
     for (a, b), score in pairs.items():
         if G.has_edge(a, b):               # don't clobber 'requires' edges

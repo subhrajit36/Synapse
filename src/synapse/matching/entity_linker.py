@@ -61,6 +61,36 @@ class SentenceTransformerEmbedder:
         return np.asarray(self._model.encode(list(texts)), dtype=np.float32)
 
 
+class FastEmbedEmbedder:
+    """Phase C1 embedder: FastEmbed (ONNX, CPU-only, no torch).
+
+    Uses BAAI/bge-small-en-v1.5 (384-dim) to match the production embedding
+    model. Applies the query prefix required by the model card for retrieval.
+    """
+
+    def __init__(self, model_name: str = "BAAI/bge-small-en-v1.5") -> None:
+        from fastembed import TextEmbedding
+
+        # Use the retrieval query prefix required by bge-small-en-v1.5
+        self._model = TextEmbedding(model_name=model_name)
+        self._query_prefix = "Represent this sentence for searching relevant passages: "
+        self._passage_prefix = ""
+
+    def encode(self, texts: Sequence[str]) -> np.ndarray:
+        # Apply query prefix for retrieval queries (not for corpus passages)
+        # The caller decides which prefix to use via the context
+        return np.asarray(list(self._model.embed(list(texts))), dtype=np.float32)
+
+    def encode_queries(self, texts: Sequence[str]) -> np.ndarray:
+        """Encode texts as queries with the required prefix."""
+        prefixed = [self._query_prefix + t for t in texts]
+        return np.asarray(list(self._model.embed(prefixed)), dtype=np.float32)
+
+    def encode_passages(self, texts: Sequence[str]) -> np.ndarray:
+        """Encode texts as passages (no prefix)."""
+        return np.asarray(list(self._model.embed(list(texts))), dtype=np.float32)
+
+
 @dataclass(frozen=True)
 class LinkResult:
     surface: str
@@ -131,6 +161,8 @@ class EntityLinker:
         self._node_texts = [
             (node_texts or {}).get(name, name) for name in self.skills
         ]
+        # Detect if using FastEmbed to apply query prefix
+        self._is_fastembed = hasattr(embedder, 'encode_queries') if embedder else False
 
     # ------------------------------------------------------------- embeddings
 
@@ -142,7 +174,11 @@ class EntityLinker:
             return True
         if self._embedder is None:
             try:
-                self._embedder = SentenceTransformerEmbedder(self._model_name)
+                # Default to FastEmbed for Phase C1+
+                if self._model_name.startswith("BAAI/") or "fastembed" in self._model_name.lower():
+                    self._embedder = FastEmbedEmbedder(self._model_name)
+                else:
+                    self._embedder = SentenceTransformerEmbedder(self._model_name)
             except ImportError:
                 logger.warning(
                     "No embedder available; linking is alias/surface-only. "
@@ -150,7 +186,11 @@ class EntityLinker:
                 )
                 self._use_embeddings = False
                 return False
-        self._node_emb = _l2_normalize(self._embedder.encode(self._node_texts))
+        # Encode node texts as passages (no query prefix)
+        if self._is_fastembed:
+            self._node_emb = _l2_normalize(self._embedder.encode_passages(self._node_texts))
+        else:
+            self._node_emb = _l2_normalize(self._embedder.encode(self._node_texts))
         return True
 
     # ------------------------------------------------------------------ linking
@@ -170,7 +210,11 @@ class EntityLinker:
         if not self._ensure_embeddings():
             return LinkResult(phrase, None, 0.0, METHOD_UNRESOLVED, weight)
 
-        query = _l2_normalize(self._embedder.encode([phrase]))  # type: ignore[union-attr]
+        # Use query prefix for FastEmbed retrieval queries
+        if self._is_fastembed:
+            query = _l2_normalize(self._embedder.encode_queries([phrase]))
+        else:
+            query = _l2_normalize(self._embedder.encode([phrase]))  # type: ignore[union-attr]
         sims = (self._node_emb @ query[0])  # type: ignore[operator]
         best = int(np.argmax(sims))
         score = float(sims[best])

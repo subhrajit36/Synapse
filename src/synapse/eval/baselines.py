@@ -19,6 +19,8 @@ from __future__ import annotations
 
 from typing import Iterable, Mapping
 
+import numpy as np
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -47,11 +49,23 @@ class TfidfBaseline:
 class CosineBaseline:
     name = "cosine"
 
-    def __init__(self, model=None, model_name: str = "all-MiniLM-L6-v2"):
+    def __init__(self, model=None, model_name: str = "BAAI/bge-small-en-v1.5"):
         # Same embedder the graph is built from, so the only difference vs Synapse
         # is the graph structure -- a clean isolation of the graph's contribution.
-        from sentence_transformers import SentenceTransformer
-        self.model = model or SentenceTransformer(model_name)
+        # Phase C1: Use FastEmbed (ONNX, CPU-only) for production parity.
+        if model is not None:
+            self.model = model
+            # FastEmbed TextEmbedding has .embed(), sentence-transformers has .encode()
+            self._is_fastembed = hasattr(model, 'embed') and not hasattr(model, 'encode')
+        else:
+            try:
+                from fastembed import TextEmbedding
+                self.model = TextEmbedding(model_name=model_name)
+                self._is_fastembed = True
+            except ImportError:
+                from sentence_transformers import SentenceTransformer
+                self.model = SentenceTransformer(model_name)
+                self._is_fastembed = False
 
     @staticmethod
     def _text(skills: list[str]) -> str:
@@ -61,7 +75,11 @@ class CosineBaseline:
         jd = _skills(jd_skills)
         ids = list(candidates)
         texts = [self._text(jd)] + [self._text(_skills(candidates[c])) for c in ids]
-        emb = self.model.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
+        if self._is_fastembed:
+            import numpy as np
+            emb = np.array(list(self.model.embed(texts)), dtype=np.float32)
+        else:
+            emb = self.model.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
         sims = emb[1:] @ emb[0]            # normalized -> dot product is cosine
         return sorted(zip(ids, sims.tolist()), key=lambda t: -t[1])
 
