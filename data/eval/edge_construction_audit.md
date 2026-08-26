@@ -1,6 +1,6 @@
 # Edge construction audit
 
-`228` skills, `57` O*NET categories, model `all-MiniLM-L6-v2`.
+`213` skills, `55` O*NET categories, model `all-MiniLM-L6-v2`.
 
 Grouping for dominance/spread is the deterministic O*NET Element Name.
 
@@ -10,9 +10,9 @@ AUC = P(a same-category pair scores above a different-category pair). Near 1.0 m
 
 | variant | AUC | point-biserial r | same-cat mean | diff-cat mean | gap |
 |---|---|---|---|---|---|
-| bare | 0.630 | 0.119 | 0.222 | 0.154 | 0.068 |
-| onet | 0.948 | 0.436 | 0.517 | 0.241 | 0.276 |
-| override | 0.909 | 0.406 | 0.499 | 0.237 | 0.261 |
+| bare | 0.618 | 0.111 | 0.213 | 0.149 | 0.064 |
+| onet | 0.948 | 0.436 | 0.506 | 0.233 | 0.272 |
+| override | 0.906 | 0.404 | 0.486 | 0.229 | 0.257 |
 
 ## 2. Within-category spread (`override`)
 
@@ -20,14 +20,14 @@ Low std means the tool name adds nothing once the suffix is fixed.
 
 | category | n | mean | std | min | max |
 |---|---|---|---|---|---|
-| Development environment software | 23 | 0.420 | 0.151 | -0.006 | 0.888 |
-| Web platform development software | 20 | 0.503 | 0.129 | 0.201 | 0.916 |
-| Data base user interface and query software | 18 | 0.493 | 0.178 | -0.045 | 0.859 |
-| Data base management system software | 13 | 0.575 | 0.084 | 0.390 | 0.816 |
+| Development environment software | 21 | 0.399 | 0.148 | -0.006 | 0.888 |
+| Web platform development software | 18 | 0.479 | 0.121 | 0.201 | 0.791 |
+| Data base user interface and query software | 17 | 0.490 | 0.181 | -0.045 | 0.859 |
 | Object or component oriented development software | 12 | 0.432 | 0.157 | 0.115 | 0.768 |
 | Operating system software | 12 | 0.555 | 0.141 | 0.300 | 0.885 |
-| Analytical or scientific software | 9 | 0.459 | 0.207 | -0.029 | 0.835 |
+| Data base management system software | 11 | 0.558 | 0.076 | 0.390 | 0.769 |
 | Program testing software | 8 | 0.524 | 0.084 | 0.421 | 0.778 |
+| Analytical or scientific software | 8 | 0.429 | 0.204 | -0.029 | 0.835 |
 | Application server software | 7 | 0.456 | 0.069 | 0.371 | 0.612 |
 | Graphics or photo imaging software | 6 | 0.667 | 0.119 | 0.491 | 0.853 |
 | Cloud-based management software | 6 | 0.531 | 0.076 | 0.419 | 0.754 |
@@ -43,7 +43,7 @@ Low std means the tool name adds nothing once the suffix is fixed.
 | Docker ↔ Kubernetes | onet | 0.542 | #1 | +0.020 | Atlassian Bitbucket (0.521) |
 | Docker ↔ Kubernetes | override | 0.542 | #1 | +0.020 | Atlassian Bitbucket (0.521) |
 | PyTorch ↔ TensorFlow | bare | 0.486 | #1 | +0.031 | NumPy (0.456) |
-| PyTorch ↔ TensorFlow | onet | 0.399 | #22 | -0.274 | NumPy (0.674) |
+| PyTorch ↔ TensorFlow | onet | 0.399 | #19 | -0.274 | NumPy (0.674) |
 | PyTorch ↔ TensorFlow | override | 0.736 | #1 | +0.064 | Keras (0.673) |
 | TensorFlow ↔ Keras | bare | 0.519 | #1 | +0.032 | PyTorch (0.486) |
 | TensorFlow ↔ Keras | onet | 0.547 | #2 | -0.025 | The MathWorks MATLAB (0.572) |
@@ -55,8 +55,8 @@ Low std means the tool name adds nothing once the suffix is fixed.
 | GitHub ↔ GitLab | onet | 0.600 | #3 | -0.025 | Git (0.626) |
 | GitHub ↔ GitLab | override | 0.600 | #3 | -0.025 | Git (0.626) |
 | MySQL ↔ PostgreSQL | bare | 0.547 | #1 | +0.018 | NoSQL (0.529) |
-| MySQL ↔ PostgreSQL | onet | 0.594 | #11 | -0.182 | Relational database management system software (0.776) |
-| MySQL ↔ PostgreSQL | override | 0.594 | #11 | -0.182 | Relational database management system software (0.776) |
+| MySQL ↔ PostgreSQL | onet | 0.594 | #9 | -0.096 | NoSQL (0.691) |
+| MySQL ↔ PostgreSQL | override | 0.594 | #9 | -0.096 | NoSQL (0.691) |
 | Apache Spark ↔ Apache Hadoop | bare | 0.602 | #1 | +0.014 | PySpark (0.588) |
 | Apache Spark ↔ Apache Hadoop | onet | 0.618 | #2 | -0.021 | PySpark (0.639) |
 | Apache Spark ↔ Apache Hadoop | override | 0.618 | #2 | -0.021 | PySpark (0.639) |
@@ -68,8 +68,8 @@ Skipped — node absent from taxonomy: `[('React', 'Angular'), ('Jenkins', 'Apac
 | variant | mean margin | rank-1 hits |
 |---|---|---|
 | bare | -0.026 | 5/7 |
-| onet | -0.062 | 2/7 |
-| override | -0.002 | 4/7 |
+| onet | -0.050 | 2/7 |
+| override | +0.011 | 4/7 |
 
 ## 4. Anchor neighbourhoods
 
@@ -84,7 +84,7 @@ Skipped — node absent from taxonomy: `[('React', 'Angular'), ('Jenkins', 'Apac
 | 5 | Grafana Labs Grafana Cloud 0.340 | GitLab 0.449 | GitLab 0.449 |
 | 6 | Portswigger BurP Suite 0.335 | Microsoft Windows Server 0.438 | Microsoft Windows Server 0.438 |
 | 7 | Bash 0.333 | Red Hat OpenShift 0.433 | Red Hat OpenShift 0.433 |
-| 8 | Kubernetes 0.315 | Web application software 0.417 | Web application software 0.417 |
+| 8 | Kubernetes 0.315 | Bash 0.379 | Bash 0.379 |
 
 ### PyTorch
 
