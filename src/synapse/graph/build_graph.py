@@ -319,6 +319,122 @@ def add_seed_edges(G, edges=SEED_SIMILAR_EDGES, verbose=True):
     return G
 
 
+def build_categorical_graph(
+    onet_dir: str = ONET_DIR,
+    edge_weight: float = 0.5,
+    max_category_size: int | None = None,
+    verbose: bool = True,
+) -> nx.Graph:
+    """Skill graph with edges from O*NET Element Name membership alone.
+
+    Two skills sharing an Element Name get an edge of fixed weight.
+    No embedder is loaded, imported, or called anywhere in this path.
+
+    max_category_size: if set, categories with more members than this are
+        skipped entirely rather than contributing a large clique. Report the
+        skipped set; do not silently drop.
+    """
+    import pandas as pd
+    from collections import Counter, defaultdict
+
+    occ = pd.read_csv(f"{onet_dir}/Occupation Data.txt", sep="\t")
+    sw = pd.read_csv(f"{onet_dir}/Software Skills.txt", sep="\t")
+
+    # 1. Scope to software-domain roles (SOC family 15).
+    occ = occ[occ["O*NET-SOC Code"].str.startswith("15-")]
+    sw = sw[sw["O*NET-SOC Code"].str.startswith("15-")]
+
+    # 2. Keep only market-relevant tools, minus generic office tools and
+    #    generic category-descriptor buckets (see STOP_SKILLS / GENERIC_SKILLS).
+    sw = sw[(sw["Hot Technology"] == "Y") | (sw["In Demand"] == "Y")]
+    sw = sw[~sw["Workplace Example"].isin(STOP_SKILLS | GENERIC_SKILLS)]
+
+    G = nx.Graph()
+
+    for _, row in occ.iterrows():
+        G.add_node(row["Title"], node_type="role", soc=row["O*NET-SOC Code"])
+
+    code_to_title = dict(zip(occ["O*NET-SOC Code"], occ["Title"]))
+
+    # Pass 1: aggregate every Element Name each skill appears under.
+    # (Reusing the exact same logic as build_skill_graph for identical node sets)
+    cat_counts: dict[str, Counter] = defaultdict(Counter)
+    for _, row in sw.iterrows():
+        cat_counts[row["Workplace Example"]][row["Element Name"]] += 1
+
+    # Pass 2: add skill nodes with a deterministic category.
+    for skill, counter in cat_counts.items():
+        G.add_node(
+            skill,
+            node_type="skill",
+            category=pick_category(counter),
+            category_all=sorted(counter),      # provenance: what we chose between
+            category_n=len(counter),
+            source="onet",
+        )
+        if skill in CATEGORY_OVERRIDES:
+            G.nodes[skill]["embed_category"] = CATEGORY_OVERRIDES[skill]
+
+    # Pass 3: role--skill edges.
+    for _, row in sw.iterrows():
+        role = code_to_title.get(row["O*NET-SOC Code"])
+        if role is not None:
+            G.add_edge(role, row["Workplace Example"], relation="requires")
+
+    # Inject custom skills that O*NET does not carry at all.
+    for item in CUSTOM_SKILLS:
+        if item["skill"] not in G:
+            G.add_node(
+                item["skill"],
+                node_type="skill",
+                category=item["category"],
+                category_all=[item["category"]],
+                category_n=1,
+                embed_category=item["category"],
+                source="custom",
+            )
+
+    # Pass 4: categorical edges — cliques per Element Name
+    # Build category -> skills map using the DETERMINISTIC category (same as node attr)
+    cat_to_skills: dict[str, list[str]] = defaultdict(list)
+    for skill, counter in cat_counts.items():
+        cat = pick_category(counter)
+        cat_to_skills[cat].append(skill)
+
+    # Add custom skills to their categories too
+    for item in CUSTOM_SKILLS:
+        if item["skill"] in G:
+            cat = item["category"]
+            cat_to_skills[cat].append(item["skill"])
+
+    skipped_categories = []
+    added_edges = 0
+
+    for cat, skills_in_cat in cat_to_skills.items():
+        n = len(skills_in_cat)
+        if max_category_size is not None and n > max_category_size:
+            skipped_categories.append((cat, n))
+            if verbose:
+                print(f"  SKIP category '{cat}' (size {n} > max_category_size={max_category_size})")
+            continue
+        # Add all pairwise edges within this category (clique)
+        for i in range(n):
+            for j in range(i + 1, n):
+                a, b = skills_in_cat[i], skills_in_cat[j]
+                if not G.has_edge(a, b):  # don't clobber 'requires' edges
+                    G.add_edge(a, b, relation="similar",
+                               weight=edge_weight, edge_source="category")
+                    added_edges += 1
+
+    if verbose:
+        print(f"\nCategorical graph: {len(cat_to_skills)} categories, "
+              f"{added_edges} similar edges added")
+        if skipped_categories:
+            print(f"  Skipped categories (size > {max_category_size}): {skipped_categories}")
+
+    return G
+
+
 def audit_graph(G, bridge_cutoff: float = 0.6) -> dict:
     """Report the two conditions that silently break bridging."""
     skills = [n for n, d in G.nodes(data=True) if d.get("node_type") == "skill"]
