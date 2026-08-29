@@ -1,108 +1,158 @@
-# Synapse — A Relationship-Aware Talent Graph Agent
+# Synapse — Graph-Based Talent Matching
 
-Traditional Applicant Tracking Systems rank candidates by **keyword overlap**: a candidate
-with *Docker* and *distributed systems* but not *Kubernetes* is scored as a poor match for a
-Kubernetes role — even though that gap is small and bridgeable.
+**Reframes resume-JD matching as graph reasoning over a skill knowledge graph**, not keyword overlap.
 
-**Synapse** reframes talent matching as **graph reasoning**. Skills, roles, and candidates are
-nodes in a weighted knowledge graph; the system scores role fit using both semantic similarity
-and **graph distance**, and explains every decision:
+---
 
-> *"Strong match — the candidate has Docker; the Kubernetes gap is one hop away and bridgeable."*
+## What Synapse Does
 
-## How it works
+| Traditional ATS | Synapse |
+|-----------------|---------|
+| "Candidate lacks *Kubernetes* → reject" | "Candidate has *Docker* → *Kubernetes* is 1 hop away (bridgeable gap)" |
+| Black-box score | Explainable: matched skills, bridged gaps, true gaps, path lengths |
+| Keyword matching | Graph distance + semantic similarity |
+
+---
+
+## Pipeline
 
 ```
-Job description + candidate skills
-        │  entity-link phrases → graph nodes (embeddings; handles "k8s" → Kubernetes)
-        ▼
-Skill Knowledge Graph  ── role→skill edges from O*NET
-        │               └─ skill↔skill edges from k-NN over sentence embeddings
-        ▼
-Score: direct matches (full credit) + bridgeable gaps (partial credit by graph distance)
-        ▼
-Ranked candidates + explainable, traceable gaps
+Job Description + Candidate Skills
+          │
+          ▼
+Entity Linker (FastEmbed + alias table) → Canonical O*NET skill nodes
+          │
+          ▼
+Skill Knowledge Graph (213 skills, 55 O*NET categories)
+  ├─ Role → Skill edges (O*NET "requires")
+  └─ Skill ↔ Skill edges (embedding k-NN, cosine similarity)
+          │
+          ▼
+Matcher (Weighted shortest-path)
+  ├─ Direct matches: full credit
+  ├─ Bridgeable gaps (≤2 hops): partial credit by distance
+  └─ True gaps: penalty
+          │
+          ▼
+Ranked candidates + Traceable gap explanations
 ```
 
-- **Graph vocabulary:** [O*NET 30.3](https://www.onetcenter.org/) (US Dept. of Labor), filtered
-  to software roles (SOC family 15), keeping Hot / In-Demand technologies.
-- **Skill adjacency:** a k-nearest-neighbor graph over context-enriched
-  [sentence-transformers](https://www.sbert.net/) embeddings (`all-MiniLM-L6-v2`).
-- **Matching:** weighted shortest-path "bridgeability" over skill↔skill edges.
+---
 
-## HLD
-```mermaid
-graph TD
-    %% User Input & Documents
-    subgraph Input ["1. Candidate Data Input"]
-        A[Candidate Resume<br/>.txt / .docx]
-    end
+## Key Achievements
 
-    %% Ingestion & Extraction Module
-    subgraph Ingest ["2. Ingestion & Extraction"]
-        B[synapse.ingest.resume<br/>Document Parser]
-        C[synapse.ingest.skill_extractor<br/>Raw Skill Extractor]
-    end
+| Phase | Milestone | Result |
+|-------|-----------|--------|
+| **A** | Intelligence core | Working end-to-end locally (NetworkX, Gemini Flash extraction) |
+| **B** | Evaluation | **7-arm study with bootstrap CIs** — graph reasoning beats cosine-only by **+0.406** on bridge>weak |
+| **C** | Productionization | **Ready to start** (FastEmbed → Neo4j AuraDB → FastMCP → Render) |
 
-    %% Taxonomy & Knowledge Graph Base
-    subgraph GraphBase ["Pre-built Knowledge Base"]
-        D[(ONET Skill Dataset)]
-        E[scripts/build_graph_artifact.py]
-        F[(data/skill_graph.pkl<br/>Serialized NetworkX Graph)]
-        D -->|fetch_onet.sh| E
-        E -->|Serializes| F
-    end
+---
 
-    %% Entity Linking & Matching Engine
-    subgraph Engine ["3. Disambiguation & Scoring"]
-        G[synapse.matching.entity_linker<br/>Vector / Text Entity Linker]
-        H[synapse.matching.matcher<br/>Graph Matcher & Scoring Engine]
-    end
+## The Edge Substrate Experiment (Phase B.2)
 
-    %% Application UI
-    subgraph Presentation ["4. User Interface"]
-        I[app.py<br/>Streamlit Dashboard]
-    end
+We tested **4 edge substrates** to find the best skill↔skill adjacency for bridging:
 
-    %% Data Flow Connections
-    A -->|Raw File Buffer| B
-    B -->|Clean Text Stream| C
-    C -->|Extracted Raw Skill Terms| G
-    F -->|Canonical Nodes & Edges| G
-    G -->|Normalized Canonical Skills| H
-    F -->|Job Profiles & Graph Traversal| H
-    H -->|Match Scores & Skill Gaps| I
-```
+| Substrate | Method | bridge>weak (heldout) | Bridge Precision | Decision |
+|-----------|--------|----------------------|------------------|----------|
+| **Embedding** ✅ | `BAAI/bge-small-en-v1.5` cosine k-NN | **0.859** [0.761, 0.944] | 48.8% | **Production** |
+| Categorical | O*NET Element Name cliques | 0.547 [0.395, 0.695] | 29.2% | Control |
+| Typed (sub) | LLM-classified `substitute` only | 0.500 [0.357, 0.635] | **77.9%** | Research |
+| Typed (sub+prereq) | + `prerequisite` edges | 0.731 [0.607, 0.848] | 29.8% | Research |
+
+### Why Embedding Won
+
+- **Only substrate meeting the falsification criterion**: `bridge>weak ≥ 0.80` on heldout
+- **Beats strong baseline**: +0.406 over cosine-only (0.454) — not a forced mechanism probe
+- **Reproducible**: Frozen arm reproduces original Phase B result exactly
+- **FastEmbed ready**: CPU-only ONNX, no GPU, fits 512MB RAM
+
+### What Typed Edges Achieved (Research Track)
+
+- **77.9% bridge precision** vs 48.8% — LLM correctly identifies substitutes
+- **AUC dropped 0.906 → 0.610** — edges carry signal beyond category membership
+- **Failed ranking**: Sparsity (201 edges / 213 nodes) + directed prerequisites + complement exclusion = insufficient connectivity
+- **Preserved for future**: Bidirectional prerequisites, node coverage expansion
+
+---
+
+## Bootstrap Confidence Intervals — Why They Matter
+
+| Arm | bridge>weak (95% CI) | nDCG@10 (95% CI) |
+|-----|----------------------|------------------|
+| **Embedding** | **0.859** [0.761, 0.944] | 0.922 [0.875, 0.959] |
+| Categorical | 0.547 [0.395, 0.695] | 0.880 [0.834, 0.923] |
+| Typed (sub) | 0.500 [0.357, 0.635] | 0.904 [0.876, 0.930] |
+| Cosine-only | 0.454 [0.000, 0.000] | 0.908 [0.000, 0.000] |
+
+**Importance:** With only 15 heldout JDs, point estimates are noisy. The CIs prove:
+- Embedding **clearly beats** categorical (CIs don't overlap)
+- Embedding **clearly beats** cosine-only (lower bound 0.761 > 0.454)
+- Typed edges **cannot claim superiority** (upper bound 0.635 < 0.80 target)
+
+*Protocol: JD-level resampling, 1000 iterations, config swept per-arm on train split only.*
+
+---
+
+## Tech Stack (Locked)
+
+| Layer | Tool |
+|-------|------|
+| Orchestration | LangGraph |
+| LLM Extraction | Gemini Flash (Google AI Studio, free tier) |
+| Embeddings | **FastEmbed** (`BAAI/bge-small-en-v1.5`, ONNX, CPU) |
+| Graph (dev) | NetworkX + pickle |
+| Graph (prod) | **Neo4j AuraDB Free** |
+| API | **FastMCP** (HTTP/SSE) |
+| Deployment | **Docker → Render Free Web Service** |
+
+---
 
 ## Quickstart
 
 ```bash
+# 1. Setup
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-bash scripts/fetch_onet.sh          # downloads O*NET data (~110 MB, not committed)
 
-python src/synapse/graph/build_graph.py       # build the knowledge graph
-python src/synapse/matching/matcher.py        # run the example candidate/JD match
+# 2. Build graph (dev: NetworkX pickle)
+python -m synapse.graph.build_graph
+
+# 3. Run evaluation (7 arms, bootstrap CIs)
+python -m synapse.eval.run_eval_arms
+
+# 4. See results
+cat src/synapse/eval/RESULTS.md
 ```
 
-## Layout
+---
+
+## Project Structure
 
 ```
-src/synapse/
-  graph/build_graph.py       # O*NET → role/skill graph + embedding skill edges
-  matching/entity_linker.py  # free-text skill phrases → graph nodes
-  matching/matcher.py        # candidate vs job-description scoring + gap explanation
-notebooks/                   # step-by-step learning scripts
-scripts/fetch_onet.sh        # re-download the O*NET dataset
+synapse/
+├── data/eval/
+│   ├── EDGE_SUBSTRATE_STUDY.md    # Complete experiment documentation
+│   ├── v2/dataset.json            # 30 JDs × 18 candidates (540 pairs)
+│   └── typed_edge_cache.jsonl     # LLM classification cache
+├── src/synapse/
+│   ├── ingest/          # Reader → Extractor (LangGraph nodes)
+│   ├── matching/        # EntityLinker + Matcher (scoring + gaps)
+│   ├── graph/
+│   │   ├── build_graph.py        # Embedding + Categorical graphs
+│   │   ├── migrate_to_neo4j.py   # Phase C2: NetworkX → Neo4j
+│   │   └── typed_edges.py        # Research: LLM edge classification
+│   └── eval/
+│       ├── run_eval_arms.py      # 7-arm evaluation + bootstrap
+│       ├── RESULTS.md            # Final numbers with CIs
+│       └── ABLATION.md
+├── CLAUDE.md              # Phase A→C implementation plan
+├── Edge_substrate_plan.md # Phase B.2 experiment plan
+├── requirements.txt
+└── README.md
 ```
 
-## Status
 
-MVP core working: knowledge graph (255 nodes, 3.2k edges), entity linking, and explainable
-bridgeable-gap matching. Roadmap: multi-candidate ranking, web UI, PDF resume ingestion,
-PMI co-occurrence edges, fairness/bias audit.
+## License
 
-## Data & license
-
-O*NET data © U.S. Department of Labor, Employment and Training Administration, used under
-[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). O*NET® is a trademark of USDOL/ETA.
+O*NET data © U.S. Department of Labor, used under CC BY 4.0.
