@@ -409,13 +409,12 @@ def classify_probe_pairs(
     These pairs are in SUBSTITUTION_GROUPS and are filtered from the main
     classification to avoid circularity. We classify them separately ONLY
     for sanity checking — their results are NOT added to the graph.
+
+    Uses the same probe pairs as category_dominance.py for consistency.
     """
-    probes = [
-        ("Docker", "Kubernetes"),
-        ("PyTorch", "TensorFlow"),
-        ("MySQL", "PostgreSQL"),
-        ("Git", "GitHub"),
-    ]
+    from scripts.category_dominance import PROBE_PAIRS
+
+    probes = [(a, b) for a, b in PROBE_PAIRS]
 
     cache = load_cache(cache_path)
     cached_keys = set(cache.keys())
