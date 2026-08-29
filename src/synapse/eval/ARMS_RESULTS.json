@@ -1,0 +1,936 @@
+{
+  "embedding": {
+    "arm": "embedding",
+    "config": {
+      "description": "Current embedding substrate (frozen)",
+      "graph_type": "embedding"
+    },
+    "best_config": {
+      "bridge_cutoff": 0.7,
+      "bridge_credit_scale": 2.0,
+      "unreachable_penalty": 0.0,
+      "max_hops": 2
+    },
+    "final_params": {
+      "bridge_cutoff": 0.7,
+      "max_hops": 2,
+      "use_weights": true,
+      "enable_bridging": true,
+      "bridge_credit_scale": 2.0,
+      "bridgeable_penalty": 0.0,
+      "unreachable_penalty": 0.0,
+      "proficiency_reference": 1.0,
+      "min_proficiency_credit": 0.0,
+      "search_cutoff": null
+    },
+    "train_means": {
+      "embedding": {
+        "nDCG@10": 0.9232458687930609,
+        "P@5": 0.9066666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.7388888888888889,
+        "bridge_precision": 0.47835497835497837
+      },
+      "cosine-only": {
+        "nDCG@10": 0.913078501155706,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.45925925925925926
+      },
+      "tfidf": {
+        "nDCG@10": 0.8239609083845935,
+        "P@5": 0.4266666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      },
+      "no_bridging": {
+        "nDCG@10": 0.823831166753631,
+        "P@5": 0.4266666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.0
+      }
+    },
+    "heldout_means": {
+      "embedding": {
+        "nDCG@10": 0.9217616303837035,
+        "P@5": 0.96,
+        "MRR": 0.9333333333333333,
+        "bridge>weak": 0.8592592592592593,
+        "bridge_precision": 0.4879120879120879
+      },
+      "cosine-only": {
+        "nDCG@10": 0.9079337896605165,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.4537037037037037
+      },
+      "tfidf": {
+        "nDCG@10": 0.8187948433843397,
+        "P@5": 0.37333333333333335,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      },
+      "no_bridging": {
+        "nDCG@10": 0.8187218559972825,
+        "P@5": 0.37333333333333335,
+        "MRR": 1.0,
+        "bridge>weak": 0.0
+      }
+    },
+    "train_bp": [
+      0.47835497835497837,
+      462
+    ],
+    "heldout_bp": [
+      0.4879120879120879,
+      455
+    ],
+    "train_cis": {
+      "embedding": {
+        "bridge>weak": [
+          0.6148148148148148,
+          0.8481481481481481
+        ],
+        "nDCG@10": [
+          0.9040451078078994,
+          0.9421461916865835
+        ],
+        "P@5": [
+          0.8133333333333334,
+          0.9733333333333334
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ],
+        "bridge_precision": [
+          0.4158215010141988,
+          0.5471264367816092
+        ]
+      },
+      "no_bridging": {
+        "bridge>weak": [
+          0.6148148148148148,
+          0.8481481481481481
+        ],
+        "nDCG@10": [
+          0.9040451078078994,
+          0.9421461916865835
+        ],
+        "P@5": [
+          0.8133333333333334,
+          0.9733333333333334
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "heldout_cis": {
+      "embedding": {
+        "bridge>weak": [
+          0.7611111111111111,
+          0.9444444444444444
+        ],
+        "nDCG@10": [
+          0.8749282637543393,
+          0.9593720454388369
+        ],
+        "P@5": [
+          0.92,
+          1.0
+        ],
+        "MRR": [
+          0.8333333333333334,
+          1.0
+        ],
+        "bridge_precision": [
+          0.4025974025974026,
+          0.5779816513761468
+        ]
+      },
+      "no_bridging": {
+        "bridge>weak": [
+          0.7611111111111111,
+          0.9444444444444444
+        ],
+        "nDCG@10": [
+          0.8749282637543393,
+          0.9593720454388369
+        ],
+        "P@5": [
+          0.92,
+          1.0
+        ],
+        "MRR": [
+          0.8333333333333334,
+          1.0
+        ]
+      }
+    }
+  },
+  "categorical": {
+    "arm": "categorical",
+    "config": {
+      "description": "O*NET Element Name cliques only (control)",
+      "graph_type": "categorical"
+    },
+    "best_config": {
+      "bridge_cutoff": 0.5,
+      "bridge_credit_scale": 2.0,
+      "unreachable_penalty": 0.0,
+      "max_hops": 1
+    },
+    "final_params": {
+      "bridge_cutoff": 0.5,
+      "max_hops": 1,
+      "use_weights": true,
+      "enable_bridging": true,
+      "bridge_credit_scale": 2.0,
+      "bridgeable_penalty": 0.0,
+      "unreachable_penalty": 0.0,
+      "proficiency_reference": 1.0,
+      "min_proficiency_credit": 0.0,
+      "search_cutoff": null
+    },
+    "train_means": {
+      "categorical": {
+        "nDCG@10": 0.86659765771552,
+        "P@5": 0.72,
+        "MRR": 1.0,
+        "bridge>weak": 0.4222222222222222,
+        "bridge_precision": 0.3471882640586797
+      },
+      "cosine-only": {
+        "nDCG@10": 0.913078501155706,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.45925925925925926
+      },
+      "tfidf": {
+        "nDCG@10": 0.8239609083845935,
+        "P@5": 0.4266666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      },
+      "no_bridging": {
+        "nDCG@10": 0.823831166753631,
+        "P@5": 0.4266666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.0
+      }
+    },
+    "heldout_means": {
+      "categorical": {
+        "nDCG@10": 0.879620388272484,
+        "P@5": 0.7866666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.5472222222222223,
+        "bridge_precision": 0.29227557411273486
+      },
+      "cosine-only": {
+        "nDCG@10": 0.9079337896605165,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.4537037037037037
+      },
+      "tfidf": {
+        "nDCG@10": 0.8187948433843397,
+        "P@5": 0.37333333333333335,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      },
+      "no_bridging": {
+        "nDCG@10": 0.8187218559972825,
+        "P@5": 0.37333333333333335,
+        "MRR": 1.0,
+        "bridge>weak": 0.0
+      }
+    },
+    "train_bp": [
+      0.3471882640586797,
+      409
+    ],
+    "heldout_bp": [
+      0.29227557411273486,
+      479
+    ],
+    "train_cis": {
+      "categorical": {
+        "bridge>weak": [
+          0.31296296296296294,
+          0.5185185185185185
+        ],
+        "nDCG@10": [
+          0.8370672563052006,
+          0.8936518445994118
+        ],
+        "P@5": [
+          0.5866666666666667,
+          0.84
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ],
+        "bridge_precision": [
+          0.3,
+          0.4122137404580153
+        ]
+      },
+      "no_bridging": {
+        "bridge>weak": [
+          0.31296296296296294,
+          0.5185185185185185
+        ],
+        "nDCG@10": [
+          0.8370672563052006,
+          0.8936518445994118
+        ],
+        "P@5": [
+          0.5866666666666667,
+          0.84
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "heldout_cis": {
+      "categorical": {
+        "bridge>weak": [
+          0.39537037037037037,
+          0.6953703703703704
+        ],
+        "nDCG@10": [
+          0.833786119526508,
+          0.9225063717094962
+        ],
+        "P@5": [
+          0.6533333333333333,
+          0.9066666666666666
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ],
+        "bridge_precision": [
+          0.24045801526717558,
+          0.34545454545454546
+        ]
+      },
+      "no_bridging": {
+        "bridge>weak": [
+          0.39537037037037037,
+          0.6953703703703704
+        ],
+        "nDCG@10": [
+          0.833786119526508,
+          0.9225063717094962
+        ],
+        "P@5": [
+          0.6533333333333333,
+          0.9066666666666666
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ]
+      }
+    }
+  },
+  "typed_sub": {
+    "arm": "typed_sub",
+    "config": {
+      "description": "Typed edges: substitutes only",
+      "graph_type": "typed",
+      "traversable_types": [
+        "substitute"
+      ]
+    },
+    "best_config": {
+      "bridge_cutoff": 0.4,
+      "bridge_credit_scale": 2.0,
+      "unreachable_penalty": 0.0,
+      "max_hops": 2
+    },
+    "final_params": {
+      "bridge_cutoff": 0.4,
+      "max_hops": 2,
+      "use_weights": true,
+      "enable_bridging": true,
+      "bridge_credit_scale": 2.0,
+      "bridgeable_penalty": 0.0,
+      "unreachable_penalty": 0.0,
+      "proficiency_reference": 1.0,
+      "min_proficiency_credit": 0.0,
+      "search_cutoff": null
+    },
+    "train_means": {
+      "typed_sub": {
+        "nDCG@10": 0.9126842881239522,
+        "P@5": 0.7733333333333333,
+        "MRR": 1.0,
+        "bridge>weak": 0.5166666666666667,
+        "bridge_precision": 0.6695652173913044
+      },
+      "cosine-only": {
+        "nDCG@10": 0.913078501155706,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.45925925925925926
+      },
+      "tfidf": {
+        "nDCG@10": 0.8239609083845935,
+        "P@5": 0.4266666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      },
+      "no_bridging": {
+        "nDCG@10": 0.823831166753631,
+        "P@5": 0.4266666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.0
+      }
+    },
+    "heldout_means": {
+      "typed_sub": {
+        "nDCG@10": 0.9035479827755406,
+        "P@5": 0.68,
+        "MRR": 1.0,
+        "bridge>weak": 0.5,
+        "bridge_precision": 0.7785714285714286
+      },
+      "cosine-only": {
+        "nDCG@10": 0.9079337896605165,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.4537037037037037
+      },
+      "tfidf": {
+        "nDCG@10": 0.8187948433843397,
+        "P@5": 0.37333333333333335,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      },
+      "no_bridging": {
+        "nDCG@10": 0.8187218559972825,
+        "P@5": 0.37333333333333335,
+        "MRR": 1.0,
+        "bridge>weak": 0.0
+      }
+    },
+    "train_bp": [
+      0.6695652173913044,
+      115
+    ],
+    "heldout_bp": [
+      0.7785714285714286,
+      140
+    ],
+    "train_cis": {
+      "typed_sub": {
+        "bridge>weak": [
+          0.3611111111111111,
+          0.6777777777777778
+        ],
+        "nDCG@10": [
+          0.8860259034826307,
+          0.9418717895987838
+        ],
+        "P@5": [
+          0.6533333333333333,
+          0.9066666666666666
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ],
+        "bridge_precision": [
+          0.5454545454545454,
+          0.819047619047619
+        ]
+      },
+      "no_bridging": {
+        "bridge>weak": [
+          0.3611111111111111,
+          0.6777777777777778
+        ],
+        "nDCG@10": [
+          0.8860259034826307,
+          0.9418717895987838
+        ],
+        "P@5": [
+          0.6533333333333333,
+          0.9066666666666666
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "heldout_cis": {
+      "typed_sub": {
+        "bridge>weak": [
+          0.3574074074074074,
+          0.6351851851851852
+        ],
+        "nDCG@10": [
+          0.8762624144088893,
+          0.9299149462210926
+        ],
+        "P@5": [
+          0.5333333333333333,
+          0.8266666666666667
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ],
+        "bridge_precision": [
+          0.6638655462184874,
+          0.8938053097345132
+        ]
+      },
+      "no_bridging": {
+        "bridge>weak": [
+          0.3574074074074074,
+          0.6351851851851852
+        ],
+        "nDCG@10": [
+          0.8762624144088893,
+          0.9299149462210926
+        ],
+        "P@5": [
+          0.5333333333333333,
+          0.8266666666666667
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ]
+      }
+    }
+  },
+  "typed_sub_prereq": {
+    "arm": "typed_sub_prereq",
+    "config": {
+      "description": "Typed edges: substitutes + prerequisites",
+      "graph_type": "typed",
+      "traversable_types": [
+        "substitute",
+        "prerequisite"
+      ]
+    },
+    "best_config": {
+      "bridge_cutoff": 0.7,
+      "bridge_credit_scale": 2.0,
+      "unreachable_penalty": 0.0,
+      "max_hops": null
+    },
+    "final_params": {
+      "bridge_cutoff": 0.7,
+      "max_hops": null,
+      "use_weights": true,
+      "enable_bridging": true,
+      "bridge_credit_scale": 2.0,
+      "bridgeable_penalty": 0.0,
+      "unreachable_penalty": 0.0,
+      "proficiency_reference": 1.0,
+      "min_proficiency_credit": 0.0,
+      "search_cutoff": null
+    },
+    "train_means": {
+      "typed_sub_prereq": {
+        "nDCG@10": 0.8958575743920425,
+        "P@5": 0.7866666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.5398148148148149,
+        "bridge_precision": 0.25831202046035806
+      },
+      "cosine-only": {
+        "nDCG@10": 0.913078501155706,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.45925925925925926
+      },
+      "tfidf": {
+        "nDCG@10": 0.8239609083845935,
+        "P@5": 0.4266666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      },
+      "no_bridging": {
+        "nDCG@10": 0.823831166753631,
+        "P@5": 0.4266666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.0
+      }
+    },
+    "heldout_means": {
+      "typed_sub_prereq": {
+        "nDCG@10": 0.9140218958324171,
+        "P@5": 0.8933333333333333,
+        "MRR": 1.0,
+        "bridge>weak": 0.7314814814814815,
+        "bridge_precision": 0.29791271347248577
+      },
+      "cosine-only": {
+        "nDCG@10": 0.9079337896605165,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.4537037037037037
+      },
+      "tfidf": {
+        "nDCG@10": 0.8187948433843397,
+        "P@5": 0.37333333333333335,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      },
+      "no_bridging": {
+        "nDCG@10": 0.8187218559972825,
+        "P@5": 0.37333333333333335,
+        "MRR": 1.0,
+        "bridge>weak": 0.0
+      }
+    },
+    "train_bp": [
+      0.25831202046035806,
+      391
+    ],
+    "heldout_bp": [
+      0.29791271347248577,
+      527
+    ],
+    "train_cis": {
+      "typed_sub_prereq": {
+        "bridge>weak": [
+          0.37592592592592594,
+          0.7074074074074074
+        ],
+        "nDCG@10": [
+          0.865880324241174,
+          0.9241472788231504
+        ],
+        "P@5": [
+          0.68,
+          0.8933333333333333
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ],
+        "bridge_precision": [
+          0.21630094043887146,
+          0.2899543378995434
+        ]
+      },
+      "no_bridging": {
+        "bridge>weak": [
+          0.37592592592592594,
+          0.7074074074074074
+        ],
+        "nDCG@10": [
+          0.865880324241174,
+          0.9241472788231504
+        ],
+        "P@5": [
+          0.68,
+          0.8933333333333333
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "heldout_cis": {
+      "typed_sub_prereq": {
+        "bridge>weak": [
+          0.6074074074074074,
+          0.8481481481481481
+        ],
+        "nDCG@10": [
+          0.8859411205885468,
+          0.9411915102487207
+        ],
+        "P@5": [
+          0.8,
+          0.9733333333333334
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ],
+        "bridge_precision": [
+          0.27472527472527475,
+          0.3213644524236984
+        ]
+      },
+      "no_bridging": {
+        "bridge>weak": [
+          0.6074074074074074,
+          0.8481481481481481
+        ],
+        "nDCG@10": [
+          0.8859411205885468,
+          0.9411915102487207
+        ],
+        "P@5": [
+          0.8,
+          0.9733333333333334
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ]
+      }
+    }
+  },
+  "no_bridging": {
+    "arm": "no_bridging",
+    "config": {
+      "description": "Embedding graph, bridging disabled (floor)",
+      "graph_type": "embedding",
+      "disable_bridging": true
+    },
+    "best_config": {
+      "bridge_cutoff": 0.4,
+      "bridge_credit_scale": 1.0,
+      "unreachable_penalty": 0.0,
+      "max_hops": 1,
+      "enable_bridging": false
+    },
+    "final_params": {
+      "bridge_cutoff": 0.4,
+      "max_hops": 1,
+      "use_weights": true,
+      "enable_bridging": false,
+      "bridge_credit_scale": 1.0,
+      "bridgeable_penalty": 0.0,
+      "unreachable_penalty": 0.0,
+      "proficiency_reference": 1.0,
+      "min_proficiency_credit": 0.0,
+      "search_cutoff": null
+    },
+    "train_means": {
+      "no_bridging": {
+        "nDCG@10": 0.823831166753631,
+        "P@5": 0.4266666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.0,
+        "bridge_precision": 0.0
+      },
+      "cosine-only": {
+        "nDCG@10": 0.913078501155706,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.45925925925925926
+      },
+      "tfidf": {
+        "nDCG@10": 0.8239609083845935,
+        "P@5": 0.4266666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      }
+    },
+    "heldout_means": {
+      "no_bridging": {
+        "nDCG@10": 0.8187218559972825,
+        "P@5": 0.37333333333333335,
+        "MRR": 1.0,
+        "bridge>weak": 0.0,
+        "bridge_precision": 0.0
+      },
+      "cosine-only": {
+        "nDCG@10": 0.9079337896605165,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.4537037037037037
+      },
+      "tfidf": {
+        "nDCG@10": 0.8187948433843397,
+        "P@5": 0.37333333333333335,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      }
+    },
+    "train_bp": [
+      0.0,
+      0
+    ],
+    "heldout_bp": [
+      0.0,
+      0
+    ],
+    "train_cis": {
+      "no_bridging": {
+        "bridge>weak": [
+          0.0,
+          0.0
+        ],
+        "nDCG@10": [
+          0.8187028840119117,
+          0.8292620852461396
+        ],
+        "P@5": [
+          0.3466666666666667,
+          0.5066666666666667
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ],
+        "bridge_precision": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "heldout_cis": {
+      "no_bridging": {
+        "bridge>weak": [
+          0.0,
+          0.0
+        ],
+        "nDCG@10": [
+          0.8105712553308259,
+          0.8252000931484843
+        ],
+        "P@5": [
+          0.28,
+          0.4666666666666667
+        ],
+        "MRR": [
+          1.0,
+          1.0
+        ],
+        "bridge_precision": [
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "cosine-only": {
+    "arm": "cosine-only",
+    "config": {
+      "description": "Cosine baseline (strong)",
+      "graph_type": "baseline",
+      "baseline": "cosine"
+    },
+    "best_config": {},
+    "final_params": {
+      "bridge_cutoff": 0.6,
+      "max_hops": null,
+      "use_weights": true,
+      "enable_bridging": true,
+      "bridge_credit_scale": 1.0,
+      "bridgeable_penalty": 0.0,
+      "unreachable_penalty": 0.0,
+      "proficiency_reference": 1.0,
+      "min_proficiency_credit": 0.0,
+      "search_cutoff": null
+    },
+    "train_means": {
+      "cosine-only": {
+        "nDCG@10": 0.913078501155706,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.45925925925925926
+      },
+      "tfidf": {
+        "nDCG@10": 0.8239609083845935,
+        "P@5": 0.4266666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      }
+    },
+    "heldout_means": {
+      "cosine-only": {
+        "nDCG@10": 0.9079337896605165,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.4537037037037037
+      },
+      "tfidf": {
+        "nDCG@10": 0.8187948433843397,
+        "P@5": 0.37333333333333335,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      }
+    },
+    "train_bp": [
+      0.0,
+      0
+    ],
+    "heldout_bp": [
+      0.0,
+      0
+    ],
+    "train_cis": {},
+    "heldout_cis": {}
+  },
+  "tfidf": {
+    "arm": "tfidf",
+    "config": {
+      "description": "TF-IDF baseline (weak)",
+      "graph_type": "baseline",
+      "baseline": "tfidf"
+    },
+    "best_config": {},
+    "final_params": {
+      "bridge_cutoff": 0.6,
+      "max_hops": null,
+      "use_weights": true,
+      "enable_bridging": true,
+      "bridge_credit_scale": 1.0,
+      "bridgeable_penalty": 0.0,
+      "unreachable_penalty": 0.0,
+      "proficiency_reference": 1.0,
+      "min_proficiency_credit": 0.0,
+      "search_cutoff": null
+    },
+    "train_means": {
+      "tfidf": {
+        "nDCG@10": 0.8239609083845935,
+        "P@5": 0.4266666666666667,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      },
+      "cosine-only": {
+        "nDCG@10": 0.913078501155706,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.45925925925925926
+      }
+    },
+    "heldout_means": {
+      "tfidf": {
+        "nDCG@10": 0.8187948433843397,
+        "P@5": 0.37333333333333335,
+        "MRR": 1.0,
+        "bridge>weak": 0.001851851851851852
+      },
+      "cosine-only": {
+        "nDCG@10": 0.9079337896605165,
+        "P@5": 0.6666666666666666,
+        "MRR": 1.0,
+        "bridge>weak": 0.4537037037037037
+      }
+    },
+    "train_bp": [
+      0.0,
+      0
+    ],
+    "heldout_bp": [
+      0.0,
+      0
+    ],
+    "train_cis": {},
+    "heldout_cis": {}
+  }
+}
