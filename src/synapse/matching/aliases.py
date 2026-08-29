@@ -50,8 +50,9 @@ ALIAS_TABLE: dict[str, str] = {
     "node": "Node.js",
     "nodejs": "Node.js",
     "postgres": "PostgreSQL",
-    "gcp": "Google Cloud Platform",
-    "tf": "Terraform",
+    "gcp": "Google Workspace software",  # Closest match in current graph
+    "tf": "IBM Terraform",
+    "terraform": "IBM Terraform",
 }
 
 _WS = re.compile(r"\s+")
