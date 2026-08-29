@@ -286,7 +286,7 @@ def save_to_cache(cache_path: str | Path, results: list[ClassificationResult]) -
     cache_path.parent.mkdir(parents=True, exist_ok=True)
     with cache_path.open("a", encoding="utf-8") as f:
         for r in results:
-            key = tuple(sorted([r.a, r.b]))
+            _ = tuple(sorted([r.a, r.b]))  # keep for future dedup if needed
             data = {
                 "a": r.a,
                 "b": r.b,
@@ -399,6 +399,15 @@ def classify_all_pairs(
     return typed_edges
 
 
+# Probe pairs for sanity checks (moved from deleted scripts.category_dominance)
+PROBE_PAIRS = [
+    ("Docker", "Kubernetes"),
+    ("PyTorch", "TensorFlow"),
+    ("MySQL", "PostgreSQL"),
+    ("Git", "GitHub"),
+]
+
+
 def classify_probe_pairs(
     cache_path: str | Path = "data/eval/typed_edge_cache.jsonl",
     api_key: str | None = None,
@@ -409,12 +418,8 @@ def classify_probe_pairs(
     These pairs are in SUBSTITUTION_GROUPS and are filtered from the main
     classification to avoid circularity. We classify them separately ONLY
     for sanity checking — their results are NOT added to the graph.
-
-    Uses the same probe pairs as category_dominance.py for consistency.
     """
-    from scripts.category_dominance import PROBE_PAIRS
-
-    probes = [(a, b) for a, b in PROBE_PAIRS]
+    probes = PROBE_PAIRS
 
     cache = load_cache(cache_path)
     cached_keys = set(cache.keys())
@@ -500,7 +505,7 @@ def build_typed_graph(
     return H
 
 
-def run_sanity_checks(typed_edges: list[TypedEdge], G: nx.Graph) -> dict:
+def run_sanity_checks(typed_edges: list[TypedEdge]) -> dict:
     """Run sanity checks per §2.6 and return a report."""
     report = {}
 
@@ -652,7 +657,7 @@ if __name__ == "__main__":
     all_edges_for_sanity = typed_edges + probe_edges
 
     print("Running sanity checks...")
-    sanity = run_sanity_checks(all_edges_for_sanity, G)
+    sanity = run_sanity_checks(all_edges_for_sanity)
 
     print("Writing audit...")
     write_audit_report(all_edges_for_sanity, sanity)
