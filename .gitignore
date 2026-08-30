@@ -10,6 +10,12 @@ data/taxonomies/onet/
 *.zip
 shreyas_cv.pdf
 
+# Phase C3 ingestion artifacts: checkpoint DBs are machine-local resume state,
+# and extractions carry source-document content (PII per the data/raw rule).
+data/checkpoints/
+data/extractions/
+*.sqlite
+
 # Editor
 .vscode/
 CLAUDE.md

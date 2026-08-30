@@ -20,7 +20,6 @@ from dataclasses import dataclass
 
 from .reader import Chunk, Document
 from .schemas import ExtractedSkill, ExtractionResult, merge_skills
-import google.genai  
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +27,7 @@ logger = logging.getLogger(__name__)
 # ExtractionResult so Phase B numbers stay attributable to a specific prompt.
 PROMPT_VERSION = "a1-v1"
 
-DEFAULT_MODEL = os.getenv("SYNAPSE_GEMINI_MODEL", "gemini-3.6-flash")
+DEFAULT_MODEL = os.getenv("SYNAPSE_GEMINI_MODEL", "gemini-3.1-flash-lite")
 
 SYSTEM_INSTRUCTION = """\
 You extract skills from hiring documents (resumes and job descriptions).
@@ -53,6 +52,15 @@ Rules:
 
 class ExtractionError(RuntimeError):
     """Raised when a chunk cannot be extracted after all retries."""
+
+
+def backoff_delay(attempt: int, base: float = 2.0, cap: float = 30.0) -> float:
+    """Exponential backoff with jitter for a zero-indexed attempt number.
+
+    Shared by the in-process retry loop below and the Phase C3 LangGraph backoff
+    node, so both degrade under Gemini's 15 RPM ceiling in exactly the same way.
+    """
+    return min(base**attempt, cap) + random.uniform(0, 0.5)
 
 
 @dataclass
@@ -145,7 +153,10 @@ class SkillExtractor:
             cleaned_payload = cleaned_payload[:-3]
         cleaned_payload = cleaned_payload.strip()
 
-        data = json.loads(payload)
+        # Parse the *cleaned* text: models intermittently wrap JSON in a ```json
+        # fence despite response_mime_type, and parsing the raw payload made the
+        # stripping above dead code (every fenced reply burned all its retries).
+        data = json.loads(cleaned_payload)
         if isinstance(data, dict):  # tolerate {"skills": [...]} shaped drift
             data = data.get("skills", data.get("items", []))
         if not isinstance(data, list):
@@ -154,7 +165,7 @@ class SkillExtractor:
 
     # ------------------------------------------------------------------- public
 
-    def _is_retryable(self, exc: Exception) -> bool:
+    def is_retryable(self, exc: Exception) -> bool:
         """Determine if an error is worth retrying vs. failing fast."""
         # Authentication/quota errors are permanent - don't retry
         error_str = str(exc).lower()
@@ -174,18 +185,30 @@ class SkillExtractor:
         # Default: retry on unexpected errors
         return True
 
+    # Retained so any existing caller of the private name keeps working.
+    _is_retryable = is_retryable
+
+    def extract_once(self, text: str) -> list[ExtractedSkill]:
+        """One attempt: generate, validate, raise. No retry, no sleeping.
+
+        Phase C3 drives retries from a LangGraph backoff node rather than an
+        in-process loop, so it needs an entry point that fails immediately and
+        lets the graph decide what happens next.
+        """
+        return self._validate(self._generate(text))
+
     def extract_from_text(self, text: str) -> list[ExtractedSkill]:
         """Extract from one chunk, retrying on transport errors and bad schemas."""
         last_error: Exception | None = None
         for attempt in range(self.max_retries):
             try:
-                return self._validate(self._generate(text))
+                return self.extract_once(text)
             except Exception as exc:  # noqa: BLE001
                 last_error = exc
-                if not self._is_retryable(exc):
+                if not self.is_retryable(exc):
                     logger.error("Non-retryable error: %s", exc)
                     raise ExtractionError(f"Non-retryable extraction error: {exc}") from exc
-                delay = min(2**attempt, 30) + random.uniform(0, 0.5)
+                delay = backoff_delay(attempt)
                 logger.warning(
                     "Extraction attempt %d/%d failed (%s); retrying in %.1fs",
                     attempt + 1,

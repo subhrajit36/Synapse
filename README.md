@@ -123,6 +123,32 @@ python -m synapse.eval.run_eval_arms
 
 # 4. See results
 cat src/synapse/eval/RESULTS.md
+
+# 5. Phase C3: ingest documents through the LangGraph pipeline
+export GEMINI_API_KEY=...
+python -m synapse.ingest.pipeline data/samples --doc-type resume -v
+```
+
+### Ingestion pipeline (Phase C3)
+
+`synapse.ingest.pipeline` wires Reader → Extractor into a LangGraph graph over a
+typed `IngestState`. Three things it buys over calling the extractor directly:
+
+- **Retry as a node, not a `try/except`.** A 429 or 503 routes to a `backoff`
+  node that waits and re-runs the chunk; a fatal error (bad key, quota) skips
+  retrying entirely. The decision and its reason land in state, so a slow run is
+  explainable after the fact.
+- **One chunk per superstep.** Extraction advances a `cursor`, so the
+  checkpointer saves progress between every Gemini call.
+- **Resumable batches.** With `--checkpoint` (SQLite, default
+  `data/checkpoints/ingest.sqlite`), a run killed during a rate-limit pause
+  resumes at the chunk it stopped on instead of re-billing the whole document
+  against the 15 RPM free tier. Each document gets its own checkpoint thread.
+
+```bash
+python -m synapse.ingest.pipeline data/raw \
+    --doc-type resume --checkpoint data/checkpoints/ingest.sqlite --out data/extractions
+# re-run the exact same command after an interruption to resume
 ```
 
 ---
@@ -136,7 +162,10 @@ synapse/
 │   ├── v2/dataset.json            # 30 JDs × 18 candidates (540 pairs)
 │   └── typed_edge_cache.jsonl     # LLM classification cache
 ├── src/synapse/
-│   ├── ingest/          # Reader → Extractor (LangGraph nodes)
+│   ├── ingest/
+│   │   ├── reader.py             # Node 1: load + chunk
+│   │   ├── extractor.py          # Node 2: Gemini structured extraction
+│   │   └── pipeline.py           # Phase C3: LangGraph graph + checkpointing
 │   ├── matching/        # EntityLinker + Matcher (scoring + gaps)
 │   ├── graph/
 │   │   ├── build_graph.py        # Embedding + Categorical graphs
