@@ -33,6 +33,12 @@ GRAPH_PATH = "data/skill_graph.pkl"
 GRID = {
     "bridge_cutoff": [0.40, 0.50, 0.60, 0.70],
     "bridge_credit_scale": [1.0, 1.5, 2.0],
+    # Swept because `bridge_credit_scale` alone cannot express "reward bridges
+    # strongly, but never above a direct match". Leaving it out is what let the
+    # previous sweep select a config that ranked a candidate holding none of the
+    # required skills above one holding all of them. 1.0 is included so the
+    # uncapped behaviour stays inside the search space and can win on merit.
+    "max_bridge_credit": [0.75, 0.90, 1.0],
     "unreachable_penalty": [0.0, 0.25, 0.5],
     "max_hops": [1, 2, None],
 }

@@ -151,6 +151,35 @@ python -m synapse.ingest.pipeline data/raw \
 # re-run the exact same command after an interruption to resume
 ```
 
+### MCP server (Phase C4)
+
+```bash
+python -m synapse.mcp.server --warm -v          # HTTP on 127.0.0.1:8000/mcp
+python -m synapse.mcp.server --transport sse    # SSE transport, same tools
+python -m synapse.mcp.server --transport stdio  # for local MCP clients
+curl localhost:8000/health                      # {"status":"ok",...}
+```
+
+Four tools, all read-only, all thin wrappers over `synapse.matching`:
+
+| Tool | Purpose |
+|---|---|
+| `rank_candidates` | FR5 — rank a pool against a JD, with score components per candidate |
+| `get_bridgeable_gaps` | FR4 — split missing skills into bridgeable (with the path) and real gaps |
+| `explain_score` | NFR6 — one candidate's full derivation plus the linking trace |
+| `graph_stats` | What graph is loaded, how it is configured; doubles as a warm-up call |
+
+Skill names are canonicalized before scoring (`K8s` → `Kubernetes`). Surfaces that
+reach no node come back in `jd_unresolved` / `unresolved_skills` rather than
+being dropped, because an unresolved JD skill leaves the demand denominator and
+would otherwise inflate the score silently. Unreachable gaps report
+`distance: -1` with `reason: "no_path"` — MCP payloads are strict JSON and
+infinity does not survive the wire.
+
+`/health` deliberately does not touch the graph: Render's free tier cold-starts,
+and a probe that unpickled 213 skills would report unhealthy while a healthy
+instance was merely waking up. Graph readiness is `graph_stats`.
+
 ---
 
 ## Project Structure
@@ -167,6 +196,9 @@ synapse/
 │   │   ├── extractor.py          # Node 2: Gemini structured extraction
 │   │   └── pipeline.py           # Phase C3: LangGraph graph + checkpointing
 │   ├── matching/        # EntityLinker + Matcher (scoring + gaps)
+│   ├── mcp/
+│   │   ├── engine.py             # Phase C4: loaded graph + typed tool contracts
+│   │   └── server.py             # Phase C4: FastMCP tools, HTTP/SSE transport
 │   ├── graph/
 │   │   ├── build_graph.py        # Embedding + Categorical graphs
 │   │   ├── migrate_to_neo4j.py   # Phase C2: NetworkX → Neo4j
