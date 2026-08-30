@@ -14,3 +14,18 @@ fastembed==0.8.0
 
 # Neo4j driver for AuraDB (Phase C2)
 neo4j==5.26.0
+
+# LangGraph ingestion pipeline (Phase C3). The sqlite checkpointer is what makes
+# a rate-limited batch resumable (C3.3); it is stdlib-sqlite backed, no server.
+langgraph==1.2.11
+langgraph-checkpoint-sqlite==3.1.1
+
+# Transitive pins, both forced by a genuine conflict rather than preference:
+#   websockets - google-genai 1.5.0 requires <15, langgraph-sdk requires >=14,
+#                streamlit requires <17. 14.2 is the only version satisfying all
+#                three. Nothing in Synapse opens a websocket; this only keeps
+#                `pip check` clean.
+#   langsmith  - 0.11+ requires websockets>=15, which contradicts the above.
+#                LangSmith tracing is unused here, so pinning back is free.
+websockets==14.2
+langsmith==0.8.5

@@ -17,6 +17,11 @@ dependencies = [
     "pydantic==2.9.2",
     "fastembed==0.8.0",
     "neo4j==5.26.0",
+    "langgraph==1.2.11",
+    "langgraph-checkpoint-sqlite==3.1.1",
+    # See requirements.txt for why these two transitive deps are pinned.
+    "websockets==14.2",
+    "langsmith==0.8.5",
 ]
 
 [project.optional-dependencies]
