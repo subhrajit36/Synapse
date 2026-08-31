@@ -203,3 +203,64 @@ def test_get_bridgeable_gaps_signature(chain):
     out = Matcher(chain, bridge_cutoff=None).get_bridgeable_gaps(["A"], ["C", "E"], max_hops=2)
     assert [g["skill"] for g in out["bridgeable"]] == ["C"]
     assert [g["skill"] for g in out["gaps"]] == ["E"]
+
+
+# ------------------------------------------------- bridge credit ceiling (A4)
+
+
+@pytest.mark.parametrize("scale", [1.0, 1.5, 2.0, 5.0])
+def test_bridging_to_a_skill_never_beats_holding_it(chain, scale):
+    """The invariant the B4 objective could not see.
+
+    `bridge>weak` rewards bridging monotonically, so the sweep pushed
+    `bridge_credit_scale` to the top of its grid and produced a scorer where a
+    candidate holding NONE of the required skills outranked one holding ALL of
+    them. Whatever the scale, a near-miss must be worth strictly less than the
+    real thing.
+    """
+    p = ScoringParams(bridge_credit_scale=scale, max_bridge_credit=0.9)
+    m = Matcher(chain, params=p)
+
+    held = m.match(["B"], ["B"], params=p).total
+    bridged = m.match(["B"], ["A"], params=p).total   # A is 0.1 away from B
+
+    assert bridged < held
+
+
+def test_perfect_match_outranks_a_candidate_holding_nothing(chain):
+    """The regression, at ranking level, with the shipped config."""
+    from synapse.matching.matcher import TUNED_PARAMS
+
+    ranked = Matcher(chain, params=TUNED_PARAMS).rank(
+        ["A", "B"],
+        {"holds_all": ["A", "B"], "holds_none_but_close": ["C"]},
+        params=TUNED_PARAMS,
+    )
+    assert [r.name for r in ranked] == ["holds_all", "holds_none_but_close"]
+
+
+def test_ceiling_is_inert_at_unscaled_credit(chain):
+    """Default configs must score exactly as they did before the cap existed.
+
+    At scale 1.0 credit is (1 - d) < 1.0, so a ceiling of 1.0 can never bind -
+    which is what keeps every previously-reported unscaled eval arm comparable.
+    """
+    uncapped = ScoringParams(bridge_cutoff=None, max_bridge_credit=10.0)
+    default = ScoringParams(bridge_cutoff=None)
+    m = Matcher(chain)
+
+    for jd, cand in ([["C"], ["A"]], [["D"], ["A"]], [["B", "C"], ["A"]]):
+        assert m.match(jd, cand, params=default).total == pytest.approx(
+            m.match(jd, cand, params=uncapped).total
+        )
+
+
+def test_ceiling_binds_only_above_it(chain):
+    """A is 0.1 from B: raw credit 0.9*2 = 1.8, capped to 0.6."""
+    p = ScoringParams(bridge_credit_scale=2.0, max_bridge_credit=0.6)
+    r = Matcher(chain, params=p).match(["B"], ["A"], params=p)
+    assert r.bridge_score == pytest.approx(0.6)
+
+    loose = ScoringParams(bridge_credit_scale=2.0, max_bridge_credit=10.0)
+    r2 = Matcher(chain, params=loose).match(["B"], ["A"], params=loose)
+    assert r2.bridge_score == pytest.approx(1.8)

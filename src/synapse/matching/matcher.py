@@ -66,6 +66,14 @@ class ScoringParams:
     use_weights: bool = True             # False = the B4.1 uniform-weight arm
     enable_bridging: bool = True         # False = the B4.2 direct-match-only arm
     bridge_credit_scale: float = 1.0     # multiplier on (1 - distance) credit
+    # Ceiling on what one bridged skill may earn, as a fraction of the credit
+    # for actually holding it. Without this, `bridge_credit_scale > 1` lets a
+    # near-miss out-earn a direct match - at scale 2.0 a bridge at distance 0.23
+    # scored 1.54 against a held skill's 1.0, so a candidate holding NONE of the
+    # required skills outranked one holding all of them. The default of 1.0
+    # never binds at scale 1.0 (credit is (1-d) < 1), so unscaled configs score
+    # exactly as they did before this parameter existed.
+    max_bridge_credit: float = 1.0
     bridgeable_penalty: float = 0.0      # smaller penalty for a reachable gap
     unreachable_penalty: float = 0.0     # full penalty for a true gap
     proficiency_reference: float = 1.0   # proficiency at or above this = full credit
@@ -88,6 +96,30 @@ class ScoringParams:
         if not self.use_weights:
             return 1.0
         return max(self.min_proficiency_credit, min(weight / self.proficiency_reference, 1.0))
+
+
+# The config selected by the Phase B4 sweep on the TRAIN split and reported on
+# heldout (src/synapse/eval/ABLATION.md): it takes the bridgeable-vs-weak
+# decision from 0.417 to 0.859. It lives here rather than in each serving
+# surface so `app.py` and the MCP server cannot drift apart and quietly serve
+# two different scoring functions.
+#
+# `max_bridge_credit` is NOT from that sweep - the sweep never varied it, because
+# it did not exist. It is here to hold the invariant the sweep's objective could
+# not see: bridging to a skill must never beat holding it. The sweep optimised
+# `bridge>weak`, a pairwise decision that is monotonically happier the more
+# bridges are rewarded, so it pushed `bridge_credit_scale` to 2.0 - the top of
+# its own grid, which run_eval_arms.py already flagged as a possible boundary
+# artifact. It is: at 2.0 uncapped, a candidate holding NONE of a role's skills
+# outranked one holding ALL of them. Re-sweep with this parameter in the grid
+# and a ranking metric (nDCG) in the objective before quoting new numbers.
+TUNED_PARAMS = ScoringParams(
+    bridge_cutoff=0.7,
+    bridge_credit_scale=2.0,
+    max_bridge_credit=0.9,
+    unreachable_penalty=0.0,
+    max_hops=2,
+)
 
 
 @dataclass
@@ -322,7 +354,9 @@ class Matcher:
                 reason=self._gap_reason(p, d, h, within_distance, within_hops),
             )
             if bridgeable:
-                credit = max(0.0, 1 - d) * p.bridge_credit_scale
+                credit = min(
+                    max(0.0, 1 - d) * p.bridge_credit_scale, p.max_bridge_credit
+                )
                 bridge_score += demand * credit
                 penalty += demand * p.bridgeable_penalty
                 bridged.append(gap)

@@ -5,7 +5,7 @@ from pathlib import Path
 sys.path.insert(0, "src")
 
 import streamlit as st
-from synapse.matching.matcher import Matcher, ScoringParams
+from synapse.matching.matcher import Matcher, TUNED_PARAMS
 from synapse.matching.entity_linker import EntityLinker
 from synapse.ingest.resume import read_resume
 from synapse.ingest.skill_extractor import SkillExtractor as GazetteerExtractor
@@ -14,12 +14,9 @@ st.set_page_config(page_title="Synapse", page_icon="🧠", layout="wide")
 
 GRAPH_PATH = "data/skill_graph.pkl"
 
-# Scoring config selected by the Phase B4 sweep on the TRAIN split only and
-# reported on heldout (src/synapse/eval/ABLATION.md). Using the defaults here
-# would ship the weaker settings: on the heldout split these take the
-# bridgeable-vs-weak decision from 0.417 to 0.859.
-TUNED = ScoringParams(bridge_cutoff=0.7, bridge_credit_scale=2.0,
-                      unreachable_penalty=0.0, max_hops=2)
+# Scoring config selected by the Phase B4 sweep; defined once in matcher.py so
+# this app and the MCP server score identically (see TUNED_PARAMS there).
+TUNED = TUNED_PARAMS
 
 
 @st.cache_resource

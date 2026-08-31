@@ -6,8 +6,9 @@ pypdf==4.3.1
 python-docx==1.1.2
 
 # LLM extraction (Phase A1) - optional, requires GEMINI_API_KEY
-google-genai==1.5.0
-pydantic==2.9.2
+google-genai==1.29.0
+# >=2.11 is a hard floor from `mcp` (Phase C4), not a preference.
+pydantic==2.13.5
 
 # Embeddings for entity linking (Phase A2) - fastembed (ONNX, CPU-only, no torch)
 fastembed==0.8.0
@@ -20,12 +21,16 @@ neo4j==5.26.0
 langgraph==1.2.11
 langgraph-checkpoint-sqlite==3.1.1
 
-# Transitive pins, both forced by a genuine conflict rather than preference:
-#   websockets - google-genai 1.5.0 requires <15, langgraph-sdk requires >=14,
-#                streamlit requires <17. 14.2 is the only version satisfying all
-#                three. Nothing in Synapse opens a websocket; this only keeps
-#                `pip check` clean.
-#   langsmith  - 0.11+ requires websockets>=15, which contradicts the above.
-#                LangSmith tracing is unused here, so pinning back is free.
-websockets==14.2
+# MCP tool/API layer (Phase C4). HTTP transport; no WebSocket transport used.
+fastmcp==3.4.7
+
+# Transitive pins, forced by a genuine conflict rather than preference:
+#   websockets - four packages disagree. fastmcp-slim[server] needs >=15.0.1,
+#                google-genai 1.29.0 needs <15.1.0, streamlit and langgraph-sdk
+#                need <17. 15.0.1 is the single version satisfying all of them;
+#                that intersection is also why google-genai moved off 1.5.0,
+#                whose <15 pin left no room for fastmcp.
+#   langsmith  - 0.11+ pulls websockets>=15 only as a sandbox extra; 0.8.5 is
+#                pinned simply to keep the resolved set reproducible (NFR7).
+websockets==15.0.1
 langsmith==0.8.5

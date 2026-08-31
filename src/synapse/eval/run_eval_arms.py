@@ -463,6 +463,9 @@ def sweep_config(matcher: Matcher, jds: list[dict], base_params: ScoringParams |
     GRID = {
         "bridge_cutoff": [0.40, 0.50, 0.60, 0.70],
         "bridge_credit_scale": [1.0, 1.5, 2.0],
+        # See ablation.py: without a ceiling, a strongly-scaled bridge can
+        # out-earn a direct match and invert the ranking entirely.
+        "max_bridge_credit": [0.75, 0.90, 1.0],
         "unreachable_penalty": [0.0, 0.25, 0.5],
         "max_hops": [1, 2, None],
     }
