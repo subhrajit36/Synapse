@@ -70,10 +70,14 @@ class ScoringParams:
     # for actually holding it. Without this, `bridge_credit_scale > 1` lets a
     # near-miss out-earn a direct match - at scale 2.0 a bridge at distance 0.23
     # scored 1.54 against a held skill's 1.0, so a candidate holding NONE of the
-    # required skills outranked one holding all of them. The default of 1.0
-    # never binds at scale 1.0 (credit is (1-d) < 1), so unscaled configs score
-    # exactly as they did before this parameter existed.
-    max_bridge_credit: float = 1.0
+    # required skills outranked one holding all of them.
+    #
+    # `None` means no ceiling, following `bridge_cutoff` and `max_hops`. It must
+    # default to None rather than 1.0: a 1.0 default is inert only while
+    # `bridge_credit_scale <= 1`, and the Phase B arms select scale 2.0, so a
+    # numeric default silently rewrites every published number. Serving sets a
+    # real ceiling via TUNED_PARAMS; evaluation leaves it off unless swept.
+    max_bridge_credit: float | None = None
     bridgeable_penalty: float = 0.0      # smaller penalty for a reachable gap
     unreachable_penalty: float = 0.0     # full penalty for a true gap
     proficiency_reference: float = 1.0   # proficiency at or above this = full credit
@@ -354,9 +358,9 @@ class Matcher:
                 reason=self._gap_reason(p, d, h, within_distance, within_hops),
             )
             if bridgeable:
-                credit = min(
-                    max(0.0, 1 - d) * p.bridge_credit_scale, p.max_bridge_credit
-                )
+                credit = max(0.0, 1 - d) * p.bridge_credit_scale
+                if p.max_bridge_credit is not None:
+                    credit = min(credit, p.max_bridge_credit)
                 bridge_score += demand * credit
                 penalty += demand * p.bridgeable_penalty
                 bridged.append(gap)

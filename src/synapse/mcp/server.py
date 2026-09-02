@@ -19,10 +19,12 @@ import logging
 import os
 from typing import Annotated
 
+from pathlib import Path
+
 from fastmcp import FastMCP
 from pydantic import Field
 from starlette.requests import Request
-from starlette.responses import JSONResponse
+from starlette.responses import HTMLResponse, JSONResponse
 
 from .engine import (
     CandidateInput,
@@ -175,6 +177,57 @@ async def health(request: Request) -> JSONResponse:
     waking up. Graph readiness is a separate question - ask `graph_stats`.
     """
     return JSONResponse({"status": "ok", "service": "synapse", "version": "0.2.0"})
+
+
+# ------------------------------------------------------------- Phase D (D1/D2)
+#
+# Mounted on this same app on purpose: one uvicorn process serves both the MCP
+# transport and the page, so there is no second service to deploy and no CORS.
+# Both handlers are wrappers over `engine.py`, same rule as the tools.
+
+STATIC_DIR = Path(__file__).parent / "static"
+
+
+@mcp.custom_route("/", methods=["GET"])
+async def index(request: Request) -> HTMLResponse:
+    """D2: the single static page."""
+    page = STATIC_DIR / "index.html"
+    if not page.exists():  # pragma: no cover - packaging error, not a runtime path
+        return HTMLResponse(f"<h1>Missing {page}</h1>", status_code=500)
+    return HTMLResponse(page.read_text(encoding="utf-8"))
+
+
+@mcp.custom_route("/api/jds", methods=["GET"])
+async def api_jds(request: Request) -> JSONResponse:
+    """D1: the JDs available in the versioned eval snapshot."""
+    try:
+        return JSONResponse(get_engine().list_eval_jds().model_dump())
+    except FileNotFoundError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=503)
+
+
+@mcp.custom_route("/api/rank", methods=["POST"])
+async def api_rank(request: Request) -> JSONResponse:
+    """D1: ranked candidates plus the full MatchResult for each. One round trip.
+
+    `explain_score`'s data is already inside each candidate, so expanding a row
+    on the page needs no second request.
+    """
+    try:
+        body = await request.json()
+    except Exception:  # noqa: BLE001 - malformed body is a client error, not a crash
+        return JSONResponse({"error": "Body must be JSON."}, status_code=400)
+
+    jd_id = (body or {}).get("jd_id")
+    if not jd_id:
+        return JSONResponse({"error": "Missing 'jd_id'."}, status_code=400)
+
+    try:
+        return JSONResponse(get_engine().rank_eval_jd(jd_id, body.get("top_k")).model_dump())
+    except KeyError:
+        return JSONResponse({"error": f"Unknown jd_id {jd_id!r}."}, status_code=404)
+    except FileNotFoundError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=503)
 
 
 # ---------------------------------------------------------------------- CLI

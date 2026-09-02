@@ -43,6 +43,13 @@ METRICS = ["bridge>weak", "nDCG@10", "P@5", "MRR"]
 N_BOOTSTRAP = 1000
 BOOTSTRAP_SEED = 42
 
+# The value bridge credit saturates at on the current graph. `min((1-d)*2.0,
+# 0.9)` returns 0.9 for any distance <= 0.55, and observed single-hop distances
+# top out at 0.400, so every 1-hop bridge earns exactly this. The count-only
+# arms use it as a flat per-gap credit to test whether anything beyond the count
+# is doing work.
+COUNT_ONLY_CREDIT = 0.9
+
 # Arm definitions
 ARMS = {
     "embedding": {
@@ -67,6 +74,57 @@ ARMS = {
         "description": "Embedding graph, bridging disabled (floor)",
         "graph_type": "embedding",
         "disable_bridging": True,
+    },
+    # --- gap-counting controls -------------------------------------------
+    # Measured on heldout with the embedding arm's own selected config: all
+    # 1097 missing skills bridge, and per-bridge credit has std 0.00214 with
+    # 99.4% of bridges exactly at the cap. Bridge credit is a constant in all
+    # but name, so bridge_score ~= K * (number of unmet skills). If that is the
+    # whole signal, path structure earns nothing.
+    #
+    # These arms use the graph ONLY for the direct-match term: bridging is
+    # switched off, so `Matcher` returns before `_reachability` and no
+    # traversal, distance or hop count is ever computed.
+    "count_only": {
+        "description": "direct_match_score + 0.9 x count(unmet skills) - no path structure",
+        "graph_type": "count_only",
+        "credit": 0.9,
+        "weighted_count": False,
+        "no_sweep": True,
+    },
+    # The eval path leaves max_bridge_credit at its 1.0 default (the sweep grid
+    # never sets it), so the constant the embedding arm actually saturates at is
+    # ~1.0, not the 0.9 of the serving config. Same test at the measured value.
+    "count_only_k1": {
+        "description": "direct_match_score + 1.0 x count(unmet skills) - no path structure",
+        "graph_type": "count_only",
+        "credit": 1.0,
+        "weighted_count": False,
+        "no_sweep": True,
+    },
+    # `bridge_score` sums demand x credit, so the closest arithmetic analogue of
+    # the real term is a demand-weighted count, not a plain one.
+    "count_only_weighted": {
+        "description": "direct_match_score + 1.0 x sum(demand of unmet skills) - no path structure",
+        "graph_type": "count_only",
+        "credit": 1.0,
+        "weighted_count": True,
+        "no_sweep": True,
+    },
+    # THE CONTROL THAT MATTERS. K is the measured mean uncapped per-bridge
+    # credit on heldout (min 0.958, mean 1.5238, max 1.808) - i.e. the embedding
+    # arm's own average bridge credit, held constant. Comparing against K=0.9
+    # answers the wrong question, because bridge>weak turns out to be almost
+    # entirely a function of K's magnitude: 0.9 -> 0.017, 1.0 -> 0.208,
+    # 1.2 -> 0.522, 1.5 -> 0.916, 1.5238 -> 0.981. Matching K isolates what
+    # graded distance adds on top of a flat constant. See
+    # data/eval/count_baseline.md.
+    "count_only_matched": {
+        "description": "direct_match_score + 1.5238 x count(unmet skills) - K matched to mean bridge credit",
+        "graph_type": "count_only",
+        "credit": 1.5238,
+        "weighted_count": False,
+        "no_sweep": True,
     },
     "cosine-only": {
         "description": "Cosine baseline (strong)",
@@ -178,7 +236,9 @@ def get_matcher_for_arm(arm_name: str, arm_config: dict) -> tuple[Matcher | None
     """Get matcher and params for a given arm."""
     graph_type = arm_config["graph_type"]
 
-    if graph_type == "embedding":
+    if graph_type in ("embedding", "count_only"):
+        # count_only uses the same graph object so its direct-match term is
+        # computed by the same code as the embedding arm's. It never traverses.
         G = load_embedding_graph()
         matcher = Matcher(G)
         params = None
@@ -207,6 +267,43 @@ def get_matcher_for_arm(arm_name: str, arm_config: dict) -> tuple[Matcher | None
     return matcher, params, cosine_model
 
 
+def _count_only_ranker(matcher: Matcher, params: ScoringParams | None,
+                       weighted: bool, credit: float = COUNT_ONLY_CREDIT):
+    """Rank on gap COUNT alone - the graph contributes no path structure.
+
+    Bridging is switched off before every call, so `Matcher` returns without
+    running `_reachability`: no Dijkstra, no shortest path, no distance, no
+    hop count, no bridge_score. What survives is `direct_match_score`, computed
+    by exactly the same code the embedding arm uses, and the set of unmet JD
+    skills (which with bridging off is all of them, in `missing_skills`).
+
+    Bridge credit is then replaced by a flat `COUNT_ONLY_CREDIT` per unmet
+    skill. If this reproduces the embedding arm, the ranking signal was the
+    count, not the path.
+
+    The score is left unnormalised, matching the requested formula. Every metric
+    is computed within a single JD, where `total_demand` is a constant across
+    candidates, so dividing by it cannot change any ranking or any metric.
+    """
+    base = params or ScoringParams()
+    no_bridge = replace(base, enable_bridging=False)
+
+    def rank_fn(jd_skills, cands):
+        scored = []
+        for name, skills in cands.items():
+            r = matcher.match(jd_skills, skills, params=no_bridge)
+            gap_term = (
+                sum(g.demand for g in r.missing_skills) if weighted
+                else len(r.missing_skills)
+            )
+            scored.append((name, r.direct_match_score + credit * gap_term))
+        # Same tie-break as Matcher.rank, so ties stay reproducible (NFR7).
+        scored.sort(key=lambda t: (-t[1], t[0]))
+        return scored
+
+    return rank_fn
+
+
 def build_rankers(matcher: Matcher | None, params: ScoringParams | None,
                   cosine_model: CosineBaseline | TfidfBaseline | None,
                   arm_name: str, arm_config: dict) -> dict:
@@ -218,6 +315,12 @@ def build_rankers(matcher: Matcher | None, params: ScoringParams | None,
             rankers[arm_name] = cosine_model.rank
         else:
             rankers[arm_name] = TfidfBaseline().rank
+    elif arm_config["graph_type"] == "count_only":
+        rankers[arm_name] = _count_only_ranker(
+            matcher, params,
+            weighted=arm_config.get("weighted_count", False),
+            credit=arm_config.get("credit", COUNT_ONLY_CREDIT),
+        )
     else:
         # Graph-based arm
         def rank_fn(jd_skills, cands):
@@ -273,31 +376,51 @@ def bridge_precision(matcher: Matcher, jds: list[dict], params: ScoringParams | 
     return (correct / total if total else 0.0), total
 
 
-def bootstrap_ci(jds: list[dict], rankers: dict, matcher: Matcher | None, params: ScoringParams | None,
-                 metric_name: str, n_iter: int = N_BOOTSTRAP, seed: int = BOOTSTRAP_SEED) -> tuple[float, float]:
-    """Compute 95% bootstrap CI for a metric by resampling pre-computed JD scores."""
-    target_name = next((n for n in rankers if n not in ("cosine-only", "tfidf") and matcher), None)
-    if not target_name:
-        return (0.0, 0.0)
+def collect_jd_metrics(jds: list[dict], rank_fn) -> list[dict]:
+    """Score every JD once with `rank_fn`; the bootstrap then resamples these.
 
-    target_rank_fn = rankers[target_name]
-    jd_metrics = []
-    
+    Hoisted out of `bootstrap_ci` so a ranker is run once per split instead of
+    once per metric. That was tolerable while the baselines were skipped, but
+    `cosine-only` re-embeds every resume and JD on each call, and the CI fix
+    puts it inside the loop.
+    """
+    out = []
     for jd in jds:
         cands = {c["cand_id"]: c["skills"] for c in jd["candidates"]}
         grades = {c["cand_id"]: c["grade"] for c in jd["candidates"]}
-        ranked = target_rank_fn(jd["jd_skills"], cands)
+        ranked = rank_fn(jd["jd_skills"], cands)
         scores = dict(ranked)
         ranked_ids = [cid for cid, _ in ranked]
-        
+
         w, t = pairwise_accuracy(scores, grades, high=2, low=1)
-        jd_metrics.append({
-            "w": w, 
+        out.append({
+            "w": w,
             "t": t,
             "nDCG@10": ndcg_at_k(list(cands), scores, grades, 10),
             "P@5": precision_at_k(ranked_ids, grades, 5),
-            "MRR": mrr(ranked_ids, grades)
+            "MRR": mrr(ranked_ids, grades),
         })
+    return out
+
+
+def bootstrap_ci(jds: list[dict], rank_fn, metric_name: str,
+                 n_iter: int = N_BOOTSTRAP, seed: int = BOOTSTRAP_SEED,
+                 jd_metrics: list[dict] | None = None) -> tuple[float, float]:
+    """Compute 95% bootstrap CI for a metric by resampling pre-computed JD scores.
+
+    Takes the ranker to measure directly. The previous signature took the whole
+    `rankers` dict and picked `next(n for n in rankers if n not in
+    ("cosine-only","tfidf"))` - the FIRST non-baseline ranker - ignoring which
+    ranker the caller was iterating over. Every ranker in an arm therefore
+    received the same interval, the primary ranker's, and the baselines received
+    none at all (reported as [0.000, 0.000]).
+
+    `seed` is deliberately fixed across rankers: every ranker is resampled on the
+    same JD draws, so the intervals are paired and differences between them are
+    attributable to the rankers rather than to the resampling (NFR7).
+    """
+    if jd_metrics is None:
+        jd_metrics = collect_jd_metrics(jds, rank_fn)
 
     rng = random.Random(seed)
     n_jds = len(jds)
@@ -393,9 +516,14 @@ def run_arm(arm_name: str, arm_config: dict, train_jds: list[dict], heldout_jds:
             return [(r.name, r.total) for r in matcher.rank(jd_skills, cands, params=p)]
         rankers["no_bridging"] = no_bridge_rank
 
-    # Sweep config on train split
-    print(f"  Sweeping config on train ({len(train_jds)} JDs)...")
-    best_cfg = sweep_config(matcher, train_jds, params, arm_config) if matcher else {}
+    # Sweep config on train split. The count-only arms have nothing to sweep -
+    # every grid axis is a bridging knob and they do not bridge - so sweeping
+    # would burn 108 no-op evaluations and imply a tuning that did not happen.
+    if matcher and not arm_config.get("no_sweep"):
+        print(f"  Sweeping config on train ({len(train_jds)} JDs)...")
+        best_cfg = sweep_config(matcher, train_jds, params, arm_config)
+    else:
+        best_cfg = {}
 
     # Use best config for heldout
     final_params = ScoringParams(**best_cfg) if best_cfg else (params or ScoringParams())
@@ -419,7 +547,10 @@ def run_arm(arm_name: str, arm_config: dict, train_jds: list[dict], heldout_jds:
     # Bridge precision
     train_bp = (0.0, 0)
     heldout_bp = (0.0, 0)
-    if matcher and arm_name not in ("cosine-only", "tfidf"):
+    # The count-only arms are excluded: they never bridge, so any figure here
+    # would be the embedding arm's precision mislabelled as theirs.
+    if (matcher and arm_name not in ("cosine-only", "tfidf")
+            and arm_config["graph_type"] != "count_only"):
         train_bp = bridge_precision(matcher, train_jds, final_params)
         heldout_bp = bridge_precision(matcher, heldout_jds, final_params)
         train_means[arm_name]["bridge_precision"] = train_bp[0]
@@ -428,17 +559,23 @@ def run_arm(arm_name: str, arm_config: dict, train_jds: list[dict], heldout_jds:
     # Bootstrap CIs
     train_cis = {}
     heldout_cis = {}
-    if do_bootstrap and matcher and arm_name not in ("cosine-only", "tfidf"):
+    # The frozen baselines are included here on purpose. `cosine-only` carries
+    # the "Synapse beats a real baseline" claim, and a comparison where only one
+    # side has an error bar cannot support that claim (CLAUDE.md 7.1).
+    if do_bootstrap:
         print(f"  Computing bootstrap CIs ({N_BOOTSTRAP} iterations)...")
-        for name in rankers:
-            if name in ("cosine-only", "tfidf"):
-                continue
+        for name, rank_fn in rankers.items():
             train_cis[name] = {}
             heldout_cis[name] = {}
+            # Rank once per split, then resample; see collect_jd_metrics.
+            tm = collect_jd_metrics(train_jds, rank_fn)
+            hm = collect_jd_metrics(heldout_jds, rank_fn)
             for m in METRICS:
-                train_cis[name][m] = bootstrap_ci(train_jds, rankers, matcher, final_params, m)
-                heldout_cis[name][m] = bootstrap_ci(heldout_jds, rankers, matcher, final_params, m)
-            if "bridge_precision" in train_means[name]:
+                train_cis[name][m] = bootstrap_ci(train_jds, rank_fn, m, jd_metrics=tm)
+                heldout_cis[name][m] = bootstrap_ci(heldout_jds, rank_fn, m, jd_metrics=hm)
+            # Bridge precision is a property of the graph matcher, so only the
+            # arms that have one can report it.
+            if matcher and "bridge_precision" in train_means.get(name, {}):
                 train_cis[name]["bridge_precision"] = bootstrap_ci_bridge_precision(train_jds, matcher, final_params)
                 heldout_cis[name]["bridge_precision"] = bootstrap_ci_bridge_precision(heldout_jds, matcher, final_params)
 
@@ -463,9 +600,11 @@ def sweep_config(matcher: Matcher, jds: list[dict], base_params: ScoringParams |
     GRID = {
         "bridge_cutoff": [0.40, 0.50, 0.60, 0.70],
         "bridge_credit_scale": [1.0, 1.5, 2.0],
-        # See ablation.py: without a ceiling, a strongly-scaled bridge can
-        # out-earn a direct match and invert the ranking entirely.
-        "max_bridge_credit": [0.75, 0.90, 1.0],
+        # NOTE: `max_bridge_credit` is deliberately NOT swept here. Adding it
+        # would change every arm's selected config and break comparability with
+        # the reported numbers. It defaults to 1.0, which is inert at
+        # bridge_credit_scale <= 1.0 and caps only the scaled arms. Add it here
+        # when a full re-sweep is actually intended - see ablation.py.
         "unreachable_penalty": [0.0, 0.25, 0.5],
         "max_hops": [1, 2, None],
     }
@@ -708,7 +847,27 @@ def generate_results_md(all_results: dict, train_jds: list[dict], heldout_jds: l
     return "\n".join(md)
 
 
-def main():
+ARM_ORDER = [
+    "embedding", "categorical", "typed_sub", "typed_sub_prereq",
+    "count_only", "count_only_k1", "count_only_weighted", "count_only_matched",
+    "no_bridging", "cosine-only", "tfidf",
+]
+
+
+def main(argv: list[str] | None = None):
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Phase B arms with bootstrap CIs.")
+    parser.add_argument(
+        "--arms", nargs="+", default=ARM_ORDER, choices=ARM_ORDER,
+        help="Subset of arms to run. Default: all.",
+    )
+    parser.add_argument(
+        "--no-write", action="store_true",
+        help="Print results without overwriting RESULTS.md / ARMS_RESULTS.json.",
+    )
+    args = parser.parse_args(argv)
+
     # Load dataset
     full = load("v2")
     train_jds = [j for j in full["jds"] if j.get("split") == "train"]
@@ -719,10 +878,26 @@ def main():
     # Run all arms
     all_results = {}
 
-    for arm_name in ["embedding", "categorical", "typed_sub", "typed_sub_prereq", "no_bridging", "cosine-only", "tfidf"]:
+    for arm_name in args.arms:
         arm_config = ARMS[arm_name]
         result = run_arm(arm_name, arm_config, train_jds, heldout_jds, do_bootstrap=True)
         all_results[arm_name] = result
+
+    print("\n" + "=" * 78)
+    print(f"{'arm':<22} {'split':<9} {'bridge>weak':<24} {'nDCG@10':<8}")
+    print("=" * 78)
+    for name, res in all_results.items():
+        for split, means, cis in (("train", res["train_means"], res["train_cis"]),
+                                  ("heldout", res["heldout_means"], res["heldout_cis"])):
+            m = means.get(name, {})
+            ci = cis.get(name, {}).get("bridge>weak")
+            band = f"[{ci[0]:.3f}, {ci[1]:.3f}]" if ci else ""
+            print(f"{name:<22} {split:<9} {m.get('bridge>weak', 0):.3f} {band:<17} "
+                  f"{m.get('nDCG@10', 0):.3f}")
+
+    if args.no_write:
+        print("\n--no-write: RESULTS.md and ARMS_RESULTS.json left untouched.")
+        return
 
     # Generate RESULTS.md
     md = generate_results_md(all_results, train_jds, heldout_jds)

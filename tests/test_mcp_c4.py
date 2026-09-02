@@ -347,11 +347,151 @@ def test_tool_output_is_json_serializable(served):
     assert "Infinity" not in text
 
 
+def test_text_and_structured_serializations_agree(served):
+    """CLAUDE.md 7.5: the two output blocks must never disagree.
+
+    A previous server reported `unreachable_penalty: 1.0` in the text block and
+    `0.0` in the structured one, which makes every served config claim
+    unfalsifiable. Both blocks are now rendered from one pydantic model, and
+    this pins that they stay that way.
+    """
+    import json
+
+    result = call_tool("graph_stats", {})
+    from_text = json.loads(result.content[0].text)
+    structured = result.structured_content
+
+    assert from_text == structured
+    assert (from_text["scoring_params"]["unreachable_penalty"]
+            == structured["scoring_params"]["unreachable_penalty"])
+
+
 def test_bad_arguments_are_rejected_by_the_schema(served):
     from fastmcp.exceptions import ToolError
 
     with pytest.raises(ToolError):
         call_tool("rank_candidates", {"jd_skills": [{"skill": "Docker"}]})  # no candidates
+
+
+# --------------------------------------------------------- Phase D (D1 / D2)
+
+
+@pytest.fixture
+def dataset(tmp_path):
+    """A two-JD snapshot shaped exactly like data/eval/v2/dataset.json."""
+    import json
+
+    path = tmp_path / "dataset.json"
+    path.write_text(json.dumps({
+        "version": "test",
+        "jds": [
+            {
+                "jd_id": "devops_0", "domain": "devops", "split": "train",
+                "jd_skills": {"Kubernetes": 1.5, "Docker": 1.0},
+                "candidates": [
+                    {"cand_id": "strong_0", "tier": "strong", "grade": 3,
+                     "skills": ["Kubernetes", "Docker"], "exact_overlap": 2},
+                    {"cand_id": "weak_0", "tier": "weak", "grade": 1,
+                     "skills": ["React"], "exact_overlap": 0},
+                ],
+            },
+            {
+                "jd_id": "frontend_0", "domain": "frontend", "split": "heldout",
+                "jd_skills": {"React": 1.0},
+                "candidates": [
+                    {"cand_id": "fe_0", "tier": "strong", "grade": 3,
+                     "skills": ["React"], "exact_overlap": 1},
+                ],
+            },
+        ],
+    }), encoding="utf-8")
+    return path
+
+
+@pytest.fixture
+def web(engine, dataset):
+    """The real Starlette app, with the engine pointed at the test fixtures."""
+    from starlette.testclient import TestClient
+
+    engine.eval_dataset = dataset
+    set_engine(engine)
+    try:
+        with TestClient(mcp.http_app()) as client:
+            yield client
+    finally:
+        set_engine(None)
+
+
+def test_api_jds_lists_the_snapshot(web):
+    body = web.get("/api/jds").json()
+    assert body["version"] == "test"
+    assert [j["jd_id"] for j in body["jds"]] == ["devops_0", "frontend_0"]
+    devops = body["jds"][0]
+    assert (devops["domain"], devops["split"]) == ("devops", "train")
+    assert (devops["n_skills"], devops["n_candidates"]) == (2, 2)
+
+
+def test_api_rank_returns_full_match_results_in_one_round_trip(web):
+    body = web.post("/api/rank", json={"jd_id": "devops_0"}).json()
+
+    assert body["jd_id"] == "devops_0"
+    # Sorted by demand desc, so the page renders the heaviest requirement first.
+    assert [s["skill"] for s in body["jd_skills"]] == ["Kubernetes", "Docker"]
+
+    assert [c["name"] for c in body["candidates"]] == ["strong_0", "weak_0"]
+    strong = body["candidates"][0]
+    # Everything the expanded view needs is already here - no second request.
+    for key in ("total", "direct_match_score", "bridge_score", "gap_penalty",
+                "total_demand", "matched_skills", "bridged_skills", "missing_skills"):
+        assert key in strong
+    assert sorted(strong["matched_skills"]) == ["Docker", "Kubernetes"]
+    assert body["params"]["max_bridge_credit"] == TUNED_PARAMS.max_bridge_credit
+
+
+def test_api_rank_carries_the_ground_truth_label(web):
+    body = web.post("/api/rank", json={"jd_id": "devops_0"}).json()
+    labels = {c["name"]: (c["tier"], c["grade"], c["exact_overlap"]) for c in body["candidates"]}
+    assert labels["strong_0"] == ("strong", 3, 2)
+    assert labels["weak_0"] == ("weak", 1, 0)
+
+
+def test_api_rank_rejects_bad_requests(web):
+    assert web.post("/api/rank", json={}).status_code == 400
+    assert web.post("/api/rank", json={"jd_id": "nope"}).status_code == 404
+    assert web.post("/api/rank", content=b"not json").status_code == 400
+
+
+def test_index_page_is_served(web):
+    response = web.get("/")
+    assert response.status_code == 200
+    assert "text/html" in response.headers["content-type"]
+    body = response.text
+    # The page must fetch both routes and render the three score terms.
+    for needle in ("/api/jds", "/api/rank", "direct_match_score",
+                   "bridge_score", "gap_penalty"):
+        assert needle in body
+
+
+def test_page_does_not_compute_scores_in_js(web):
+    """D2: 'Every number on screen comes from MatchResult.'
+
+    A cheap structural guard - no arithmetic on the score fields in the script.
+    """
+    import re
+
+    body = web.get("/").text
+    script = body[body.index("<script>"):]
+    for field in ("total", "direct_match_score", "bridge_score", "gap_penalty",
+                  "distance", "hops"):
+        assert not re.search(rf"c\.{field}\s*[-+*/]", script), f"{field} is derived in JS"
+
+
+def test_page_and_api_coexist_with_the_mcp_transport(web):
+    """One process serves both; mounting the page must not break the tools."""
+    assert web.get("/health").status_code == 200
+    assert web.get("/api/jds").status_code == 200
+    tools = asyncio.run(mcp._list_tools())
+    assert len(tools) == 4
 
 
 def test_health_route_does_not_touch_the_graph():
