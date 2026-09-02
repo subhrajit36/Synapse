@@ -38,7 +38,14 @@ GRID = {
     # previous sweep select a config that ranked a candidate holding none of the
     # required skills above one holding all of them. 1.0 is included so the
     # uncapped behaviour stays inside the search space and can win on merit.
-    "max_bridge_credit": [0.75, 0.90, 1.0],
+    #
+    # Enabling this makes the sweep 324 configs instead of 108 and will select a
+    # different config, so results stop being comparable to the reported ones.
+    # `run_eval_arms.py` deliberately does NOT sweep it for that reason; this
+    # grid is the one to use when a full re-sweep is intended.
+    # None keeps the uncapped behaviour - the one that produced the published
+    # numbers - inside the search space so it can win on merit.
+    "max_bridge_credit": [None, 0.75, 0.90, 1.0],
     "unreachable_penalty": [0.0, 0.25, 0.5],
     "max_hops": [1, 2, None],
 }

@@ -12,6 +12,7 @@ is a surface whose numbers mean nothing (C6.4).
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import pickle
@@ -34,6 +35,10 @@ from ..matching.matcher import TUNED_PARAMS, Gap, Matcher, MatchResult, ScoringP
 logger = logging.getLogger(__name__)
 
 DEFAULT_GRAPH_PATH = os.getenv("SYNAPSE_GRAPH_PATH", "data/skill_graph.pkl")
+
+# Phase D reads its JDs from the versioned eval snapshot rather than an ad-hoc
+# demo fixture, so the page shows the same pairs the reported metrics came from.
+DEFAULT_EVAL_DATASET = os.getenv("SYNAPSE_EVAL_DATASET", "data/eval/v2/dataset.json")
 
 # Phase C1's production embedder. FastEmbed builds it lazily on the first
 # surface that reaches the embedding fallback, which keeps a cold start off the
@@ -134,6 +139,46 @@ class ExplainResponse(BaseModel):
     candidate_linking: list[LinkedSkill]
 
 
+class JDSummary(BaseModel):
+    """One row in the Phase D JD selector."""
+
+    jd_id: str
+    domain: str
+    split: str = Field(..., description="'train' or 'heldout'.")
+    n_skills: int
+    n_candidates: int
+
+
+class JDListResponse(BaseModel):
+    dataset: str
+    version: str
+    jds: list[JDSummary]
+
+
+class EvalCandidateScore(CandidateScore):
+    """A scored candidate plus the label the eval set assigns it.
+
+    The ground-truth tier travels with the score so the page can show the
+    ranking against the labels rather than asking the reader to take the order
+    on trust.
+    """
+
+    tier: str = Field(..., description="strong | bridgeable | weak | irrelevant")
+    grade: int = Field(..., description="3 | 2 | 1 | 0, matching the tier.")
+    exact_overlap: int = Field(
+        ..., description="Count of JD skills held outright, from the dataset."
+    )
+
+
+class EvalRankResponse(BaseModel):
+    jd_id: str
+    domain: str
+    split: str
+    jd_skills: list[SkillWeight]
+    params: dict
+    candidates: list[EvalCandidateScore]
+
+
 class GraphStats(BaseModel):
     graph_path: str
     skill_nodes: int
@@ -210,14 +255,17 @@ class MatchEngine:
         params: ScoringParams | None = None,
         min_score: float = DEFAULT_MIN_SCORE,
         embed_model: str = DEFAULT_EMBED_MODEL,
+        eval_dataset: str | Path = DEFAULT_EVAL_DATASET,
     ) -> None:
         self.graph_path = Path(graph_path)
         self.params = params or TUNED_PARAMS
         self.min_score = min_score
         self.embed_model = embed_model
+        self.eval_dataset = Path(eval_dataset)
         self._graph = None
         self._matcher: Matcher | None = None
         self._linker: EntityLinker | None = None
+        self._dataset: dict | None = None
 
     # -- lazy resources ----------------------------------------------------
 
@@ -389,6 +437,78 @@ class MatchEngine:
             explanation=result.explain(),
             jd_linking=_to_linked(jd_profile),
             candidate_linking=_to_linked(cand_profile),
+        )
+
+    # -- Phase D: the eval snapshot behind the page -------------------------
+
+    @property
+    def dataset(self) -> dict:
+        if self._dataset is None:
+            if not self.eval_dataset.exists():
+                raise FileNotFoundError(
+                    f"Missing eval dataset {self.eval_dataset}. Point "
+                    "SYNAPSE_EVAL_DATASET at a versioned snapshot."
+                )
+            self._dataset = json.loads(self.eval_dataset.read_text(encoding="utf-8"))
+        return self._dataset
+
+    def list_eval_jds(self) -> JDListResponse:
+        """D1: `GET /api/jds`."""
+        data = self.dataset
+        return JDListResponse(
+            dataset=str(self.eval_dataset),
+            version=str(data.get("version", "")),
+            jds=[
+                JDSummary(
+                    jd_id=jd["jd_id"],
+                    domain=jd.get("domain", ""),
+                    split=jd.get("split", ""),
+                    n_skills=len(jd.get("jd_skills", {})),
+                    n_candidates=len(jd.get("candidates", [])),
+                )
+                for jd in data.get("jds", [])
+            ],
+        )
+
+    def rank_eval_jd(self, jd_id: str, top_k: int | None = None) -> EvalRankResponse:
+        """D1: `POST /api/rank`. Full MatchResult per candidate, one round trip.
+
+        Eval-set skills are already canonical node names - they were drawn from
+        the graph - so linking is skipped. Running them back through the linker
+        would let a linking change silently alter numbers that are supposed to
+        be reproducible from the snapshot (NFR7).
+        """
+        jd = next((j for j in self.dataset.get("jds", []) if j["jd_id"] == jd_id), None)
+        if jd is None:
+            raise KeyError(jd_id)
+
+        labels = {
+            c["cand_id"]: (c.get("tier", ""), c.get("grade", 0), c.get("exact_overlap", 0))
+            for c in jd["candidates"]
+        }
+        candidates = {c["cand_id"]: c["skills"] for c in jd["candidates"]}
+        ranked = self.matcher.rank(
+            jd["jd_skills"], candidates, params=self.params, top_k=top_k
+        )
+
+        scored: list[EvalCandidateScore] = []
+        for result in ranked:
+            tier, grade, overlap = labels.get(result.name, ("", 0, 0))
+            base = _to_candidate_score(result, [])
+            scored.append(EvalCandidateScore(
+                **base.model_dump(), tier=tier, grade=grade, exact_overlap=overlap
+            ))
+
+        return EvalRankResponse(
+            jd_id=jd["jd_id"],
+            domain=jd.get("domain", ""),
+            split=jd.get("split", ""),
+            jd_skills=[
+                SkillWeight(skill=s, weight=w)
+                for s, w in sorted(jd["jd_skills"].items(), key=lambda kv: (-kv[1], kv[0]))
+            ],
+            params=_params_dict(self.params),
+            candidates=scored,
         )
 
     def stats(self) -> GraphStats:

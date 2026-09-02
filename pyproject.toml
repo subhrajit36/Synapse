@@ -37,6 +37,11 @@ dev = [
 where = ["src"]
 include = ["synapse*"]
 
+[tool.setuptools.package-data]
+# The Phase D page ships inside the package so the Docker runtime stage does not
+# need a separate copy step for it.
+"synapse.mcp" = ["static/*.html"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]

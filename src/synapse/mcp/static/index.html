@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synapse — score decomposition</title>
+<style>
+  :root {
+    --bg: #f7f7f5;  --panel: #fff;   --ink: #1a1a19;  --muted: #6b6b66;
+    --line: #e2e2dd; --accent: #2f6f4f; --bridge: #8a6d1f; --gap: #9a3b32;
+    --chip: #f0efe9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16161a; --panel: #1e1e23; --ink: #e8e8e4; --muted: #9a9a94;
+      --line: #33333a; --accent: #6fbf90; --bridge: #d6b65c;
+      --gap: #e08076; --chip: #2a2a31;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  header {
+    padding: 18px 22px; border-bottom: 1px solid var(--line); background: var(--panel);
+  }
+  header h1 { margin: 0; font-size: 17px; font-weight: 620; letter-spacing: -0.01em; }
+  header p  { margin: 5px 0 0; color: var(--muted); font-size: 12.5px; max-width: 76ch; }
+  .layout { display: grid; grid-template-columns: 300px 1fr; gap: 18px; padding: 18px 22px; align-items: start; }
+  @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
+  .panel h2 { margin: 0 0 10px; font-size: 12px; text-transform: uppercase;
+              letter-spacing: 0.07em; color: var(--muted); font-weight: 600; }
+  select { width: 100%; padding: 7px 8px; border: 1px solid var(--line); border-radius: 6px;
+           background: var(--bg); color: var(--ink); font: inherit; }
+  .skills { list-style: none; margin: 12px 0 0; padding: 0; }
+  .skills li { display: flex; justify-content: space-between; gap: 10px;
+               padding: 4px 0; border-bottom: 1px dashed var(--line); }
+  .skills li:last-child { border-bottom: 0; }
+  .w { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .cand { border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px;
+          background: var(--panel); overflow: hidden; }
+  .cand > summary {
+    cursor: pointer; padding: 10px 12px; display: grid;
+    grid-template-columns: 26px 1fr auto auto; gap: 12px; align-items: center;
+  }
+  .cand > summary::-webkit-details-marker { display: none; }
+  .rank { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .name { font-weight: 560; }
+  .tier { font-size: 11px; padding: 2px 7px; border-radius: 99px; background: var(--chip); color: var(--muted); }
+  .total { font-variant-numeric: tabular-nums; font-weight: 620; min-width: 4.5em; text-align: right; }
+  .body { padding: 0 12px 14px; border-top: 1px solid var(--line); }
+
+  .terms { display: flex; flex-wrap: wrap; gap: 18px; margin: 12px 0 4px;
+           font-variant-numeric: tabular-nums; }
+  .terms div { display: flex; flex-direction: column; }
+  .terms .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .terms .v { font-size: 15px; }
+  .direct .v { color: var(--accent); }
+  .bridgev .v { color: var(--bridge); }
+  .penalty .v { color: var(--gap); }
+
+  h3 { margin: 16px 0 6px; font-size: 12px; text-transform: uppercase;
+       letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+  ul.plain { list-style: none; margin: 0; padding: 0; }
+  ul.plain li { padding: 3px 0; font-variant-numeric: tabular-nums; }
+  .path { color: var(--muted); }
+  .reason { color: var(--muted); font-size: 12.5px; }
+  code { background: var(--chip); padding: 1px 5px; border-radius: 4px;
+         font: 12px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  .cfg { margin-top: 16px; font-size: 12px; color: var(--muted); word-break: break-word; }
+  .empty { color: var(--muted); }
+  .note { margin-top: 14px; padding: 9px 11px; border-left: 3px solid var(--line);
+          color: var(--muted); font-size: 12.5px; }
+  .err { color: var(--gap); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Synapse — score decomposition</h1>
+  <p>
+    Every number on this page is read from a <code>MatchResult</code> returned by
+    <code>POST /api/rank</code>. Nothing is computed in the browser. Candidates are
+    from the versioned eval snapshot, and each one's ground-truth tier is shown so the
+    ranking can be checked against the labels rather than taken on trust.
+  </p>
+</header>
+
+<div class="layout">
+  <div class="panel">
+    <h2>Job description</h2>
+    <select id="jd"><option>loading…</option></select>
+    <div id="jdmeta" class="cfg"></div>
+    <h2 style="margin-top:16px">Required skills &amp; demand weight</h2>
+    <ul class="skills" id="jdskills"></ul>
+  </div>
+
+  <div>
+    <div id="status" class="panel" style="margin-bottom:10px">Loading…</div>
+    <div id="results"></div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+async function loadJds() {
+  const res = await fetch('/api/jds');
+  if (!res.ok) { $('status').innerHTML = '<span class="err">Could not load JDs.</span>'; return; }
+  const data = await res.json();
+  const sel = $('jd');
+  sel.innerHTML = '';
+  for (const jd of data.jds) {
+    const o = document.createElement('option');
+    o.value = jd.jd_id;
+    o.textContent = `${jd.jd_id} — ${jd.n_candidates} candidates`;
+    sel.appendChild(o);
+  }
+  $('jdmeta').textContent = `${data.jds.length} JDs · dataset ${data.version} · ${data.dataset}`;
+  sel.addEventListener('change', () => rank(sel.value));
+  if (data.jds.length) rank(data.jds[0].jd_id);
+}
+
+async function rank(jdId) {
+  $('status').textContent = 'Scoring…';
+  const res = await fetch('/api/rank', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({jd_id: jdId})
+  });
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({error: res.statusText}));
+    $('status').innerHTML = `<span class="err">${esc(e.error || 'Request failed')}</span>`;
+    return;
+  }
+  render(await res.json());
+}
+
+function skillList(items, empty) {
+  if (!items.length) return `<p class="empty">${empty}</p>`;
+  return '<ul class="plain">' + items + '</ul>';
+}
+
+function render(data) {
+  $('jdskills').innerHTML = data.jd_skills
+    .map(s => `<li><span>${esc(s.skill)}</span><span class="w">${s.weight}</span></li>`)
+    .join('');
+  $('jdmeta').textContent = `${data.jd_id} · domain ${data.domain} · ${data.split} split`;
+  $('status').textContent =
+    `${data.candidates.length} candidates ranked · scored against ${data.jd_skills.length} JD skills`;
+
+  $('results').innerHTML = data.candidates.map((c, i) => {
+    const matched = skillList(
+      c.matched_skills.map(s => `<li>${esc(s)}</li>`).join(''),
+      'None held outright.');
+
+    // "<skill> <- via <skill>, <n> hops, distance <d>" - all four values come
+    // straight from the Gap object; none of them are derived here.
+    const bridged = skillList(
+      c.bridged_skills.map(g =>
+        `<li>${esc(g.skill)} <span class="path">&larr; via ${esc(g.via)},
+         ${g.hops} hop(s), distance ${g.distance}</span></li>`).join(''),
+      'No bridged skills.');
+
+    const missing = skillList(
+      c.missing_skills.map(g =>
+        `<li>${esc(g.skill)} <span class="reason">(${esc(g.reason)}${
+          g.via ? `, nearest ${esc(g.via)} at ${g.distance}` : ''})</span></li>`).join(''),
+      'No unreachable gaps.');
+
+    const cfg = Object.entries(data.params)
+      .map(([k, v]) => `${k}=${v}`).join(' · ');
+
+    return `
+    <details class="cand">
+      <summary>
+        <span class="rank">${i + 1}</span>
+        <span class="name">${esc(c.name)}</span>
+        <span class="tier">${esc(c.tier)} · grade ${c.grade}</span>
+        <span class="total">${c.total}</span>
+      </summary>
+      <div class="body">
+        <div class="terms">
+          <div class="direct"><span class="k">direct match</span><span class="v">${c.direct_match_score}</span></div>
+          <div class="bridgev"><span class="k">bridge</span><span class="v">${c.bridge_score}</span></div>
+          <div class="penalty"><span class="k">gap penalty</span><span class="v">${c.gap_penalty}</span></div>
+          <div><span class="k">total demand</span><span class="v">${c.total_demand}</span></div>
+          <div><span class="k">exact overlap</span><span class="v">${c.exact_overlap}</span></div>
+        </div>
+
+        <h3>Matched (${c.matched_skills.length})</h3>${matched}
+        <h3>Bridged (${c.bridged_skills.length})</h3>${bridged}
+        <h3>Unreachable gaps (${c.missing_skills.length})</h3>${missing}
+
+        <div class="cfg">ScoringParams &middot; ${esc(cfg)}</div>
+      </div>
+    </details>`;
+  }).join('');
+}
+
+loadJds();
+</script>
+</body>
+</html>

@@ -180,6 +180,55 @@ infinity does not survive the wire.
 and a probe that unpickled 213 skills would report unhealthy while a healthy
 instance was merely waking up. Graph readiness is `graph_stats`.
 
+### Web UI (Phase D)
+
+The same uvicorn process serves the MCP transport and a single static page — one
+service, no build step, no Node.
+
+```
+GET  /              -> the page
+GET  /api/jds       -> JDs in the versioned eval snapshot
+POST /api/rank      -> ranked candidates + full MatchResult each (one round trip)
+```
+
+Pick a JD on the left, click a candidate on the right to expand its score into
+`direct_match_score`, `bridge_score` and `gap_penalty`, its matched skills, its
+bridged skills with the path that produced them (`← via <skill>, n hops,
+distance d`), its unreachable gaps with a reason code, and the active
+`ScoringParams`. Every number is read from `MatchResult`; nothing is computed in
+the browser. Each candidate's ground-truth tier from the eval set is shown beside
+its score, so the ranking can be checked against the labels.
+
+---
+
+## Known limitation — FR4 is not validated
+
+**FR3 (ranking) is validated. FR4 (gap explanation) is not.** Treat the
+bridgeable/gap distinction as unproven, and read the reported path distance and
+hop count rather than the label.
+
+The skill graph is **68.5% dense with a diameter of 2** — every skill is within two
+hops of every other skill. At the shipped `max_hops=2`, 100% of missing skills
+classify as "bridgeable" over random candidate/JD draws, and 0% as real gaps. The
+previously reported 48.8% bridgeable-gap precision is what an unconditional
+classifier scores when roughly half the answers happen to be "yes".
+
+The cause is the graph build threshold, not the scoring: `strong_sim=0.60` sits
+below the *median* all-pair cosine of 0.627, so two unrelated skills are expected
+to clear it. Full analysis, the threshold table, and the FR3-vs-FR4 impact split
+are in [`data/eval/GRAPH_DENSITY.md`](data/eval/GRAPH_DENSITY.md); the edge-substrate
+comparison that selected the embedding graph is in
+[`data/eval/EDGE_SUBSTRATE_STUDY.md`](data/eval/EDGE_SUBSTRATE_STUDY.md).
+
+Two related caveats on the reported numbers:
+
+- The bootstrap CIs in `RESULTS.md` predate a fix to `bootstrap_ci`, which had
+  been reporting one ranker's interval for every ranker and none at all for the
+  frozen baselines. The code is fixed; the numbers have not been re-run.
+- `TUNED_PARAMS` now carries `max_bridge_credit=0.9`. Without that ceiling,
+  `bridge_credit_scale=2.0` let a bridged skill out-earn a direct match, and a
+  candidate holding none of a role's skills outranked one holding all of them.
+
 ---
 
 ## Project Structure
@@ -198,7 +247,8 @@ synapse/
 │   ├── matching/        # EntityLinker + Matcher (scoring + gaps)
 │   ├── mcp/
 │   │   ├── engine.py             # Phase C4: loaded graph + typed tool contracts
-│   │   └── server.py             # Phase C4: FastMCP tools, HTTP/SSE transport
+│   │   ├── server.py             # Phase C4: FastMCP tools + Phase D routes
+│   │   └── static/index.html     # Phase D: the score-decomposition page
 │   ├── graph/
 │   │   ├── build_graph.py        # Embedding + Categorical graphs
 │   │   ├── migrate_to_neo4j.py   # Phase C2: NetworkX → Neo4j
