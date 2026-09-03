@@ -180,6 +180,41 @@ infinity does not survive the wire.
 and a probe that unpickled 213 skills would report unhealthy while a healthy
 instance was merely waking up. Graph readiness is `graph_stats`.
 
+### Graph source: AuraDB (Phase C2/C6)
+
+AuraDB is the system of record. The graph is materialised into NetworkX once at
+first use, so the scoring path stays byte-identical to the one Phase B measured
+— `Matcher` runs the same in-process Dijkstra either way. One query, ~1.2MB,
+negligible against the 512MB budget.
+
+```bash
+NEO4J_URI=neo4j+s://<instance>.databases.neo4j.io
+NEO4J_USERNAME=<from the Aura credentials file>
+NEO4J_PASSWORD=<from the Aura credentials file>
+NEO4J_DATABASE=<from the Aura credentials file>
+
+SYNAPSE_GRAPH_SOURCE=neo4j    # production; fails startup if Aura is unreachable
+SYNAPSE_GRAPH_SOURCE=pickle   # tests and offline work; never touches the network
+```
+
+There is deliberately **no automatic fallback**. A service that quietly serves a
+stale local pickle when Aura is down violates NFR4 while reporting itself
+healthy, so `neo4j` raises instead. `graph_stats` reports the active
+`graph_source`, and the loader asserts the graph's shape (`SYNAPSE_EXPECTED_SKILLS`,
+`SYNAPSE_EXPECTED_PAIRS`, defaulting to 213 / 15,459) so a wrong-shaped deploy
+fails at startup rather than producing subtly wrong rankings.
+
+Two things about the migrated data that will otherwise mislead you:
+
+- **`SIMILAR` is stored in both directions** — 30,918 relationships for 15,459
+  logical pairs. Compare `count_similar_pairs()` against a NetworkX edge count,
+  not `count_edges()["SIMILAR"]`, or it looks like a 2× mismatch.
+- **Two roles have no `REQUIRES` edges** (`... Occupations, All Other`), so roles
+  must be loaded as nodes, not derived from the edge list.
+
+Verified against the live instance: identical rankings and identical gap
+analysis from both sources, 251 nodes / 17,877 edges each.
+
 ### Web UI (Phase D)
 
 The same uvicorn process serves the MCP transport and a single static page — one

@@ -328,13 +328,20 @@ class Neo4jClient:
             return dict(record) if record else None
 
     def get_skill_neighbors(self, skill_name: str, min_weight: float = 0.3) -> list[dict]:
-        """Get direct similar neighbors of a skill."""
+        """Get direct similar neighbours of a skill, one row per neighbour.
+
+        The undirected match traverses both stored directions, so without the
+        aggregation below every neighbour is returned twice (verified against
+        Aura: "Docker" reported "Kubernetes" twice at weight 0.77).
+        """
         with self.session() as session:
             result = session.run("""
                 MATCH (s:Skill {name: $name})-[r:SIMILAR]-(n:Skill)
                 WHERE r.weight >= $min_weight
-                RETURN n.name AS name, r.weight AS weight, r.edge_source AS source
-                ORDER BY r.weight DESC
+                WITH n.name AS name, max(r.weight) AS weight,
+                     head(collect(r.edge_source)) AS source
+                RETURN name, weight, source
+                ORDER BY weight DESC, name ASC
             """, {"name": skill_name, "min_weight": min_weight})
             return [dict(r) for r in result]
 
@@ -415,9 +422,36 @@ class Neo4jClient:
                 MATCH (a:Skill)-[:SIMILAR]->(b:Skill)
                 WITH CASE WHEN a.name < b.name THEN a.name ELSE b.name END AS lo,
                      CASE WHEN a.name < b.name THEN b.name ELSE a.name END AS hi
-                RETURN count(DISTINCT lo + '\\u0000' + hi) AS pairs
+                RETURN count(DISTINCT lo + '\t' + hi) AS pairs
             """).single()
             return record["pairs"] if record else 0
+
+    def iter_roles(self) -> list[dict]:
+        """All Role nodes, including any with no REQUIRES edges.
+
+        Deriving roles from the edge list instead drops edgeless ones - the
+        O*NET dump contains two ("... Occupations, All Other") - which makes a
+        loaded graph two nodes short of the pickle for no visible reason.
+        """
+        with self.session() as session:
+            return [dict(r) for r in session.run("""
+                MATCH (r:Role)
+                RETURN r.name AS name, r.soc AS soc
+                ORDER BY r.name
+            """)]
+
+    def iter_role_requirements(self) -> list[tuple[str, str]]:
+        """(role_name, skill_name) pairs for the REQUIRES edges.
+
+        Not used by scoring - `Matcher` ignores role nodes - but loading them
+        keeps `graph_stats` node/edge totals comparable with the pickle.
+        """
+        with self.session() as session:
+            return [(r["role"], r["skill"]) for r in session.run("""
+                MATCH (r:Role)-[:REQUIRES]->(s:Skill)
+                RETURN r.name AS role, s.name AS skill
+                ORDER BY role, skill
+            """)]
 
     def iter_skill_graph(self) -> tuple[list[dict], list[dict]]:
         """Everything needed to rebuild the NetworkX graph, in two queries.
