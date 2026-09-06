@@ -36,6 +36,22 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_GRAPH_PATH = os.getenv("SYNAPSE_GRAPH_PATH", "data/skill_graph.pkl")
 
+# Where the scoring graph comes from. AuraDB is the system of record (NFR4);
+# the pickle exists for tests and for offline development, and is NOT a
+# production fallback - a service that silently serves a stale local graph
+# violates NFR4 while looking healthy, so `neo4j` fails loudly instead.
+#   neo4j  - load from AuraDB, fail startup if unavailable
+#   pickle - load from data/skill_graph.pkl, never touch the network
+GRAPH_SOURCE_NEO4J = "neo4j"
+GRAPH_SOURCE_PICKLE = "pickle"
+DEFAULT_GRAPH_SOURCE = os.getenv("SYNAPSE_GRAPH_SOURCE", GRAPH_SOURCE_PICKLE)
+
+# Shape the deployed graph must have, asserted at load. These are the counts the
+# Phase B evaluation ran against; a mismatch means the deployed artifact is not
+# the evaluated one, which is exactly what C6.4 exists to catch.
+EXPECTED_SKILLS = int(os.getenv("SYNAPSE_EXPECTED_SKILLS", "213"))
+EXPECTED_SIMILAR_PAIRS = int(os.getenv("SYNAPSE_EXPECTED_PAIRS", "15459"))
+
 # Phase D reads its JDs from the versioned eval snapshot rather than an ad-hoc
 # demo fixture, so the page shows the same pairs the reported metrics came from.
 DEFAULT_EVAL_DATASET = os.getenv("SYNAPSE_EVAL_DATASET", "data/eval/v2/dataset.json")
@@ -179,7 +195,18 @@ class EvalRankResponse(BaseModel):
     candidates: list[EvalCandidateScore]
 
 
+class RegisteredSkill(BaseModel):
+    """Outcome of a C2.5 dynamic MERGE attempt for one unresolved surface."""
+
+    surface: str
+    node: str = Field(..., description="Canonical node the surface now maps to.")
+    created: bool = Field(..., description="True if a new node was written to Aura.")
+
+
 class GraphStats(BaseModel):
+    graph_source: str = Field(
+        ..., description="'neo4j' or 'pickle' - where this graph was actually loaded from."
+    )
     graph_path: str
     skill_nodes: int
     total_nodes: int
@@ -256,12 +283,21 @@ class MatchEngine:
         min_score: float = DEFAULT_MIN_SCORE,
         embed_model: str = DEFAULT_EMBED_MODEL,
         eval_dataset: str | Path = DEFAULT_EVAL_DATASET,
+        graph_source: str = DEFAULT_GRAPH_SOURCE,
+        neo4j_client=None,
+        expected_skills: int | None = EXPECTED_SKILLS,
+        expected_pairs: int | None = EXPECTED_SIMILAR_PAIRS,
     ) -> None:
         self.graph_path = Path(graph_path)
         self.params = params or TUNED_PARAMS
         self.min_score = min_score
         self.embed_model = embed_model
         self.eval_dataset = Path(eval_dataset)
+        self.graph_source = graph_source
+        # None disables the check; the defaults are the shape Phase B ran on.
+        self.expected_skills = expected_skills
+        self.expected_pairs = expected_pairs
+        self._neo4j_client = neo4j_client   # injectable for tests
         self._graph = None
         self._matcher: Matcher | None = None
         self._linker: EntityLinker | None = None
@@ -270,18 +306,70 @@ class MatchEngine:
     # -- lazy resources ----------------------------------------------------
 
     @property
+    def neo4j(self):
+        """The Neo4j client, constructed on demand.
+
+        Constructed here rather than in __init__ so that importing the engine
+        never reads credentials or opens a socket.
+        """
+        if self._neo4j_client is None:
+            from ..graph.neo4j_client import Neo4jClient
+
+            self._neo4j_client = Neo4jClient()
+        return self._neo4j_client
+
+    @property
     def graph(self):
         if self._graph is None:
-            if not self.graph_path.exists():
-                raise FileNotFoundError(
-                    f"Missing {self.graph_path}. Build it with "
-                    "`python scripts/build_graph_artifact.py`, or point "
-                    "SYNAPSE_GRAPH_PATH at an existing artifact."
+            if self.graph_source == GRAPH_SOURCE_NEO4J:
+                self._graph = self._load_from_neo4j()
+            elif self.graph_source == GRAPH_SOURCE_PICKLE:
+                self._graph = self._load_from_pickle()
+            else:
+                raise ValueError(
+                    f"Unknown SYNAPSE_GRAPH_SOURCE {self.graph_source!r}; "
+                    f"expected {GRAPH_SOURCE_NEO4J!r} or {GRAPH_SOURCE_PICKLE!r}."
                 )
-            logger.info("Loading skill graph from %s", self.graph_path)
-            with self.graph_path.open("rb") as fh:
-                self._graph = pickle.load(fh)
         return self._graph
+
+    def _load_from_pickle(self):
+        if not self.graph_path.exists():
+            raise FileNotFoundError(
+                f"Missing {self.graph_path}. Build it with "
+                "`python scripts/build_graph_artifact.py`, or point "
+                "SYNAPSE_GRAPH_PATH at an existing artifact."
+            )
+        logger.info("Loading skill graph from %s", self.graph_path)
+        with self.graph_path.open("rb") as fh:
+            return pickle.load(fh)
+
+    def _load_from_neo4j(self):
+        """Load from AuraDB, failing loudly rather than degrading silently."""
+        from ..graph.neo4j_loader import load_graph_from_neo4j
+
+        client = self.neo4j
+        if not client.config.is_configured:
+            raise RuntimeError(
+                "SYNAPSE_GRAPH_SOURCE=neo4j but no NEO4J_PASSWORD is set "
+                f"({client.config.describe()}). Set the Neo4j environment "
+                "variables, or use SYNAPSE_GRAPH_SOURCE=pickle for offline work."
+            )
+        logger.info("Loading skill graph from Neo4j (%s)", client.config.describe())
+        return load_graph_from_neo4j(
+            client,
+            expected_skills=self.expected_skills,
+            expected_pairs=self.expected_pairs,
+        )
+
+    def invalidate_graph(self) -> None:
+        """Drop the cached graph so the next access reloads it.
+
+        Needed by the C2.5 dynamic-MERGE path: a skill added to Aura after
+        startup is invisible to the in-process graph until it is rebuilt.
+        """
+        self._graph = None
+        self._matcher = None
+        self._linker = None
 
     @property
     def skill_names(self) -> list[str]:
@@ -511,6 +599,60 @@ class MatchEngine:
             candidates=scored,
         )
 
+    # -- C2.5: dynamic graph building --------------------------------------
+
+    def register_skills(
+        self,
+        surfaces: Sequence[str],
+        min_similarity: float = 0.82,
+    ) -> list[RegisteredSkill]:
+        """MERGE unresolved surfaces into Aura, deduplicated first (C2.5).
+
+        Each surface is embedded, vector-searched against existing nodes, and
+        only written if nothing at or above `min_similarity` already exists -
+        the guard that stops "JS"/"JavaScript"/"Javascript" becoming three nodes.
+
+        Deliberately NOT called automatically from the linking path. Doing so
+        would let any MCP caller write into the shared ontology by sending a
+        typo, and an unresolved surface is far more often a bad input than a
+        genuinely missing skill. Wire it to a reviewed ingestion flow, not to
+        request handling.
+
+        A newly created node has no SIMILAR edges, so it is isolated and cannot
+        bridge to anything until edges are computed for it. Creating the node is
+        the ontology decision; edge construction is a separate one.
+        """
+        if self.graph_source != GRAPH_SOURCE_NEO4J:
+            raise RuntimeError(
+                "register_skills writes to the graph and requires "
+                f"SYNAPSE_GRAPH_SOURCE=neo4j (currently {self.graph_source!r}). "
+                "Writes must not go to a local pickle that Aura will never see."
+            )
+
+        embedder = self.linker._embedder
+        if embedder is None:
+            self.linker._ensure_embeddings()
+            embedder = self.linker._embedder
+        if embedder is None:
+            raise RuntimeError("No embedder available; cannot deduplicate before MERGE.")
+
+        results: list[RegisteredSkill] = []
+        created_any = False
+        for surface in surfaces:
+            vector = (embedder.encode_queries([surface])[0]
+                      if hasattr(embedder, "encode_queries")
+                      else embedder.encode([surface])[0])
+            node, created = self.neo4j.get_or_create_skill_with_dedup(
+                surface, vector, min_similarity=min_similarity
+            )
+            created_any = created_any or created
+            results.append(RegisteredSkill(surface=surface, node=node, created=created))
+
+        if created_any:
+            # The in-process graph is now stale; next access reloads it.
+            self.invalidate_graph()
+        return results
+
     def stats(self) -> GraphStats:
         """Cheap enough to serve as a readiness probe (C6.3)."""
         graph = self.graph
@@ -518,7 +660,9 @@ class MatchEngine:
             1 for _, _, d in graph.edges(data=True) if d.get("relation") == "similar"
         )
         return GraphStats(
-            graph_path=str(self.graph_path),
+            graph_source=self.graph_source,
+            graph_path=(str(self.graph_path) if self.graph_source == GRAPH_SOURCE_PICKLE
+                        else self.neo4j.config.uri),
             skill_nodes=len(self.skill_names),
             total_nodes=graph.number_of_nodes(),
             total_edges=graph.number_of_edges(),
