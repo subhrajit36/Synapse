@@ -117,20 +117,44 @@ class ScoringParams:
 # artifact. It is: at 2.0 uncapped, a candidate holding NONE of a role's skills
 # outranked one holding ALL of them. Re-sweep with this parameter in the grid
 # and a ranking metric (nDCG) in the objective before quoting new numbers.
-# `bridge_cutoff` is NOT the swept 0.70. That value was selected against a graph
-# built with all-MiniLM-L6-v2, whose edge distances have median ~0.45, so a
-# 2-hop path cost ~0.91 and the cutoff rejected most of them. bge-small-en-v1.5
-# compresses cosines into a high narrow band: median edge distance ~0.23, so a
-# 2-hop path costs ~0.46 and 0.70 rejects almost nothing. Same threshold, same
-# graph shape, opposite behaviour.
+# LOCKED PRODUCTION CONFIG. Do not change without re-measuring; the test suite
+# pins these values deliberately so that a change has to be intentional.
 #
-# 0.35 is 0.70 rescaled by the ratio of median edge distances (0.231/0.453),
-# i.e. the same cutoff expressed in the new embedder's units. It reproduces the
-# pre-migration bridgeable rate on random draws. It is a scale correction, NOT a
-# new sweep result - re-run the B4 sweep on the rebuilt graph before treating it
-# as tuned.
+# `bridge_cutoff=0.30` was selected on measured bridgeable-gap precision against
+# the rebuilt graph, NOT by the B4 sweep. The sweep's own answer is rejected on
+# purpose, for a reason worth stating plainly:
+#
+#   The sweep sorts on `bridge>weak`, a pairwise metric that is monotonically
+#   happier the more credit unmet skills receive. It therefore walks to the
+#   permissive boundary every time - it selected bridge_cutoff=0.70 with
+#   unbounded hops and maximum credit scale, three of four axes at grid edges,
+#   a configuration that scores a candidate holding NONE of a role's skills
+#   above one holding all of them. On that config, gap precision is ~21%.
+#
+# Measured precision on the rebuilt graph (train / heldout):
+#   cutoff 0.70, hops None (sweep's pick)   19.5% / 21.1%   over ~1000 calls
+#   cutoff 0.70, hops 2 (pre-migration cfg) 23.2% / 24.1%
+#   cutoff 0.35, hops 2                     33.3% / 33.5%
+#   cutoff 0.30, hops 2   <- selected       36.2% / 39.8%   over ~530 calls
+#   cutoff 0.25, hops 1                     37.5% / 45.7%   over ~410 calls
+#
+# 0.25/hops=1 scores higher but reduces a "bridge" to a direct edge, which
+# removes the multi-hop reasoning the graph exists to provide, and its
+# train/heldout gap suggests the heldout figure is optimistic. 0.30/hops=2 is
+# consistent across splits and keeps real traversal. The cost is coverage:
+# roughly 40% fewer bridge classifications than the permissive config.
+#
+# SCALE WARNING: this number is specific to bge-small-en-v1.5. Cutoffs are
+# expressed in edge-distance units, and every embedder has its own distance
+# distribution - 0.70 meant "restrictive" under all-MiniLM-L6-v2 and means
+# "accepts nearly everything" here. Changing the embedder invalidates this
+# constant; re-measure rather than porting it.
+#
+# `max_bridge_credit=0.9` is not optional at this credit scale: without a
+# ceiling, `bridge_credit_scale=2.0` lets a bridged skill out-earn a held one
+# and inverts the ranking.
 TUNED_PARAMS = ScoringParams(
-    bridge_cutoff=0.35,
+    bridge_cutoff=0.30,
     bridge_credit_scale=2.0,
     max_bridge_credit=0.9,
     unreachable_penalty=0.0,

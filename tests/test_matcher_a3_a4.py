@@ -205,6 +205,44 @@ def test_get_bridgeable_gaps_signature(chain):
     assert [g["skill"] for g in out["gaps"]] == ["E"]
 
 
+# ------------------------------------------------ locked production config
+
+
+def test_tuned_params_are_the_locked_production_values():
+    """TUNED_PARAMS is a locked config; changing it must be deliberate.
+
+    This project has twice had a scoring constant change meaning underneath it
+    without any test failing - once when the embedder swap silently reinterpreted
+    an absolute threshold, once when a new parameter's "inert" default turned out
+    to bind at the credit scale the evaluation actually selected. Pinning the
+    values means a change has to come with an updated test and a reason.
+
+    If this fails, do not update the numbers to match the code. Work out why the
+    config moved, and re-measure gap precision before locking a new one.
+    """
+    from synapse.matching.matcher import TUNED_PARAMS
+
+    assert TUNED_PARAMS.bridge_cutoff == 0.30
+    assert TUNED_PARAMS.max_hops == 2
+    assert TUNED_PARAMS.bridge_credit_scale == 2.0
+    assert TUNED_PARAMS.max_bridge_credit == 0.9
+    assert TUNED_PARAMS.unreachable_penalty == 0.0
+    assert TUNED_PARAMS.use_weights is True
+    assert TUNED_PARAMS.enable_bridging is True
+
+
+def test_locked_config_does_not_invert():
+    """The ceiling must actually bind at the locked credit scale."""
+    from synapse.matching.matcher import TUNED_PARAMS
+
+    credit_ceiling = min(TUNED_PARAMS.bridge_credit_scale,
+                         TUNED_PARAMS.max_bridge_credit)
+    assert credit_ceiling < 1.0, (
+        "a bridged skill can earn at least as much as holding one; "
+        "the ranking will invert"
+    )
+
+
 # ------------------------------------------------- bridge credit ceiling (A4)
 
 
