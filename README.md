@@ -204,6 +204,10 @@ healthy, so `neo4j` raises instead. `graph_stats` reports the active
 `SYNAPSE_EXPECTED_PAIRS`, defaulting to 213 / 15,459) so a wrong-shaped deploy
 fails at startup rather than producing subtly wrong rankings.
 
+> **AuraDB currently holds the pre-fix dense graph.** It must be re-migrated from
+> the rebuilt artifact before `SYNAPSE_GRAPH_SOURCE=neo4j` will start — the shape
+> assertion will refuse it, which is the assertion doing its job.
+
 Two things about the migrated data that will otherwise mislead you:
 
 - **`SIMILAR` is stored in both directions** — 30,918 relationships for 15,459
@@ -242,27 +246,48 @@ its score, so the ranking can be checked against the labels.
 bridgeable/gap distinction as unproven, and read the reported path distance and
 hop count rather than the label.
 
-The skill graph is **68.5% dense with a diameter of 2** — every skill is within two
-hops of every other skill. At the shipped `max_hops=2`, 100% of missing skills
-classify as "bridgeable" over random candidate/JD draws, and 0% as real gaps. The
-previously reported 48.8% bridgeable-gap precision is what an unconditional
-classifier scores when roughly half the answers happen to be "yes".
+### The density regression, and its fix
 
-The cause is the graph build threshold, not the scoring: `strong_sim=0.60` sits
-below the *median* all-pair cosine of 0.627, so two unrelated skills are expected
-to clear it. Full analysis, the threshold table, and the FR3-vs-FR4 impact split
-are in [`data/eval/GRAPH_DENSITY.md`](data/eval/GRAPH_DENSITY.md); the edge-substrate
-comparison that selected the embedding graph is in
-[`data/eval/EDGE_SUBSTRATE_STUDY.md`](data/eval/EDGE_SUBSTRATE_STUDY.md).
+For a period the graph was **68.5% dense with a diameter of 2**, and *every* missing
+skill classified as "bridgeable" — the label carried no information at all.
 
-Two related caveats on the reported numbers:
+The cause was an embedder swap, not the scoring. `strong_sim=0.60` and
+`bridge_cutoff=0.70` were both calibrated against `all-MiniLM-L6-v2`. The C1
+migration to `BAAI/bge-small-en-v1.5` kept both numbers and changed their meaning:
+bge compresses short-string cosines into a high narrow band whose all-pair median
+(~0.63) sits *above* the build threshold, so two unrelated skills were expected to
+clear it; and its edge distances are roughly half MiniLM's, so a 2-hop path cost
+~0.46 against a cutoff of 0.70 that had been rejecting ~0.91.
 
-- The bootstrap CIs in `RESULTS.md` predate a fix to `bootstrap_ci`, which had
-  been reporting one ranker's interval for every ranker and none at all for the
-  frozen baselines. The code is fixed; the numbers have not been re-run.
-- `TUNED_PARAMS` now carries `max_bridge_credit=0.9`. Without that ceiling,
+Both halves are corrected:
+
+- **Edge construction is rank-based only.** The absolute-threshold pass is off by
+  default, because "which are this skill's nearest neighbours" is scale-free while
+  "which pairs exceed 0.6 cosine" is not. `add_semantic_edges` now aborts the build
+  if the result exceeds a plausible density ceiling, so this class of regression
+  fails loudly instead of shipping.
+- **`bridge_cutoff` is rescaled to 0.35**, which is 0.70 expressed in the new
+  embedder's distance units. This is a scale correction, not a sweep result.
+
+The rebuilt graph is ~3.4% dense with mean degree ~7, and roughly a quarter of
+missing skills classify as bridgeable — matching the pre-migration regime.
+
+**FR4 still is not independently validated.** Restoring the discrimination is not
+the same as measuring its precision, and that measurement has not been re-run.
+
+### Caveats on the reported numbers
+
+Everything in `RESULTS.md` predates the fixes above and does not describe the
+current graph. Re-run the arms before citing any of it.
+
+- The graph artifact was rebuilt after those results were generated, so they are
+  not reproducible against it even before the density fix.
+- The bootstrap CIs predate a fix to `bootstrap_ci`, which had been reporting one
+  ranker's interval for every ranker and none at all for the frozen baselines.
+- `TUNED_PARAMS` carries `max_bridge_credit=0.9`. Without that ceiling,
   `bridge_credit_scale=2.0` let a bridged skill out-earn a direct match, and a
   candidate holding none of a role's skills outranked one holding all of them.
+- `bridge_cutoff` is no longer the swept value, for the scale reason above.
 
 ---
 

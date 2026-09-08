@@ -50,7 +50,12 @@ DEFAULT_GRAPH_SOURCE = os.getenv("SYNAPSE_GRAPH_SOURCE", GRAPH_SOURCE_PICKLE)
 # Phase B evaluation ran against; a mismatch means the deployed artifact is not
 # the evaluated one, which is exactly what C6.4 exists to catch.
 EXPECTED_SKILLS = int(os.getenv("SYNAPSE_EXPECTED_SKILLS", "213"))
-EXPECTED_SIMILAR_PAIRS = int(os.getenv("SYNAPSE_EXPECTED_PAIRS", "15459"))
+# 773, not 15459. The 15459-pair graph was built with an absolute similarity
+# threshold that stopped being selective when the embedder changed (see
+# build_graph.add_semantic_edges). AuraDB still holds that dense graph until it
+# is re-migrated, so this assertion will - correctly - refuse to start against
+# it until the migration is re-run from the rebuilt artifact.
+EXPECTED_SIMILAR_PAIRS = int(os.getenv("SYNAPSE_EXPECTED_PAIRS", "773"))
 
 # Phase D reads its JDs from the versioned eval snapshot rather than an ad-hoc
 # demo fixture, so the page shows the same pairs the reported metrics came from.

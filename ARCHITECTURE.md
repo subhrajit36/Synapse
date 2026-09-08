@@ -873,11 +873,21 @@ marketing.
 
 - **The bridgeable/unreachable distinction is not independently validated.** Ranking
   quality and gap-labelling quality are separate claims, and only the first is
-  supported. The density audit explains the mechanism.
-- **The graph's edge-admission threshold was chosen before its consequences were
-  measured.** Whether it is meaningfully selective given the embedder's actual output
-  distribution is a settled question with an unimplemented answer; changing it means
-  rebuilding the graph and re-running the evaluation.
+  supported. Restoring the distinction's discriminating power (below) is not the
+  same as measuring its precision.
+- **Absolute similarity thresholds did not survive an embedder swap, and it took a
+  structural audit to notice.** Both the edge-admission threshold and the bridging
+  cutoff were calibrated for one embedding model and silently reinterpreted by
+  another whose cosine distribution is shifted and compressed. The graph became
+  densely connected and the bridgeable label became unconditional, with no test
+  failing and no metric obviously collapsing. Edge construction is now rank-based,
+  which is scale-free; the bridging cutoff has been rescaled; and the builder
+  refuses to emit an implausibly dense graph. The general lesson is recorded here
+  because the same trap applies to every absolute threshold in the system: a
+  constant tuned against one model's output distribution is not a constant, it is
+  a fitted parameter, and swapping the model invalidates it.
+- **The scoring parameters need re-sweeping against the rebuilt graph.** The
+  bridging cutoff is currently a scale correction rather than a selected value.
 - **The evaluation artifact and the graph artifact drifted apart** at one point, which
   makes stored results non-reproducible against the current graph until the arms are
   re-run and regenerated together.

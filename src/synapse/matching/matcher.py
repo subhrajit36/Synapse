@@ -117,8 +117,20 @@ class ScoringParams:
 # artifact. It is: at 2.0 uncapped, a candidate holding NONE of a role's skills
 # outranked one holding ALL of them. Re-sweep with this parameter in the grid
 # and a ranking metric (nDCG) in the objective before quoting new numbers.
+# `bridge_cutoff` is NOT the swept 0.70. That value was selected against a graph
+# built with all-MiniLM-L6-v2, whose edge distances have median ~0.45, so a
+# 2-hop path cost ~0.91 and the cutoff rejected most of them. bge-small-en-v1.5
+# compresses cosines into a high narrow band: median edge distance ~0.23, so a
+# 2-hop path costs ~0.46 and 0.70 rejects almost nothing. Same threshold, same
+# graph shape, opposite behaviour.
+#
+# 0.35 is 0.70 rescaled by the ratio of median edge distances (0.231/0.453),
+# i.e. the same cutoff expressed in the new embedder's units. It reproduces the
+# pre-migration bridgeable rate on random draws. It is a scale correction, NOT a
+# new sweep result - re-run the B4 sweep on the rebuilt graph before treating it
+# as tuned.
 TUNED_PARAMS = ScoringParams(
-    bridge_cutoff=0.7,
+    bridge_cutoff=0.35,
     bridge_credit_scale=2.0,
     max_bridge_credit=0.9,
     unreachable_penalty=0.0,
