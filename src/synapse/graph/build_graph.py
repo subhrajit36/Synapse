@@ -193,23 +193,50 @@ def _embed_text(G: nx.Graph, node: str) -> str:
     return f"{node} ({d.get('embed_category') or d.get('category', '')})"
 
 
+# Above this, the graph is too dense for "bridgeable" to mean anything: at ~68%
+# density every skill is within two hops of every other and the label becomes
+# unconditional. This is a guard against an absolute similarity threshold that
+# has silently stopped being selective - see `add_semantic_edges`.
+MAX_PLAUSIBLE_DENSITY = 0.15
+
+
 def add_semantic_edges(
     G,
     model_name="BAAI/bge-small-en-v1.5",
     k=5,
     min_sim=0.30,
-    strong_sim=0.60,
+    strong_sim=None,
     use_embed_category=True,
     model=None,
+    max_density=MAX_PLAUSIBLE_DENSITY,
 ):
     """Add skill<->skill 'similar' edges from embedding similarity.
 
     Two passes, unioned:
       1. rank-based  - top-k neighbours per skill, floored at `min_sim`
       2. threshold   - ANY pair at or above `strong_sim`, regardless of rank
+                       (disabled by default; see below)
 
-    Pass 2 exists because a fixed top-k budget gets consumed inside dense
-    clusters, silently dropping genuine high-similarity pairs at rank k+1.
+    ---
+
+    ABSOLUTE SIMILARITY THRESHOLDS ARE EMBEDDER-SPECIFIC. `strong_sim` defaulted
+    to 0.60, which was selective under all-MiniLM-L6-v2. Switching to
+    bge-small-en-v1.5 in the C1 migration kept the number and changed its
+    meaning: bge compresses short-string cosines into a high narrow band whose
+    all-pair median is ~0.63, i.e. ABOVE the threshold. Two unrelated skills are
+    then expected to clear it, pass 2 admits most of the graph, and density went
+    from ~3% to ~68%. Every missing skill became "bridgeable", which is the
+    label doing no work at all.
+
+    Pass 2 is therefore off by default. Rank-based selection is scale-free - it
+    asks "which are this skill's nearest neighbours", a question whose answer
+    does not depend on how the model spreads its cosines - so pass 1 survives an
+    embedder swap intact. Re-enable pass 2 only with a threshold calibrated
+    against the actual all-pair distribution of the model in use, and note that
+    for bge it adds almost nothing above 0.80 and floods the graph below it.
+
+    `max_density` aborts the build if the result is implausibly dense, so this
+    class of regression fails loudly instead of shipping.
 
     Uses FastEmbed (ONNX, CPU-only) by default. Set `model_name` to a
     sentence-transformers model to use the old backend (dev only).
@@ -274,6 +301,21 @@ def add_semantic_edges(
                 score = float(sim[i][j])
                 if score >= strong_sim:
                     offer(i, j, score)
+
+    n_skills = len(skills)
+    max_pairs = n_skills * (n_skills - 1) // 2
+    density = len(pairs) / max_pairs if max_pairs else 0.0
+    if max_density is not None and density > max_density:
+        raise ValueError(
+            f"Similarity graph is {density:.1%} dense ({len(pairs)} pairs over "
+            f"{n_skills} skills), above the {max_density:.0%} ceiling. An "
+            f"absolute threshold (strong_sim={strong_sim}) that is no longer "
+            f"selective for '{model_name}' is the usual cause: check it against "
+            "the model's all-pair similarity distribution rather than assuming "
+            "a value calibrated for a different embedder still holds. At this "
+            "density every skill is within two hops of every other and the "
+            "bridgeable/gap distinction carries no information."
+        )
 
     for (a, b), score in pairs.items():
         if G.has_edge(a, b):               # don't clobber 'requires' edges
