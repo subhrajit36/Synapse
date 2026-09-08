@@ -18,6 +18,7 @@ Two deliberate changes from the previous version:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 from dataclasses import dataclass, field
@@ -30,6 +31,12 @@ import numpy as np
 from .aliases import active_alias_table, build_surface_index, normalize, validate_alias_table
 
 logger = logging.getLogger(__name__)
+
+# The embedder Phase C1 locked in, and the one build_graph.py used to produce the
+# edge weights `matcher.TUNED_PARAMS` is calibrated against. Serving surfaces
+# should pass this explicitly rather than inheriting the `model_name` default
+# below, which is still the Phase A dev embedder for backwards compatibility.
+PRODUCTION_EMBED_MODEL = "BAAI/bge-small-en-v1.5"
 
 # NOTE: this default is a starting point, NOT a validated value. Canonical node
 # names are long O*NET strings, so a short surface like "aws" scores far lower
@@ -143,10 +150,14 @@ class EntityLinker:
         alias_table: dict[str, str] | None = None,
         unresolved_log: str | Path | None = None,
         use_embeddings: bool = True,
+        cache_dir: str | Path | None = None,
     ) -> None:
         self.skills = list(skill_names)
         self.min_score = min_score
         self.unresolved_log = Path(unresolved_log) if unresolved_log else None
+        # Off by default: an opt-in caller gets the on-disk node matrix, everyone
+        # else keeps recomputing exactly as before.
+        self.cache_dir = Path(cache_dir) if cache_dir else None
 
         self.alias_index = active_alias_table(self.skills, alias_table)
         self.surface_index = build_surface_index(self.skills)
@@ -166,31 +177,106 @@ class EntityLinker:
 
     # ------------------------------------------------------------- embeddings
 
+    def warm(self) -> bool:
+        """Build the node embedding matrix now rather than on the first fallback.
+
+        Encoding every node text costs ~60ms per node on CPU ONNX, so on a 213
+        skill graph the lazy path spends ~13s inside whichever request first
+        misses the alias and surface indexes. A serving surface that would rather
+        pay that at startup calls this; the MCP engine deliberately does not, so
+        a cold container stays off the 512MB ceiling until something needs it
+        (NFR1). Returns False when no embedder is available, exactly as
+        `_ensure_embeddings` does - warming is best-effort, never fatal.
+        """
+        return self._ensure_embeddings()
+
+    def _cache_path(self) -> Path | None:
+        """Where this node matrix is cached, or None when caching is off.
+
+        The key covers everything the matrix depends on - model, prefix mode and
+        the node texts themselves - so a rebuilt graph or a swapped embedder
+        misses the cache instead of silently scoring against a stale matrix
+        (NFR7).
+        """
+        if self.cache_dir is None:
+            return None
+        digest = hashlib.sha256(
+            "\x00".join(
+                [self._model_name, f"fastembed={self._is_fastembed}", *self._node_texts]
+            ).encode("utf-8")
+        ).hexdigest()[:16]
+        return self.cache_dir / f"node_emb-{digest}.npy"
+
+    def _load_cached_embeddings(self) -> np.ndarray | None:
+        path = self._cache_path()
+        if path is None or not path.exists():
+            return None
+        try:
+            matrix = np.load(path)
+        except Exception as exc:  # noqa: BLE001 - a bad cache must never be fatal
+            logger.warning("Ignoring unreadable embedding cache %s (%s)", path, exc)
+            return None
+        if matrix.ndim != 2 or matrix.shape[0] != len(self._node_texts):
+            logger.warning(
+                "Ignoring embedding cache %s: shape %s does not match %d nodes",
+                path, matrix.shape, len(self._node_texts),
+            )
+            return None
+        logger.info("Loaded node embeddings from %s", path)
+        return matrix
+
+    def _store_cached_embeddings(self, matrix: np.ndarray) -> None:
+        path = self._cache_path()
+        if path is None:
+            return
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            np.save(path, matrix)
+            logger.info("Cached node embeddings to %s", path)
+        except Exception as exc:  # noqa: BLE001 - a read-only FS is not an error
+            logger.warning("Could not write embedding cache %s (%s)", path, exc)
+
+    def _ensure_embedder(self) -> bool:
+        """Construct the embedder itself. False if the library is unavailable.
+
+        Split out from `_ensure_embeddings` so a cached node matrix can be used
+        without paying to instantiate a model that may never encode a query.
+        """
+        if self._embedder is not None:
+            return True
+        try:
+            # Default to FastEmbed for Phase C1+
+            if self._model_name.startswith("BAAI/") or "fastembed" in self._model_name.lower():
+                self._embedder = FastEmbedEmbedder(self._model_name)
+            else:
+                self._embedder = SentenceTransformerEmbedder(self._model_name)
+        except ImportError:
+            logger.warning(
+                "No embedder available; linking is alias/surface-only. "
+                "Unmatched surfaces will be reported as unresolved."
+            )
+            self._use_embeddings = False
+            return False
+        return True
+
     def _ensure_embeddings(self) -> bool:
         """Lazily build the node embedding matrix. False if unavailable."""
         if not self._use_embeddings:
             return False
         if self._node_emb is not None:
             return True
-        if self._embedder is None:
-            try:
-                # Default to FastEmbed for Phase C1+
-                if self._model_name.startswith("BAAI/") or "fastembed" in self._model_name.lower():
-                    self._embedder = FastEmbedEmbedder(self._model_name)
-                else:
-                    self._embedder = SentenceTransformerEmbedder(self._model_name)
-            except ImportError:
-                logger.warning(
-                    "No embedder available; linking is alias/surface-only. "
-                    "Unmatched surfaces will be reported as unresolved."
-                )
-                self._use_embeddings = False
-                return False
+        cached = self._load_cached_embeddings()
+        if cached is not None:
+            self._node_emb = cached
+            return True
+        if not self._ensure_embedder():
+            return False
         # Encode node texts as passages (no query prefix)
         if self._is_fastembed:
             self._node_emb = _l2_normalize(self._embedder.encode_passages(self._node_texts))
         else:
             self._node_emb = _l2_normalize(self._embedder.encode(self._node_texts))
+        self._store_cached_embeddings(self._node_emb)
         return True
 
     # ------------------------------------------------------------------ linking
@@ -207,7 +293,9 @@ class EntityLinker:
         if surface in self.surface_index:
             return LinkResult(phrase, self.surface_index[surface], 1.0, METHOD_SURFACE, weight)
 
-        if not self._ensure_embeddings():
+        # The matrix may have come from cache, in which case the embedder itself
+        # is built here - on the first surface that actually needs a query vector.
+        if not self._ensure_embeddings() or not self._ensure_embedder():
             return LinkResult(phrase, None, 0.0, METHOD_UNRESOLVED, weight)
 
         # Use query prefix for FastEmbed retrieval queries

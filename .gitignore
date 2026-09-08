@@ -16,6 +16,10 @@ data/checkpoints/
 data/extractions/
 *.sqlite
 
+# Derived embedding matrix: reproducible from (skill_graph.pkl, embed model),
+# keyed on both, so it is a cache and not an artifact worth versioning.
+data/.emb_cache/
+
 # Editor
 .vscode/
 CLAUDE.md

@@ -598,7 +598,13 @@ def sweep_config(matcher: Matcher, jds: list[dict], base_params: ScoringParams |
     """Sweep ScoringParams on train split for a given arm."""
     # Grid from ablation.py
     GRID = {
-        "bridge_cutoff": [0.40, 0.50, 0.60, 0.70],
+        # Extended downward for the bge-small distance scale. Edge distances on
+        # the rebuilt graph run 0.012-0.380 with a median of ~0.23, so a 2-hop
+        # path costs ~0.46; the previous floor of 0.40 sat above the range where
+        # the cutoff actually discriminates, and the old top of 0.70 rejects
+        # essentially nothing. A grid that cannot express the answer returns a
+        # boundary value and looks like a result.
+        "bridge_cutoff": [0.20, 0.25, 0.30, 0.35, 0.40, 0.50, 0.60, 0.70],
         "bridge_credit_scale": [1.0, 1.5, 2.0],
         # NOTE: `max_bridge_credit` is deliberately NOT swept here. Adding it
         # would change every arm's selected config and break comparability with
