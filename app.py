@@ -6,13 +6,17 @@ sys.path.insert(0, "src")
 
 import streamlit as st
 from synapse.matching.matcher import Matcher, TUNED_PARAMS
-from synapse.matching.entity_linker import EntityLinker
+from synapse.matching.entity_linker import PRODUCTION_EMBED_MODEL, EntityLinker
 from synapse.ingest.resume import read_resume
 from synapse.ingest.skill_extractor import SkillExtractor as GazetteerExtractor
 
 st.set_page_config(page_title="Synapse", page_icon="🧠", layout="wide")
 
 GRAPH_PATH = "data/skill_graph.pkl"
+# Encoding the node texts costs ~13s on CPU and depends only on (graph, model),
+# so it is cached to disk and survives the process. Keyed on both, so a rebuilt
+# graph misses rather than reusing a stale matrix.
+EMBED_CACHE_DIR = "data/.emb_cache"
 
 # Scoring config selected by the Phase B4 sweep; defined once in matcher.py so
 # this app and the MCP server score identically (see TUNED_PARAMS there).
@@ -39,13 +43,27 @@ def load_engine():
     skills = [n for n, d in G.nodes(data=True) if d["node_type"] == "skill"]
     node_texts = {n: f"{n} ({G.nodes[n].get('category', '')})" for n in skills}
 
-    # Entity linker: canonicalizes extracted skills to graph nodes
+    # Entity linker: canonicalizes extracted skills to graph nodes.
+    #
+    # `model_name` is pinned to the production embedder rather than left on the
+    # constructor's Phase A default (all-MiniLM-L6-v2). The graph's edge weights
+    # were produced by bge-small-en-v1.5 and matcher.TUNED_PARAMS' cutoffs are
+    # expressed in that embedder's distance units, so linking with MiniLM here
+    # scored one model's distances against another's thresholds - and made this
+    # page disagree with the MCP server, which already pins bge.
     linker = EntityLinker(
         skills,
         node_texts=node_texts,
+        model_name=PRODUCTION_EMBED_MODEL,
         min_score=0.60,  # threshold for embedding fallback
         use_embeddings=True,
+        cache_dir=EMBED_CACHE_DIR,
     )
+    # Build the node matrix now. Left lazy, it fires inside whichever request
+    # first sees a surface the alias and surface indexes miss, which put a ~13s
+    # stall in the middle of "Extracting skills from <resume>". Startup is the
+    # honest place to pay it; the disk cache means only the first ever run does.
+    linker.warm()
 
     # Gazetteer extractor: fast string-match fallback (no API key needed)
     gazetteer = GazetteerExtractor(skills)

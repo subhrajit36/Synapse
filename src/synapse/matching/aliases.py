@@ -53,6 +53,19 @@ ALIAS_TABLE: dict[str, str] = {
     "gcp": "Google Workspace software",  # Closest match in current graph
     "tf": "IBM Terraform",
     "terraform": "IBM Terraform",
+    # Four graph nodes that `build_surface_index` cannot index, so without these
+    # they resolve to nothing even when a document names them exactly:
+    #   C, R      - one character, dropped by the index's `len(surface) >= 2` guard
+    #   SAS, UNIX - `embedded_acronyms` pulls the same acronym out of 'SAS JMP'
+    #               and 'UNIX Shell', making the surface ambiguous, and an
+    #               ambiguous surface is dropped rather than guessed at
+    # An exact node name should not depend on a cosine score to be found again,
+    # which is what the deterministic override layer is for (A2.4). Longer
+    # surfaces are unaffected: 'sas jmp' and 'unix shell' still reach the index.
+    "c": "C",
+    "r": "R",
+    "sas": "SAS",
+    "unix": "UNIX",
 }
 
 _WS = re.compile(r"\s+")
