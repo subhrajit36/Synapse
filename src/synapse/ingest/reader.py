@@ -1,8 +1,17 @@
 """Phase A1, Node 1: load a resume or JD and chunk it for extraction.
 
-Deliberately dependency-light: `.txt`/`.md` need nothing, `.docx` needs
-python-docx and only imports it when a .docx is actually opened, so the rest of
-the pipeline stays importable on a machine without it.
+Two entry points, one behaviour:
+
+  * `read_document(path)` - the batch/CLI path, reads a file from disk.
+  * `read_bytes(data, filename)` - the upload path (F1), takes what an HTTP
+    request hands you. A web upload has bytes and a filename, never a path.
+
+Both delegate parsing to `resume.py` so the two can never disagree about what a
+document contains, and both then normalise and chunk identically.
+
+Deliberately dependency-light: `.txt`/`.md` need nothing; `.docx` and `.pdf`
+import their parsers only when a file of that type is actually opened, so the
+rest of the pipeline stays importable without them.
 """
 
 from __future__ import annotations
@@ -11,11 +20,15 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .resume import docx_text, pdf_text
+
 # ~500 tokens; English prose runs roughly 0.75 words per token, so ~375 words.
 DEFAULT_CHUNK_WORDS = 375
 DEFAULT_OVERLAP_WORDS = 40
 
-SUPPORTED_SUFFIXES = {".txt", ".md", ".docx"}
+# `.pdf` is here because it is what résumés actually arrive as. Parsing lives in
+# `resume.py`; this set only decides what the pipeline will accept.
+SUPPORTED_SUFFIXES = {".txt", ".md", ".docx", ".pdf"}
 
 _WHITESPACE = re.compile(r"[ \t\r\f\v]+")
 _BLANKLINES = re.compile(r"\n{3,}")
@@ -41,23 +54,44 @@ def _read_txt(path: Path) -> str:
     return path.read_text(encoding="utf-8", errors="replace")
 
 
-def _read_docx(path: Path) -> str:
+def _extract_text(source, suffix: str) -> str:
+    """Dispatch one source to the right parser in `resume.py`.
+
+    `source` is a path for the disk entry point and a BytesIO for the upload
+    one; both parsers accept either, so the two paths share this dispatch and
+    cannot drift apart.
+
+    A parser failure is re-raised as `ValueError`. That is not cosmetic: a
+    corrupt or password-protected PDF raises `pypdf.errors.PdfReadError`, which
+    nothing upstream catches, so one bad file would abort an entire upload
+    batch. As a `ValueError` it lands in the read node's existing handler and
+    becomes a recorded `read_failed` for that document alone. Users will upload
+    broken PDFs; that has to be survivable.
+
+    `ImportError` passes through untouched - a missing parser is a deployment
+    problem, not a bad document, and must not look like one.
+    """
     try:
-        import docx  # type: ignore
-    except ImportError as exc:  # pragma: no cover - environment-dependent
-        raise ImportError(
-            "Reading .docx requires python-docx. Install it with `pip install python-docx`."
+        if suffix == ".pdf":
+            return pdf_text(source)
+        if suffix == ".docx":
+            return docx_text(source)
+        if isinstance(source, Path):
+            return _read_txt(source)
+        return source.read().decode("utf-8", errors="replace")
+    except ImportError:
+        raise
+    except Exception as exc:  # noqa: BLE001 - normalised for the caller
+        raise ValueError(
+            f"Could not parse {suffix or 'file'}: {type(exc).__name__}: {exc}"
         ) from exc
 
-    document = docx.Document(str(path))
-    parts: list[str] = [p.text for p in document.paragraphs]
-    # Resumes frequently hide the entire skills section inside a table.
-    for table in document.tables:
-        for row in table.rows:
-            cells = [c.text.strip() for c in row.cells if c.text.strip()]
-            if cells:
-                parts.append(" | ".join(cells))
-    return "\n".join(parts)
+
+def _check_suffix(suffix: str) -> None:
+    if suffix not in SUPPORTED_SUFFIXES:
+        raise ValueError(
+            f"Unsupported file type {suffix!r}; supported: {sorted(SUPPORTED_SUFFIXES)}"
+        )
 
 
 def normalize_text(raw: str) -> str:
@@ -110,23 +144,56 @@ def read_document(
     chunk_words: int = DEFAULT_CHUNK_WORDS,
     overlap_words: int = DEFAULT_OVERLAP_WORDS,
 ) -> Document:
-    """Load one file and return it normalized and chunked."""
+    """Load one file from disk and return it normalized and chunked."""
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(path)
     suffix = path.suffix.lower()
-    if suffix not in SUPPORTED_SUFFIXES:
-        raise ValueError(
-            f"Unsupported file type {suffix!r}; supported: {sorted(SUPPORTED_SUFFIXES)}"
-        )
+    _check_suffix(suffix)
 
-    raw = _read_docx(path) if suffix == ".docx" else _read_txt(path)
-    text = normalize_text(raw)
+    text = normalize_text(_extract_text(path, suffix))
     source_id = path.stem
 
     return Document(
         source_id=source_id,
         path=path,
+        text=text,
+        doc_type=doc_type,
+        chunks=chunk_text(text, source_id, chunk_words, overlap_words),
+    )
+
+
+def read_bytes(
+    data: bytes,
+    filename: str,
+    doc_type: str = "unknown",
+    chunk_words: int = DEFAULT_CHUNK_WORDS,
+    overlap_words: int = DEFAULT_OVERLAP_WORDS,
+) -> Document:
+    """F1: the upload entry point. Same result as `read_document`, no disk.
+
+    An HTTP upload hands you bytes and a filename, never a path, and spooling to
+    a temp file just to read it back would also break checkpoint identity - the
+    temp path differs on every request, so a path-derived thread id would never
+    resume. `filename` is used only for its suffix (which parser) and its stem
+    (the `source_id`); nothing is written anywhere.
+
+    `Document.path` is set to the bare filename so the object stays printable
+    and the field keeps meaning something, but it is not a real location and
+    must not be opened.
+    """
+    from io import BytesIO
+
+    name = Path(filename)
+    suffix = name.suffix.lower()
+    _check_suffix(suffix)
+
+    text = normalize_text(_extract_text(BytesIO(data), suffix))
+    source_id = name.stem
+
+    return Document(
+        source_id=source_id,
+        path=name,
         text=text,
         doc_type=doc_type,
         chunks=chunk_text(text, source_id, chunk_words, overlap_words),
