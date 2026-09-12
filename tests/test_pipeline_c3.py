@@ -27,7 +27,12 @@ VALID = json.dumps([{"skill": "Python", "weight": 1.5, "context": "led Python wo
 VALID_DOCKER = json.dumps([{"skill": "Docker", "weight": 1.0, "context": "containerised"}])
 
 # Fast config: no real sleeping, so a backoff path costs nothing in test time.
-FAST = IngestionConfig(chunk_words=10, overlap_words=2, max_attempts=3, sleep=False)
+# `chunks_per_call=1` is deliberate: these tests pin the C3 guarantees at chunk
+# granularity - one call per chunk, a checkpoint after each, one chunk recorded
+# per failure. E2's grouping is a separate behaviour with its own tests in
+# test_batched_extraction.py; setting it here would conflate the two.
+FAST = IngestionConfig(chunk_words=10, overlap_words=2, max_attempts=3,
+                       sleep=False, chunks_per_call=1)
 
 
 class FakeClient:

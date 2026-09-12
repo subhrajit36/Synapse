@@ -165,6 +165,20 @@ class Neo4jClient:
                 FOR (r:Role) ON (r.name)
             """)
 
+    def ensure_candidate_schema(self) -> None:
+        """Constraints and indexes for the Phase E candidate pool. Idempotent."""
+        with self.session() as session:
+            session.run("""
+                CREATE CONSTRAINT candidate_id_unique IF NOT EXISTS
+                FOR (c:Candidate) REQUIRE c.candidate_id IS UNIQUE
+            """)
+            # Dedupe key: re-uploading the same resume must not re-extract it,
+            # which is the whole point of separating the pool from the query.
+            session.run("""
+                CREATE INDEX candidate_content_hash IF NOT EXISTS
+                FOR (c:Candidate) ON (c.content_hash)
+            """)
+
     # ------------------------------------------------------------------ ingestion
 
     def upsert_skill(
@@ -383,6 +397,186 @@ class Neo4jClient:
         # No similar node exists - create new
         self.upsert_skill(name, embedding=embedding, category=category, source="dynamic")
         return name, True
+
+    # ------------------------------------------------------- candidate pool (E1)
+
+    def upsert_candidate(
+        self,
+        candidate_id: str,
+        skills: list[dict],
+        name: str = "",
+        source_id: str = "",
+        doc_type: str = "resume",
+        content_hash: str = "",
+        model: str = "",
+        prompt_version: str = "",
+        chunk_count: int = 0,
+        failed_chunks: list[int] | None = None,
+        unresolved: list[str] | None = None,
+    ) -> None:
+        """Write one candidate profile and its HAS_SKILL edges.
+
+        `skills` are already-linked entries:
+            {node, weight, context, method, link_score}
+
+        Existing HAS_SKILL edges are deleted before the new ones are written, in
+        one transaction. A re-extraction must *replace* a profile rather than
+        union with it - otherwise a skill the model no longer finds lingers
+        forever and the profile only ever grows.
+
+        Only skills that resolved to a graph node get an edge. Unresolved
+        surfaces are kept as a property so they stay visible (NFR6) without
+        fabricating nodes for them; creating nodes is the separate, deduplicated
+        C2.5 path.
+        """
+        props = {
+            "candidate_id": candidate_id,
+            "name": name or candidate_id,
+            "source_id": source_id,
+            "doc_type": doc_type,
+            "content_hash": content_hash,
+            "model": model,
+            "prompt_version": prompt_version,
+            "chunk_count": chunk_count,
+            "failed_chunks": failed_chunks or [],
+            "unresolved": unresolved or [],
+            "skills": skills,
+        }
+
+        with self.session() as session:
+            session.execute_write(self._write_candidate, props)
+
+    @staticmethod
+    def _write_candidate(tx, props: dict) -> None:
+        """Single transaction so a profile is never half-replaced."""
+        tx.run("""
+            MERGE (c:Candidate {candidate_id: $candidate_id})
+            SET c.name           = $name,
+                c.source_id      = $source_id,
+                c.doc_type       = $doc_type,
+                c.content_hash   = $content_hash,
+                c.model          = $model,
+                c.prompt_version = $prompt_version,
+                c.chunk_count    = $chunk_count,
+                c.failed_chunks  = $failed_chunks,
+                c.unresolved     = $unresolved,
+                c.extracted_at   = datetime()
+        """, props)
+
+        tx.run("""
+            MATCH (c:Candidate {candidate_id: $candidate_id})-[r:HAS_SKILL]->()
+            DELETE r
+        """, {"candidate_id": props["candidate_id"]})
+
+        # UNWIND rather than a call per skill: one round trip instead of N, which
+        # matters on a managed database where latency dominates.
+        tx.run("""
+            MATCH (c:Candidate {candidate_id: $candidate_id})
+            UNWIND $skills AS skill
+            MATCH (s:Skill {name: skill.node})
+            MERGE (c)-[r:HAS_SKILL]->(s)
+            SET r.weight     = skill.weight,
+                r.context    = skill.context,
+                r.method     = skill.method,
+                r.link_score = skill.link_score
+        """, {"candidate_id": props["candidate_id"], "skills": props["skills"]})
+
+    def get_candidate(self, candidate_id: str) -> dict | None:
+        """One candidate profile with its skills, or None."""
+        with self.session() as session:
+            record = session.run("""
+                MATCH (c:Candidate {candidate_id: $candidate_id})
+                OPTIONAL MATCH (c)-[r:HAS_SKILL]->(s:Skill)
+                RETURN c.candidate_id AS candidate_id, c.name AS name,
+                       c.source_id AS source_id, c.doc_type AS doc_type,
+                       c.content_hash AS content_hash, c.model AS model,
+                       c.prompt_version AS prompt_version,
+                       c.chunk_count AS chunk_count,
+                       c.failed_chunks AS failed_chunks,
+                       c.unresolved AS unresolved,
+                       toString(c.extracted_at) AS extracted_at,
+                       collect(CASE WHEN s IS NULL THEN NULL ELSE {
+                           node: s.name, weight: r.weight, context: r.context,
+                           method: r.method, link_score: r.link_score
+                       } END) AS skills
+            """, {"candidate_id": candidate_id}).single()
+        if record is None:
+            return None
+        out = dict(record)
+        out["skills"] = [s for s in out["skills"] if s is not None]
+        return out
+
+    def find_candidate_by_hash(self, content_hash: str) -> str | None:
+        """Candidate id already holding this exact document, if any.
+
+        The dedupe check that stops a re-upload costing another extraction.
+        """
+        if not content_hash:
+            return None
+        with self.session() as session:
+            record = session.run("""
+                MATCH (c:Candidate {content_hash: $content_hash})
+                RETURN c.candidate_id AS candidate_id
+                LIMIT 1
+            """, {"content_hash": content_hash}).single()
+        return record["candidate_id"] if record else None
+
+    def list_candidates(self) -> list[dict]:
+        """Pool summary - no skill payloads, so it stays cheap to poll."""
+        with self.session() as session:
+            return [dict(r) for r in session.run("""
+                MATCH (c:Candidate)
+                OPTIONAL MATCH (c)-[r:HAS_SKILL]->()
+                RETURN c.candidate_id AS candidate_id, c.name AS name,
+                       c.doc_type AS doc_type, c.model AS model,
+                       c.content_hash AS content_hash,
+                       size(c.unresolved) AS unresolved_count,
+                       toString(c.extracted_at) AS extracted_at,
+                       count(r) AS skill_count
+                ORDER BY c.name
+            """)]
+
+    def load_candidate_pool(self) -> list[dict]:
+        """Every candidate with `{skill: weight}`, ready for the matcher.
+
+        One query for the whole pool rather than one per candidate: ranking is
+        supposed to be the fast half, and N round trips to a managed database
+        would undo exactly the cost asymmetry this design exists to exploit.
+        """
+        with self.session() as session:
+            rows = session.run("""
+                MATCH (c:Candidate)
+                OPTIONAL MATCH (c)-[r:HAS_SKILL]->(s:Skill)
+                RETURN c.candidate_id AS candidate_id, c.name AS name,
+                       c.unresolved AS unresolved,
+                       collect(CASE WHEN s IS NULL THEN NULL
+                               ELSE {node: s.name, weight: r.weight} END) AS skills
+                ORDER BY c.name
+            """)
+            pool = []
+            for record in rows:
+                entry = dict(record)
+                entry["skills"] = {
+                    s["node"]: s["weight"] for s in entry["skills"] if s is not None
+                }
+                pool.append(entry)
+        return pool
+
+    def delete_candidate(self, candidate_id: str) -> bool:
+        """Remove a candidate and its edges. False if it was not there."""
+        with self.session() as session:
+            record = session.run("""
+                MATCH (c:Candidate {candidate_id: $candidate_id})
+                DETACH DELETE c
+                RETURN count(*) AS deleted
+            """, {"candidate_id": candidate_id}).single()
+        return bool(record and record["deleted"])
+
+    def count_candidates(self) -> int:
+        with self.session() as session:
+            record = session.run(
+                "MATCH (c:Candidate) RETURN count(c) AS n").single()
+        return record["n"] if record else 0
 
     # ------------------------------------------------------------------ diagnostics
 

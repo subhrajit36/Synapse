@@ -57,6 +57,14 @@ STATUS_EXTRACTING = "extracting"
 STATUS_COMPLETE = "complete"
 STATUS_PARTIAL = "partial"      # finished, but some chunks never validated
 STATUS_READ_FAILED = "read_failed"
+STATUS_LINK_FAILED = "link_failed"        # E3: canonicalization could not run
+STATUS_PERSIST_FAILED = "persist_failed"  # E3: extracted but not stored
+
+# Which step the backoff node is currently protecting. One backoff node serves
+# both because the policy - wait, retry, eventually give up and record why - is
+# identical; only what "give up" means differs.
+STAGE_EXTRACT = "extract"
+STAGE_PERSIST = "persist"
 
 
 # -------------------------------------------------------------------------- state
@@ -91,16 +99,28 @@ class IngestState(TypedDict, total=False):
     failed_chunks: list[int]
 
     # --- retry bookkeeping owned by the backoff node
-    attempt: int                # consecutive failures on the current chunk
+    attempt: int                # consecutive failures on the current group
     last_error: str
     fatal: bool                 # error class says retrying cannot help
+    stage: str                  # which step backoff is protecting
+
+    # --- E3: canonicalization and persistence
+    candidate_id: str
+    content_hash: str           # dedupe key; a re-upload must not re-extract
+    linked: list[dict]          # {node, weight, context, method, link_score}
+    unresolved: list[str]       # surfaces that reached no graph node
+    persisted: bool
 
     # --- terminal
     status: str
     result: dict | None         # ExtractionResult.model_dump()
 
 
-def initial_state(source_path: str | Path, doc_type: str = "unknown") -> IngestState:
+def initial_state(
+    source_path: str | Path,
+    doc_type: str = "unknown",
+    candidate_id: str = "",
+) -> IngestState:
     return IngestState(
         source_path=str(source_path),
         doc_type=doc_type,
@@ -112,6 +132,12 @@ def initial_state(source_path: str | Path, doc_type: str = "unknown") -> IngestS
         attempt=0,
         last_error="",
         fatal=False,
+        stage=STAGE_EXTRACT,
+        candidate_id=candidate_id,
+        content_hash="",
+        linked=[],
+        unresolved=[],
+        persisted=False,
         status=STATUS_READING,
         result=None,
     )
@@ -123,10 +149,16 @@ class IngestionConfig:
 
     chunk_words: int = DEFAULT_CHUNK_WORDS
     overlap_words: int = DEFAULT_OVERLAP_WORDS
-    max_attempts: int = 4          # per chunk, across the backoff node
+    max_attempts: int = 4          # per group, across the backoff node
     backoff_base: float = 2.0
     backoff_cap: float = 30.0
     sleep: bool = True             # tests turn the real sleeping off
+    # E2: chunks sent per Gemini call. The free tier caps requests per minute,
+    # not tokens, so grouping chunks divides a batch's wall-clock cost by this
+    # factor. Raising it coarsens checkpoint granularity and widens the blast
+    # radius of one failed call; 1 restores the original chunk-at-a-time
+    # behaviour exactly. Tune against real documents.
+    chunks_per_call: int = 3
 
 
 # --------------------------------------------------------------------- nodes
@@ -153,6 +185,11 @@ def _read_node(state: IngestState, config: IngestionConfig) -> IngestState:
 
     return {
         "source_id": document.source_id,
+        "candidate_id": state.get("candidate_id") or document.source_id,
+        # Hash the normalised text, not the raw bytes: the same résumé saved as
+        # .txt and .docx should dedupe, and a trailing-whitespace edit should not
+        # cost another extraction.
+        "content_hash": hashlib.sha256(document.text.encode("utf-8")).hexdigest(),
         "chunks": [{"index": c.index, "text": c.text} for c in document.chunks],
         "cursor": 0,
         "skills": [],
@@ -160,29 +197,41 @@ def _read_node(state: IngestState, config: IngestionConfig) -> IngestState:
         "attempt": 0,
         "last_error": "",
         "fatal": False,
+        "stage": STAGE_EXTRACT,
         "status": STATUS_EXTRACTING,
     }
+
+
+def _group_size(config: IngestionConfig) -> int:
+    return max(1, config.chunks_per_call)
 
 
 def _extract_node(
     state: IngestState, extractor: SkillExtractor, config: IngestionConfig
 ) -> IngestState:
-    """Node 2. Extract exactly one chunk.
+    """Node 2. Extract one GROUP of chunks per superstep (E2).
 
-    One chunk per superstep is the whole point: it is what gives the
-    checkpointer something to save between Gemini calls (C3.3). Batching the
-    document into a single node would make the checkpoint all-or-nothing.
+    One group per superstep is still what gives the checkpointer something to
+    save between Gemini calls (C3.3); the group is simply larger than one chunk
+    now. Extracting the whole document in a single node would make its
+    checkpoint all-or-nothing, which is the thing this design exists to avoid.
+
+    The cursor counts chunks, not groups, so a checkpoint written under one
+    `chunks_per_call` setting stays meaningful if the setting changes.
     """
     cursor = state["cursor"]
-    chunk = state["chunks"][cursor]
+    chunks = state["chunks"]
+    group = chunks[cursor:cursor + _group_size(config)]
+    texts = [c["text"] for c in group]
 
     try:
-        extracted = extractor.extract_once(chunk["text"])
+        extracted = extractor.extract_batch(texts)
     except Exception as exc:  # noqa: BLE001 - classification happens in the router
         fatal = not extractor.is_retryable(exc)
         logger.warning(
-            "Chunk %d of %s failed (%s, attempt %d/%d, fatal=%s)",
-            cursor, state.get("source_id") or state["source_path"],
+            "Chunks %d-%d of %s failed (%s, attempt %d/%d, fatal=%s)",
+            cursor, cursor + len(group) - 1,
+            state.get("source_id") or state["source_path"],
             type(exc).__name__, state["attempt"] + 1, config.max_attempts, fatal,
         )
         return {
@@ -193,35 +242,152 @@ def _extract_node(
 
     return {
         "skills": state["skills"] + [s.model_dump() for s in extracted],
-        "cursor": cursor + 1,
+        "cursor": cursor + len(group),
         "attempt": 0,
         "last_error": "",
         "fatal": False,
     }
 
 
+def _link_node(state: IngestState, linker) -> IngestState:
+    """E3. Canonicalize extracted surfaces onto graph nodes.
+
+    Runs once per document, after every chunk group, rather than per group: the
+    linker deduplicates by target node, so linking the merged set is both
+    cheaper and more correct than linking each group in isolation.
+
+    Linking is local computation. A failure here means the embedder is broken or
+    absent, which retrying will not fix, so it is terminal for the document
+    rather than routed to backoff - and terminal *without* losing the extraction,
+    which still reaches `finalize` and the caller.
+    """
+    merged = merge_skills([ExtractedSkill.model_validate(s) for s in state["skills"]])
+
+    try:
+        profile = linker.link_many(
+            [(s.skill, s.weight) for s in merged],
+            source_id=state.get("source_id", ""),
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.error("Linking failed for %s: %s: %s",
+                     state.get("source_id"), type(exc).__name__, exc)
+        return {
+            "status": STATUS_LINK_FAILED,
+            "last_error": f"{type(exc).__name__}: {exc}",
+        }
+
+    # Keep the justifying context from extraction alongside the link provenance,
+    # so a stored profile can still answer "why does this candidate have this
+    # skill" without re-reading the document (NFR6).
+    context_by_surface = {s.skill: s.context for s in merged}
+    linked = [
+        {
+            "node": r.node,
+            "weight": r.weight,
+            "context": context_by_surface.get(r.surface, ""),
+            "method": r.method,
+            "link_score": round(r.score, 4),
+        }
+        for r in profile.results if r.node is not None
+    ]
+    unresolved = [r.surface for r in profile.unresolved]
+
+    logger.info("Linked %s: %d nodes, %d unresolved",
+                state.get("source_id"), len(linked), len(unresolved))
+    return {"linked": linked, "unresolved": unresolved, "last_error": ""}
+
+
+def _persist_node(state: IngestState, store, model: str = "") -> IngestState:
+    """E3. Write the candidate profile to AuraDB.
+
+    A network failure routes to the same backoff node the extractor uses, via
+    `stage`. Giving up is NOT silent: the document finishes with
+    `persist_failed`, the extraction is still returned, and the checkpoint means
+    a re-run resumes here rather than re-extracting anything.
+    """
+    try:
+        store.upsert_candidate(
+            candidate_id=state["candidate_id"],
+            skills=state["linked"],
+            name=state.get("source_id", ""),
+            source_id=state.get("source_id", ""),
+            doc_type=state.get("doc_type", "resume"),
+            content_hash=state.get("content_hash", ""),
+            model=model,
+            prompt_version=PROMPT_VERSION,
+            chunk_count=len(state["chunks"]),
+            failed_chunks=sorted(state["failed_chunks"]),
+            unresolved=state["unresolved"],
+        )
+    except Exception as exc:  # noqa: BLE001 - classified by the router
+        logger.warning(
+            "Persist failed for %s (%s, attempt %d)",
+            state["candidate_id"], type(exc).__name__, state["attempt"] + 1,
+        )
+        return {
+            "stage": STAGE_PERSIST,
+            "attempt": state["attempt"] + 1,
+            "last_error": f"{type(exc).__name__}: {exc}",
+            "fatal": _persist_is_fatal(exc),
+        }
+
+    return {"persisted": True, "attempt": 0, "last_error": "", "fatal": False,
+            "stage": STAGE_EXTRACT}
+
+
+def _persist_is_fatal(exc: Exception) -> bool:
+    """Auth and schema errors will not fix themselves; network errors might."""
+    text = str(exc).lower()
+    return any(k in text for k in (
+        "unauthorized", "authentication", "forbidden", "constraint",
+        "syntaxerror", "invalid input",
+    ))
+
+
 def _backoff_node(state: IngestState, config: IngestionConfig) -> IngestState:
     """C3.2. The retry policy, as a node.
 
     Two outcomes, both explicit in state:
-      * retries remain and the error is transient -> wait, then re-run the chunk
+      * retries remain and the error is transient -> wait, then re-run the group
         with `cursor` untouched.
-      * the error is fatal, or attempts are exhausted -> record the chunk index
-        in `failed_chunks` and step over it. A chunk is never silently dropped
-        (A1.3), and one poisoned chunk never stalls the document forever.
+      * the error is fatal, or attempts are exhausted -> record EVERY chunk index
+        in the group as failed and step over the whole group. A chunk is never
+        silently dropped (A1.3), and one poisoned group never stalls the
+        document forever. Recording the whole group is the honest accounting:
+        one call covered N chunks, so its failure cost all N of them.
     """
     cursor = state["cursor"]
     give_up = state["fatal"] or state["attempt"] >= config.max_attempts
 
+    if state.get("stage") == STAGE_PERSIST:
+        if give_up:
+            logger.error(
+                "Giving up on persisting %s after %d attempt(s): %s",
+                state.get("candidate_id"), state["attempt"], state["last_error"],
+            )
+            # The extraction is not lost - it still reaches finalize and the
+            # caller. Only the write to the pool failed, and the checkpoint
+            # means a re-run retries the write without re-extracting.
+            return {"status": STATUS_PERSIST_FAILED, "attempt": 0, "fatal": False}
+        delay = backoff_delay(
+            state["attempt"] - 1, base=config.backoff_base, cap=config.backoff_cap
+        )
+        logger.info("Backing off %.1fs before retrying persist", delay)
+        if config.sleep:
+            time.sleep(delay)
+        return {}
+
     if give_up:
+        span = len(state["chunks"][cursor:cursor + _group_size(config)]) or 1
         logger.error(
-            "Giving up on chunk %d of %s after %d attempt(s): %s",
-            cursor, state.get("source_id") or state["source_path"],
+            "Giving up on chunks %d-%d of %s after %d attempt(s): %s",
+            cursor, cursor + span - 1,
+            state.get("source_id") or state["source_path"],
             state["attempt"], state["last_error"],
         )
         return {
-            "failed_chunks": state["failed_chunks"] + [cursor],
-            "cursor": cursor + 1,
+            "failed_chunks": state["failed_chunks"] + list(range(cursor, cursor + span)),
+            "cursor": cursor + span,
             "attempt": 0,
             "fatal": False,
         }
@@ -248,10 +414,14 @@ def _finalize_node(state: IngestState, extractor: SkillExtractor) -> IngestState
         chunk_count=len(state["chunks"]),
         failed_chunks=failed,
     )
-    return {
-        "result": result.model_dump(),
-        "status": STATUS_COMPLETE if not failed else STATUS_PARTIAL,
-    }
+    # A terminal failure already recorded upstream wins: the extraction may be
+    # complete while the link or the write was not, and reporting "complete"
+    # would hide that the profile never reached the pool.
+    status = state.get("status")
+    if status not in (STATUS_LINK_FAILED, STATUS_PERSIST_FAILED):
+        status = STATUS_COMPLETE if not failed else STATUS_PARTIAL
+
+    return {"result": result.model_dump(), "status": status}
 
 
 # -------------------------------------------------------------------- routers
@@ -268,11 +438,26 @@ def _route_after_read(state: IngestState) -> str:
 def _route_after_extract(state: IngestState) -> str:
     if state["last_error"]:
         return "backoff"
-    return "extract" if state["cursor"] < len(state["chunks"]) else "finalize"
+    if state["cursor"] < len(state["chunks"]):
+        return "extract"
+    return "link"
 
 
 def _route_after_backoff(state: IngestState) -> str:
-    return "extract" if state["cursor"] < len(state["chunks"]) else "finalize"
+    if state.get("stage") == STAGE_PERSIST:
+        # Gave up: status was set, so stop retrying and finish.
+        return "finalize" if state.get("status") == STATUS_PERSIST_FAILED else "persist"
+    if state["cursor"] < len(state["chunks"]):
+        return "extract"
+    return "link"
+
+
+def _route_after_link(state: IngestState) -> str:
+    return "finalize" if state.get("status") == STATUS_LINK_FAILED else "persist"
+
+
+def _route_after_persist(state: IngestState) -> str:
+    return "finalize" if state.get("persisted") else "backoff"
 
 
 # --------------------------------------------------------------------- graph
@@ -282,11 +467,21 @@ def build_ingestion_graph(
     extractor: SkillExtractor,
     config: IngestionConfig | None = None,
     checkpointer=None,
+    linker=None,
+    store=None,
 ):
-    """Compile the Reader -> Extractor graph.
+    """Compile the ingestion graph.
 
-    `extractor` is closed over rather than carried in state: a live SDK client is
-    not serializable, and putting it in state would break checkpointing.
+        read -> extract -> [link -> persist] -> finalize
+
+    `linker` and `store` are optional. Without them the graph is exactly the
+    Phase C3 pipeline: read, extract, write JSON. With them it is the Phase E
+    pool ingestion. Keeping both shapes in one graph avoids a second, drifting
+    copy of the retry and checkpoint logic.
+
+    All three collaborators are closed over rather than carried in state: a live
+    SDK client, an embedder and a database driver are none of them serializable,
+    and putting them in state would break checkpointing.
     """
     config = config or IngestionConfig()
 
@@ -296,16 +491,51 @@ def build_ingestion_graph(
     builder.add_node("backoff", lambda s: _backoff_node(s, config))
     builder.add_node("finalize", lambda s: _finalize_node(s, extractor))
 
+    # "link" and "persist" always exist as nodes so the routers have one shape;
+    # when a collaborator is absent the node is a pass-through and the router
+    # skips straight to finalize.
+    builder.add_node(
+        "link",
+        (lambda s: _link_node(s, linker)) if linker is not None else (lambda s: {}),
+    )
+    builder.add_node(
+        "persist",
+        (lambda s: _persist_node(s, store, extractor.model)) if store is not None
+        else (lambda s: {"persisted": False}),
+    )
+
+    def route_after_extract(state: IngestState) -> str:
+        nxt = _route_after_extract(state)
+        return "finalize" if (nxt == "link" and linker is None) else nxt
+
+    def route_after_backoff(state: IngestState) -> str:
+        nxt = _route_after_backoff(state)
+        return "finalize" if (nxt == "link" and linker is None) else nxt
+
+    def route_after_link(state: IngestState) -> str:
+        nxt = _route_after_link(state)
+        return "finalize" if (nxt == "persist" and store is None) else nxt
+
     builder.set_entry_point("read")
     builder.add_conditional_edges(
         "read", _route_after_read, {"extract": "extract", "finalize": "finalize", END: END}
     )
     builder.add_conditional_edges(
-        "extract", _route_after_extract,
-        {"extract": "extract", "backoff": "backoff", "finalize": "finalize"},
+        "extract", route_after_extract,
+        {"extract": "extract", "backoff": "backoff", "link": "link",
+         "finalize": "finalize"},
     )
     builder.add_conditional_edges(
-        "backoff", _route_after_backoff, {"extract": "extract", "finalize": "finalize"}
+        "backoff", route_after_backoff,
+        {"extract": "extract", "link": "link", "persist": "persist",
+         "finalize": "finalize"},
+    )
+    builder.add_conditional_edges(
+        "link", route_after_link, {"persist": "persist", "finalize": "finalize"}
+    )
+    builder.add_conditional_edges(
+        "persist", _route_after_persist,
+        {"backoff": "backoff", "finalize": "finalize"},
     )
     builder.add_edge("finalize", END)
 
@@ -361,12 +591,17 @@ class IngestionPipeline:
         config: IngestionConfig | None = None,
         checkpoint_path: str | Path | None = None,
         checkpointer=None,
+        linker=None,
+        store=None,
     ) -> None:
         self.extractor = extractor or SkillExtractor()
         self.config = config or IngestionConfig()
         self.checkpointer = checkpointer or make_checkpointer(checkpoint_path)
+        self.linker = linker
+        self.store = store
         self.graph = build_ingestion_graph(
-            self.extractor, self.config, self.checkpointer
+            self.extractor, self.config, self.checkpointer,
+            linker=linker, store=store,
         )
 
     # -- resume ------------------------------------------------------------
@@ -470,6 +705,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", default="data/extractions", help="Where to write JSON results.")
     parser.add_argument("--rpm", type=int, default=15, help="Gemini free-tier RPM ceiling.")
     parser.add_argument("--max-attempts", type=int, default=4)
+    parser.add_argument(
+        "--chunks-per-call", type=int, default=IngestionConfig.chunks_per_call,
+        help="Chunks per Gemini call. Higher = fewer calls, coarser checkpoints.",
+    )
+    parser.add_argument(
+        "--to-pool", action="store_true",
+        help="E5: canonicalize and write each candidate into the AuraDB pool.",
+    )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
 
@@ -478,10 +721,30 @@ def main(argv: list[str] | None = None) -> int:
         format="%(levelname)s %(name)s: %(message)s",
     )
 
+    linker = store = None
+    if args.to_pool:
+        # Imported here so a plain JSON run never constructs an embedder or a
+        # database client.
+        from ..mcp.engine import MatchEngine
+
+        engine = MatchEngine()
+        client = engine.neo4j
+        if not client.config.is_configured:
+            parser.error(
+                "--to-pool writes to AuraDB but no NEO4J_PASSWORD is set "
+                f"({client.config.describe()})."
+            )
+        client.ensure_candidate_schema()
+        linker, store = engine.linker, client
+        print(f"writing to pool: {client.config.uri}")
+
     pipeline = IngestionPipeline(
         extractor=SkillExtractor(rpm=args.rpm),
-        config=IngestionConfig(max_attempts=args.max_attempts),
+        config=IngestionConfig(max_attempts=args.max_attempts,
+                               chunks_per_call=args.chunks_per_call),
         checkpoint_path=None if args.checkpoint == "none" else args.checkpoint,
+        linker=linker,
+        store=store,
     )
 
     source = Path(args.source)

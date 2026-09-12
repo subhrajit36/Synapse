@@ -139,6 +139,11 @@ class RankingResponse(BaseModel):
                     "narrower job than the caller asked about.",
     )
     params: dict = Field(..., description="Scoring parameters this ranking used.")
+    candidate_source: str = Field(
+        "request",
+        description="'pool' when the stored candidate pool was ranked, "
+                    "'request' when candidates were supplied in the call.",
+    )
     candidates: list[CandidateScore]
 
 
@@ -198,6 +203,26 @@ class EvalRankResponse(BaseModel):
     jd_skills: list[SkillWeight]
     params: dict
     candidates: list[EvalCandidateScore]
+
+
+class PoolCandidate(BaseModel):
+    """One row in the stored candidate pool (E4). No skill payload - a listing
+    is polled and must stay cheap."""
+
+    candidate_id: str
+    name: str
+    doc_type: str = ""
+    model: str = Field("", description="Extractor that produced this profile.")
+    skill_count: int
+    unresolved_count: int = Field(
+        0, description="Surfaces that reached no graph node and so score nothing."
+    )
+    extracted_at: str = ""
+
+
+class PoolListResponse(BaseModel):
+    count: int
+    candidates: list[PoolCandidate]
 
 
 class RegisteredSkill(BaseModel):
@@ -307,6 +332,7 @@ class MatchEngine:
         self._matcher: Matcher | None = None
         self._linker: EntityLinker | None = None
         self._dataset: dict | None = None
+        self._pool: list[dict] | None = None
 
     # -- lazy resources ----------------------------------------------------
 
@@ -456,26 +482,99 @@ class MatchEngine:
         }
         return replace(self.params, **overrides) if overrides else self.params
 
+    # -- E4: the persistent candidate pool ---------------------------------
+
+    @property
+    def pool(self) -> list[dict]:
+        """Stored candidate profiles, loaded once per process and cached.
+
+        Ranking is the fast half of the system and must stay that way, so the
+        whole pool is fetched in one query rather than one per candidate. It is
+        small - a profile is a name and a few dozen skill weights.
+        """
+        if self._pool is None:
+            client = self.neo4j
+            if not client.config.is_configured:
+                raise RuntimeError(
+                    "The candidate pool lives in AuraDB, but no NEO4J_PASSWORD "
+                    f"is set ({client.config.describe()}). Ingest candidates "
+                    "first, and configure the Neo4j environment variables."
+                )
+            self._pool = client.load_candidate_pool()
+            logger.info("Loaded %d candidates from the pool", len(self._pool))
+        return self._pool
+
+    def invalidate_pool(self) -> None:
+        """Drop the cached pool so the next ranking sees new ingestions."""
+        self._pool = None
+
+    def list_pool(self) -> PoolListResponse:
+        """What is in the pool, without the skill payloads."""
+        rows = self.neo4j.list_candidates()
+        return PoolListResponse(
+            count=len(rows),
+            candidates=[
+                PoolCandidate(
+                    candidate_id=r["candidate_id"],
+                    name=r.get("name") or r["candidate_id"],
+                    doc_type=r.get("doc_type") or "",
+                    model=r.get("model") or "",
+                    skill_count=r.get("skill_count") or 0,
+                    unresolved_count=r.get("unresolved_count") or 0,
+                    extracted_at=r.get("extracted_at") or "",
+                )
+                for r in rows
+            ],
+        )
+
+    def _pool_as_candidates(self) -> tuple[dict[str, dict[str, float]], dict[str, list[str]]]:
+        """Pool profiles in the shape the matcher wants.
+
+        Stored skills are already canonical node names and already carry their
+        extracted proficiency weight, so nothing is re-linked here. Re-linking
+        would let a linking change silently move the score of a candidate whose
+        document has not been touched since ingestion.
+        """
+        resolved = {c["name"] or c["candidate_id"]: c["skills"] for c in self.pool}
+        unresolved = {
+            (c["name"] or c["candidate_id"]): list(c.get("unresolved") or [])
+            for c in self.pool
+        }
+        return resolved, unresolved
+
     def rank_candidates(
         self,
         jd_skills: Sequence[SkillWeight],
-        candidates: Sequence[CandidateInput],
+        candidates: Sequence[CandidateInput] | None = None,
         top_k: int | None = None,
         max_hops: int | None = None,
         use_weights: bool | None = None,
         enable_bridging: bool | None = None,
         link: bool = True,
     ) -> RankingResponse:
-        """FR5: rank a candidate pool against a JD with explainable components."""
+        """FR5: rank candidates against a JD with explainable components.
+
+        `candidates` omitted or empty ranks the stored pool (E4). Passing them
+        explicitly keeps the original stateless behaviour, which the evaluation
+        harness and the tests rely on.
+        """
         params = self._params_for(max_hops, use_weights, enable_bridging)
         jd_map, jd_profile = self.resolve(jd_skills, "jd", link)
 
-        resolved: dict[str, dict[str, float]] = {}
-        unresolved: dict[str, list[str]] = {}
-        for candidate in candidates:
-            skills, profile = self.resolve(candidate.skills, candidate.name, link)
-            resolved[candidate.name] = skills
-            unresolved[candidate.name] = [r.surface for r in profile.unresolved]
+        # `None` means "use the pool"; an explicitly empty list means "score
+        # nothing". Collapsing the two would make `candidates=[]` silently rank
+        # the entire stored pool, which is not what an empty list asks for.
+        if candidates is not None:
+            resolved: dict[str, dict[str, float]] = {}
+            unresolved: dict[str, list[str]] = {}
+            for candidate in candidates:
+                skills, profile = self.resolve(candidate.skills, candidate.name, link)
+                resolved[candidate.name] = skills
+                unresolved[candidate.name] = [r.surface for r in profile.unresolved]
+            source = "request"
+        else:
+            resolved, unresolved = self._pool_as_candidates()
+            source = "pool"
 
         ranked = self.matcher.rank(jd_map, resolved, params=params, top_k=top_k)
 
@@ -483,6 +582,7 @@ class MatchEngine:
             jd_skills=sorted(jd_map),
             jd_unresolved=[r.surface for r in jd_profile.unresolved],
             params=_params_dict(params),
+            candidate_source=source,
             candidates=[
                 _to_candidate_score(r, unresolved.get(r.name, [])) for r in ranked
             ],

@@ -17,6 +17,7 @@ import os
 import random
 import time
 from dataclasses import dataclass
+from typing import Sequence
 
 from .reader import Chunk, Document
 from .schemas import ExtractedSkill, ExtractionResult, merge_skills
@@ -196,6 +197,39 @@ class SkillExtractor:
         lets the graph decide what happens next.
         """
         return self._validate(self._generate(text))
+
+    def extract_batch(self, texts: Sequence[str]) -> list[ExtractedSkill]:
+        """Extract several chunks in ONE call. One attempt, no retry (Phase E2).
+
+        The free tier limits requests per minute, not tokens per minute, so the
+        binding constraint is call *count*. Sending N chunks per call divides the
+        wall-clock cost of a batch by N, which is what makes ingesting a pool of
+        resumes practical.
+
+        Chunks are concatenated under numbered headers rather than sent as
+        separate turns, because the extractor's contract is a flat skill list and
+        `merge_skills` already collapses duplicates across chunks. Nothing
+        downstream needs to know which chunk a skill came from.
+
+        Two costs, both accepted deliberately:
+          * Adjacent chunks share their overlap window, so a little text is sent
+            twice. Cheap, and removing it would re-introduce the boundary problem
+            the overlap exists to solve.
+          * A failed call fails every chunk in the group, and the checkpoint
+            granularity coarsens from one chunk to N. That is the trade being
+            made for the call-count reduction; `chunks_per_call=1` restores the
+            old behaviour exactly.
+        """
+        if not texts:
+            return []
+        if len(texts) == 1:
+            return self.extract_once(texts[0])
+
+        joined = "\n\n".join(
+            f"--- SECTION {i + 1} of {len(texts)} ---\n{t}"
+            for i, t in enumerate(texts)
+        )
+        return self._validate(self._generate(joined))
 
     def extract_from_text(self, text: str) -> list[ExtractedSkill]:
         """Extract from one chunk, retrying on transport errors and bad schemas."""

@@ -31,6 +31,7 @@ from .engine import (
     ExplainResponse,
     GapResponse,
     GraphStats,
+    PoolListResponse,
     RankingResponse,
     SkillWeight,
     get_engine,
@@ -70,9 +71,10 @@ def rank_candidates(
         Field(description="Skills the role requires; weight = how much it demands each."),
     ],
     candidates: Annotated[
-        list[CandidateInput],
-        Field(description="The candidate pool; weight = that candidate's proficiency."),
-    ],
+        list[CandidateInput] | None,
+        Field(None, description="Candidates to score, weight = proficiency. "
+                                "Omit to rank the stored candidate pool instead."),
+    ] = None,
     top_k: Annotated[
         int | None, Field(None, ge=1, description="Return only the best K. Null = all.")
     ] = None,
@@ -95,9 +97,16 @@ def rank_candidates(
 ) -> RankingResponse:
     """Rank candidates against a job description, best fit first.
 
+    Omit `candidates` to rank the stored pool - candidates ingested earlier,
+    whose skills were already extracted and canonicalized. That is the normal
+    path: extraction is expensive and rate-limited, scoring is milliseconds, and
+    a resume's skills do not change between searches. Pass `candidates`
+    explicitly only to score skill lists you already hold.
+
     Each result carries its score components (direct match, bridge credit, gap
     penalty), the skills that matched, the gaps that were bridgeable and via
-    which held skill, and the gaps that were not.
+    which held skill, and the gaps that were not. `candidate_source` says which
+    of the two paths produced the ranking.
     """
     return get_engine().rank_candidates(
         jd_skills=jd_skills, candidates=candidates, top_k=top_k, max_hops=max_hops,
@@ -155,6 +164,17 @@ def explain_score(
     )
 
 
+@mcp.tool(annotations={"readOnlyHint": True, "idempotentHint": True}, tags={"pool"})
+def list_candidates() -> PoolListResponse:
+    """List the candidates currently in the pool.
+
+    These are the candidates `rank_candidates` scores when called without an
+    explicit list. Skill payloads are omitted so this stays cheap to poll; use
+    `explain_score` for one candidate's detail.
+    """
+    return get_engine().list_pool()
+
+
 @mcp.tool(annotations={"readOnlyHint": True, "idempotentHint": True}, tags={"diagnostics"})
 def graph_stats() -> GraphStats:
     """Report what graph is loaded and how it is configured.
@@ -204,6 +224,52 @@ async def api_jds(request: Request) -> JSONResponse:
         return JSONResponse(get_engine().list_eval_jds().model_dump())
     except FileNotFoundError as exc:
         return JSONResponse({"error": str(exc)}, status_code=503)
+
+
+@mcp.custom_route("/api/candidates", methods=["GET"])
+async def api_candidates(request: Request) -> JSONResponse:
+    """E4: the stored candidate pool."""
+    try:
+        return JSONResponse(get_engine().list_pool().model_dump())
+    except RuntimeError as exc:
+        # Pool lives in AuraDB; an unconfigured or unreachable database is a
+        # service-availability problem, not a bad request.
+        return JSONResponse({"error": str(exc)}, status_code=503)
+
+
+@mcp.custom_route("/api/rank_pool", methods=["POST"])
+async def api_rank_pool(request: Request) -> JSONResponse:
+    """E4: rank the stored pool against a JD given as skills.
+
+    Separate from `/api/rank`, which scores the versioned evaluation snapshot.
+    Mixing them would let a page silently show benchmark numbers as if they were
+    live results.
+    """
+    try:
+        body = await request.json()
+    except Exception:  # noqa: BLE001
+        return JSONResponse({"error": "Body must be JSON."}, status_code=400)
+
+    raw = (body or {}).get("jd_skills")
+    if not raw:
+        return JSONResponse({"error": "Missing 'jd_skills'."}, status_code=400)
+
+    try:
+        jd_skills = [
+            SkillWeight(skill=s["skill"], weight=s.get("weight", 1.0))
+            if isinstance(s, dict) else SkillWeight(skill=str(s))
+            for s in raw
+        ]
+    except Exception as exc:  # noqa: BLE001
+        return JSONResponse({"error": f"Bad 'jd_skills': {exc}"}, status_code=400)
+
+    try:
+        response = get_engine().rank_candidates(
+            jd_skills=jd_skills, candidates=None, top_k=body.get("top_k")
+        )
+    except RuntimeError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=503)
+    return JSONResponse(response.model_dump())
 
 
 @mcp.custom_route("/api/rank", methods=["POST"])

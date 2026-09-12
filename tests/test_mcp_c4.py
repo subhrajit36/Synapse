@@ -299,10 +299,11 @@ def call_tool(name: str, arguments: dict):
     return asyncio.run(run())
 
 
-def test_all_four_tools_are_registered():
+def test_all_tools_are_registered():
     tools = asyncio.run(mcp._list_tools())
     assert {t.name for t in tools} == {
-        "rank_candidates", "get_bridgeable_gaps", "explain_score", "graph_stats"
+        "rank_candidates", "get_bridgeable_gaps", "explain_score", "graph_stats",
+        "list_candidates",
     }
     for tool in tools:
         assert tool.description, f"{tool.name} has no description for the client to read"
@@ -491,7 +492,7 @@ def test_page_and_api_coexist_with_the_mcp_transport(web):
     assert web.get("/health").status_code == 200
     assert web.get("/api/jds").status_code == 200
     tools = asyncio.run(mcp._list_tools())
-    assert len(tools) == 4
+    assert len(tools) == 5
 
 
 def test_health_route_does_not_touch_the_graph():
