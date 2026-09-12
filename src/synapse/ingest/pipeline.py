@@ -1,30 +1,46 @@
-"""Phase C3: the LangGraph ingestion pipeline (Reader -> Extractor), cloud-wired.
+"""Phase C3/E: the LangGraph ingestion pipeline, cloud-wired.
+
+    Reader -> Extractor -> Linker -> AuraDB candidate pool
 
 What this adds over calling `SkillExtractor.extract_from_document()` directly:
 
-  * C3.1 - Reader and Extractor are real graph nodes over an explicit, typed
-    state schema (`IngestState`), not a loose dict passed hand to hand.
-  * C3.2 - Retry/backoff is its own node with its own edges. A 429 or a 503 is
-    a routing decision the graph makes and records in state, not a `try/except`
-    buried inside a helper. That is what makes "why did this document take four
-    minutes?" answerable after the fact (NFR5, NFR6).
-  * C3.3 - Extraction advances one chunk per superstep, so the checkpointer
-    persists a `cursor` after every chunk. A batch killed during a rate-limit
-    pause resumes at the chunk it was on instead of re-billing the whole
-    document against the 15 RPM free tier.
+  * C3.1 - Every stage is a real graph node over an explicit, typed state
+    schema (`IngestState`), not a loose dict passed hand to hand.
+  * C3.2 - Retry/backoff is its own node with its own edges. A 429, a 503 or a
+    failed database write is a routing decision the graph makes and records in
+    state, not a `try/except` buried inside a helper. That is what makes "why
+    did this document take four minutes?" answerable after the fact (NFR5,
+    NFR6). One node serves both the extract and the persist stage, selected by
+    `stage`: the policy is identical and only what "give up" means differs.
+  * C3.3 - Extraction advances one GROUP of chunks per superstep, so the
+    checkpointer persists a `cursor` after every Gemini call. A batch killed
+    during a rate-limit pause resumes at the group it was on instead of
+    re-billing the whole document against the free-tier RPM ceiling.
+  * E2 - A group is `chunks_per_call` chunks sent in ONE call. The free tier
+    caps requests per minute, not tokens, so grouping divides a batch's
+    wall-clock cost by that factor. The trade is coarser checkpoints and a
+    wider blast radius per failed call - a failed group records every chunk in
+    it; `chunks_per_call=1` restores the original chunk-at-a-time behaviour.
+  * E3 - `link` canonicalizes the extracted surfaces onto graph nodes and
+    `persist` writes the profile to the AuraDB candidate pool. Extraction is
+    then paid for once per candidate and every later ranking is a graph
+    traversal. Both nodes are optional: without a `linker` and a `store` this
+    is exactly the Phase C3 pipeline - read, extract, return.
 
 The graph:
 
-        read ──▶ extract ──chunk ok, more left──▶ extract
+        read ──▶ extract ──group ok, more left──▶ extract
                     │  │
-                    │  └──all chunks done──▶ finalize ──▶ END
-                    ▼
-                 backoff ──retries left──▶ extract
-                    │
-                    └──gave up (chunk recorded as failed)──▶ extract / finalize
+                    │  └──all chunks done──▶ link ──▶ persist ──▶ finalize ──▶ END
+                    ▼                          │         │
+                 backoff                       │         └──write failed──▶ backoff
+                    │                          └──link failed──▶ finalize
+                    ├──retries left──▶ extract / persist
+                    └──gave up (group or write recorded)──▶ extract / link / finalize
 
-Business logic still lives in `reader.py` and `extractor.py`; this module only
-wires them, exactly as C4 will keep the MCP layer thin over `scoring`/`graph`.
+Business logic still lives in `reader.py`, `extractor.py`, `entity_linker.py`
+and `neo4j_client.py`; this module only wires them, the same rule that keeps the
+C4 MCP layer thin over `matching`/`graph`.
 """
 
 from __future__ import annotations
