@@ -1,4 +1,4 @@
-"""Phase C3 tests: the LangGraph ingestion pipeline. No network, no API key.
+﻿"""Phase C3 tests: the LangGraph ingestion pipeline. No network, no API key.
 
 The extractor is faked throughout - what is under test here is the graph's
 routing, its retry/backoff node and its checkpoint/resume behaviour, not
@@ -185,8 +185,8 @@ def test_backoff_delay_grows_between_attempts(tmp_path, monkeypatch):
 
 def test_unreadable_file_returns_none_without_killing_the_batch(tmp_path):
     good = write_doc(tmp_path, "cand_ok.txt", words=5)
-    bad = tmp_path / "cand_bad.pdf"
-    bad.write_bytes(b"%PDF-1.4")
+    bad = tmp_path / "cand_bad.xlsx"
+    bad.write_bytes(b"PK\x03\x04")
 
     pipeline = IngestionPipeline(make_extractor([VALID]), FAST)
 
@@ -196,8 +196,8 @@ def test_unreadable_file_returns_none_without_killing_the_batch(tmp_path):
 
 
 def test_read_failure_is_recorded_in_state(tmp_path):
-    bad = tmp_path / "x.pdf"
-    bad.write_bytes(b"%PDF")
+    bad = tmp_path / "x.xlsx"
+    bad.write_bytes(b"PK\x03\x04")
     graph = build_ingestion_graph(make_extractor([]), FAST)
 
     final = graph.invoke(initial_state(bad))
@@ -330,3 +330,4 @@ def test_partial_status_when_a_chunk_never_validates(tmp_path):
 
     assert final["status"] == STATUS_PARTIAL
     assert final["result"]["failed_chunks"] == [0]
+

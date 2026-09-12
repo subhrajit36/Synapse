@@ -85,8 +85,23 @@ def test_read_document_txt(tmp_path):
 
 
 def test_unsupported_suffix_rejected(tmp_path):
-    p = tmp_path / "resume.pdf"
-    p.write_bytes(b"%PDF-1.4")
+    # .pdf is supported as of F1, so this needs a type the pipeline really
+    # does not accept.
+    p = tmp_path / "resume.xlsx"
+    p.write_bytes(b"PK\x03\x04")
+    with pytest.raises(ValueError):
+        read_document(p)
+
+
+def test_corrupt_pdf_is_a_value_error_not_a_parser_crash(tmp_path):
+    """A broken upload must be survivable, not fatal to a batch.
+
+    pypdf raises its own exception type, which nothing upstream catches. Read
+    failures are normalised to ValueError so the pipeline's read node records
+    one bad document and carries on.
+    """
+    p = tmp_path / "broken.pdf"
+    p.write_bytes(b"%PDF-1.4 this is not actually a pdf")
     with pytest.raises(ValueError):
         read_document(p)
 
