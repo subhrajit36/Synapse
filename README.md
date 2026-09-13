@@ -13,30 +13,64 @@
 | Keyword matching | Graph distance + semantic similarity |
 
 ---
+## High-Level Design (HLD)
 
-## Pipeline
+```mermaid
+flowchart TB
 
+U["👤 User / Client"] --> WEB["Web UI"]
+WEB <--> MCP["FastMCP / HTTP API"]
+
+%% ===================== 1. INGESTION =====================
+subgraph S1["① Document Ingestion Pipeline"]
+  direction LR
+  R["Reader\nPDF / DOCX / TXT / MD\nLoad → Normalize → Chunk"]
+  E["Skill Extractor\n(Gemini Flash)\nStructured Skill Extraction"]
+  L["Entity Linker\nFastEmbed + Alias Table"]
+  R --> E --> L
+end
+
+MCP -- "Upload Resume" --> R
+
+%% ===================== 2. KNOWLEDGE GRAPH =====================
+subgraph S2["② Skill Knowledge Layer"]
+  direction LR
+  SK["Canonical O*NET\nSkill Nodes"]
+  SG[("Skill Knowledge Graph\nNeo4j AuraDB / NetworkX")]
+  SIM["SIMILAR edges\n(Skill ↔ Skill)"]
+  SK --> SG --> SIM
+end
+
+L -- "Canonical Skills + Weights" --> SK
+
+%% ===================== 3. CANDIDATE POOL =====================
+subgraph S3["③ Candidate Pool"]
+  direction LR
+  C[("Candidate Nodes")]
+  HS["HAS_SKILL edges\n(Candidate → Skill)"]
+  C --> HS
+end
+
+HS --> SK
+
+%% ===================== 4. MATCHING & RANKING =====================
+subgraph S4["④ Matching & Ranking"]
+  direction LR
+  M["Matcher\nWeighted Shortest Path"]
+  RM["Rank Candidates"]
+  GAP["Gap Analysis\nBridgeable vs True Gaps"]
+  M --> RM
+  M --> GAP
+end
+
+MCP -- "JD Skills + Candidate Pool" --> RM
+SG --> M
+SK --> M
+C --> M
+
+RM -- "Ranked Candidates" --> WEB
+GAP -- "Traceable Explanations" --> WEB
 ```
-Job Description + Candidate Skills
-          │
-          ▼
-Entity Linker (FastEmbed + alias table) → Canonical O*NET skill nodes
-          │
-          ▼
-Skill Knowledge Graph (213 skills, 55 O*NET categories)
-  ├─ Role → Skill edges (O*NET "requires")
-  └─ Skill ↔ Skill edges (embedding k-NN, cosine similarity)
-          │
-          ▼
-Matcher (Weighted shortest-path)
-  ├─ Direct matches: full credit
-  ├─ Bridgeable gaps (≤2 hops): partial credit by distance
-  └─ True gaps: penalty
-          │
-          ▼
-Ranked candidates + Traceable gap explanations
-```
-
 ---
 
 ## Key Achievements
