@@ -18,59 +18,77 @@
 ```mermaid
 flowchart TB
 
-U["👤 User / Client"] --> WEB["Web UI"]
-WEB <--> MCP["FastMCP / HTTP API"]
+CLIENT["👤 Browser page / MCP client"]
+GEM["Gemini API<br/>structured skill extraction"]
 
-%% ===================== 1. INGESTION =====================
-subgraph S1["① Document Ingestion Pipeline"]
+%% ============ ① OFFLINE — developer machine, never the server ============
+subgraph S1["① Graph construction — offline, run by a developer"]
   direction LR
-  R["Reader\nPDF / DOCX / TXT / MD\nLoad → Normalize → Chunk"]
-  E["Skill Extractor\n(Gemini Flash)\nStructured Skill Extraction"]
-  L["Entity Linker\nFastEmbed + Alias Table"]
-  R --> E --> L
+  ONET["O*NET taxonomy dump"]
+  BUILD["build_graph.py<br/>skill + role nodes,<br/>rank-based SIMILAR edges"]
+  PKL["skill_graph.pkl<br/>dev + test artifact"]
+  MIG["scripts/migrate_graph.py<br/>wipe SIMILAR, rewrite,<br/>verify — pool untouched"]
+  ONET --> BUILD --> PKL --> MIG
 end
 
-MCP -- "Upload Resume" --> R
-
-%% ===================== 2. KNOWLEDGE GRAPH =====================
-subgraph S2["② Skill Knowledge Layer"]
+%% ============ ② AURADB — system of record ============
+subgraph S2["② Neo4j AuraDB — system of record"]
   direction LR
-  SK["Canonical O*NET\nSkill Nodes"]
-  SG[("Skill Knowledge Graph\nNeo4j AuraDB / NetworkX")]
-  SIM["SIMILAR edges\n(Skill ↔ Skill)"]
-  SK --> SG --> SIM
+  SKILLS["Skill / Role nodes<br/>SIMILAR, REQUIRES"]
+  POOL["Candidate nodes<br/>HAS_SKILL → Skill"]
 end
 
-L -- "Canonical Skills + Weights" --> SK
+MIG -->|"migrate, never at boot"| SKILLS
 
-%% ===================== 3. CANDIDATE POOL =====================
-subgraph S3["③ Candidate Pool"]
-  direction LR
-  C[("Candidate Nodes")]
-  HS["HAS_SKILL edges\n(Candidate → Skill)"]
-  C --> HS
+%% ============ ③ SERVING PROCESS ============
+subgraph S3["③ One uvicorn process — FastMCP transport + HTTP routes + static page"]
+  direction TB
+
+  subgraph S3A["Ingestion — LangGraph, one document at a time"]
+    direction LR
+    READ["read<br/>pdf / docx / txt / md,<br/>bytes or path;<br/>normalize + overlapping chunks"]
+    EXTRACT["extract<br/>one chunk group per superstep"]
+    BACKOFF["backoff<br/>retry as a node,<br/>fatal errors skip it"]
+    LINK["link<br/>alias → surface → embedding,<br/>below threshold = unresolved"]
+    PERSIST["persist<br/>candidate profile + skills"]
+    FINAL["finalize"]
+    READ --> EXTRACT
+    EXTRACT --> BACKOFF
+    BACKOFF --> EXTRACT
+    EXTRACT --> LINK
+    LINK --> PERSIST
+    PERSIST --> FINAL
+  end
+
+  CKPT["SQLite checkpoint<br/>one thread per document"]
+  SERVER["server.py — transport only<br/>MCP tools, JSON routes, page"]
+  ENGINE["engine.py<br/>typed contracts, lazy resources,<br/>pool cache"]
+  NX["NetworkX skill graph<br/>materialised once, in process"]
+  MATCH["Matcher — pure<br/>multi-source Dijkstra,<br/>matched / bridged / unreachable"]
+
+  EXTRACT -.->|"cursor + partial skills"| CKPT
+  SERVER --> ENGINE
+  ENGINE --> NX
+  NX --> MATCH
 end
 
-HS --> SK
+EXTRACT <--> GEM
+PERSIST --> POOL
+SKILLS -->|"one query at first use"| NX
+POOL -->|"candidate pool, cached"| ENGINE
 
-%% ===================== 4. MATCHING & RANKING =====================
-subgraph S4["④ Matching & Ranking"]
-  direction LR
-  M["Matcher\nWeighted Shortest Path"]
-  RM["Rank Candidates"]
-  GAP["Gap Analysis\nBridgeable vs True Gaps"]
-  M --> RM
-  M --> GAP
-end
-
-MCP -- "JD Skills + Candidate Pool" --> RM
-SG --> M
-SK --> M
-C --> M
-
-RM -- "Ranked Candidates" --> WEB
-GAP -- "Traceable Explanations" --> WEB
+CLIENT -->|"upload resumes"| READ
+CLIENT -->|"JD skills, rank, explain"| SERVER
+SERVER -->|"MatchResult per candidate:<br/>components, bridge paths, reason codes"| CLIENT
 ```
+
+Three things the diagram is asserting. The graph is **built offline and migrated**,
+never constructed at boot. **AuraDB is the system of record** for both the skill
+graph and the candidate pool, and the skill graph is materialised into NetworkX
+once per process so the scoring path stays the one the evaluation measured. And a
+**ranking query never calls Gemini** — extraction is an ingestion-time concern, so
+serving does not depend on a rate-limited external API.
+
 ---
 
 ## Key Achievements
