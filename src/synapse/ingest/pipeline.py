@@ -62,6 +62,7 @@ from .reader import (
     DEFAULT_CHUNK_WORDS,
     DEFAULT_OVERLAP_WORDS,
     SUPPORTED_SUFFIXES,
+    Document,
     read_document,
 )
 from .schemas import ExtractedSkill, ExtractionResult, merge_skills
@@ -104,6 +105,8 @@ class IngestState(TypedDict, total=False):
     # --- inputs
     source_path: str
     doc_type: str
+    preread: bool               # F3: reader output was supplied up front (an
+                                # upload); the read node must not touch disk
 
     # --- reader output
     source_id: str
@@ -133,15 +136,42 @@ class IngestState(TypedDict, total=False):
     result: dict | None         # ExtractionResult.model_dump()
 
 
+def content_hash_of(text: str) -> str:
+    """The dedupe key. Hash the normalised text, not the raw bytes: the same
+    résumé saved as .txt and .docx should dedupe, and a trailing-whitespace edit
+    should not cost another extraction."""
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def upload_thread_id(content_hash: str) -> str:
+    """Checkpoint thread for an upload, keyed on content (F3).
+
+    A path-derived id (`default_thread_id`) is meaningless for an upload: there
+    is no path, and a temp file would get a fresh one per request so nothing
+    would ever resume. Keying on the hash means a retry of the same document -
+    under any filename - picks up where the interrupted run stopped.
+    """
+    return f"upload-{content_hash[:16]}"
+
+
 def initial_state(
     source_path: str | Path,
     doc_type: str = "unknown",
     candidate_id: str = "",
     batch_id: str = "",
+    document: Document | None = None,
 ) -> IngestState:
-    return IngestState(
+    """Fresh state for one document.
+
+    `document` is the F3 upload path: the reader has already run on the
+    request's bytes, so its output is placed in state directly and the read
+    node passes through. Nothing else about the graph changes - the bytes never
+    enter state (they would bloat every checkpoint) and no temp file is written.
+    """
+    state = IngestState(
         source_path=str(source_path),
         doc_type=doc_type,
+        preread=False,
         source_id="",
         chunks=[],
         cursor=0,
@@ -160,6 +190,16 @@ def initial_state(
         status=STATUS_READING,
         result=None,
     )
+    if document is not None:
+        state.update(
+            preread=True,
+            source_id=document.source_id,
+            candidate_id=candidate_id or document.source_id,
+            content_hash=content_hash_of(document.text),
+            chunks=[{"index": c.index, "text": c.text} for c in document.chunks],
+            status=STATUS_EXTRACTING,
+        )
+    return state
 
 
 @dataclass(frozen=True)
@@ -190,6 +230,11 @@ def _read_node(state: IngestState, config: IngestionConfig) -> IngestState:
     recorded in state and routed straight to END, so one unreadable file cannot
     take down a 200-document run.
     """
+    if state.get("preread"):
+        # F3: an upload arrives already read; `source_path` is a bare filename
+        # that does not exist on disk and must not be opened.
+        return {}
+
     path = state["source_path"]
     try:
         document = read_document(
@@ -205,10 +250,7 @@ def _read_node(state: IngestState, config: IngestionConfig) -> IngestState:
     return {
         "source_id": document.source_id,
         "candidate_id": state.get("candidate_id") or document.source_id,
-        # Hash the normalised text, not the raw bytes: the same résumé saved as
-        # .txt and .docx should dedupe, and a trailing-whitespace edit should not
-        # cost another extraction.
-        "content_hash": hashlib.sha256(document.text.encode("utf-8")).hexdigest(),
+        "content_hash": content_hash_of(document.text),
         "chunks": [{"index": c.index, "text": c.text} for c in document.chunks],
         "cursor": 0,
         "skills": [],
@@ -675,6 +717,36 @@ class IngestionPipeline:
             return None
         result = final.get("result")
         return ExtractionResult.model_validate(result) if result else None
+
+    def run_document(
+        self,
+        document: Document,
+        batch_id: str = "",
+        candidate_id: str = "",
+        thread_id: str | None = None,
+        force_restart: bool = False,
+    ) -> IngestState:
+        """F3: ingest an already-read document (an upload). Returns the final
+        graph state, since the caller needs `status`, `persisted` and
+        `candidate_id`, not just the extraction.
+
+        The checkpoint thread is keyed on the content hash, so an interrupted
+        upload resumes on retry no matter what the file is called the second
+        time - and the LLM is not paid twice for it.
+        """
+        content_hash = content_hash_of(document.text)
+        thread_id = thread_id or upload_thread_id(content_hash)
+        config = self._thread_config(thread_id, max(1, len(document.chunks)))
+
+        if not force_restart and self._pending(config):
+            logger.info("Resuming interrupted upload %s", thread_id)
+            return self.graph.invoke(None, config)
+
+        state = initial_state(
+            document.path, document.doc_type,
+            candidate_id=candidate_id, batch_id=batch_id, document=document,
+        )
+        return self.graph.invoke(state, config)
 
     # -- batch -------------------------------------------------------------
 

@@ -251,6 +251,42 @@ async def api_candidates(request: Request) -> JSONResponse:
         return JSONResponse({"error": str(exc)}, status_code=503)
 
 
+@mcp.custom_route("/api/candidates", methods=["POST"])
+async def api_upload_candidate(request: Request) -> JSONResponse:
+    """F3: one résumé into the pool. Multipart: `file`, `batch_id`, [`doc_type`].
+
+    One document per request on purpose (locked decision): the page drives the
+    loop and renders its own progress, so there is no job store, no worker and
+    nothing to poll. A dedupe hit returns immediately without an LLM call.
+    """
+    try:
+        form = await request.form()
+    except Exception:  # noqa: BLE001 - not multipart, or malformed
+        return JSONResponse({"error": "Body must be multipart/form-data."}, status_code=400)
+
+    upload = form.get("file")
+    if upload is None or not hasattr(upload, "filename"):
+        return JSONResponse({"error": "Missing file field 'file'."}, status_code=400)
+    batch_id = (form.get("batch_id") or "").strip()
+    if not batch_id:
+        return JSONResponse({"error": "Missing 'batch_id'."}, status_code=400)
+
+    data = await upload.read()
+    try:
+        response = get_engine().ingest_upload(
+            data, upload.filename or "upload.txt", batch_id,
+            doc_type=str(form.get("doc_type") or "resume"),
+        )
+    except ValueError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
+    except RuntimeError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=503)
+
+    # The candidate never reached the pool: the page must not show it as ranked.
+    status = 200 if response.in_pool else 502
+    return JSONResponse(response.model_dump(), status_code=status)
+
+
 @mcp.custom_route("/api/rank_pool", methods=["POST"])
 async def api_rank_pool(request: Request) -> JSONResponse:
     """E4: rank the stored pool against a JD given as skills.

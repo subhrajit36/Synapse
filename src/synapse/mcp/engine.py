@@ -66,6 +66,13 @@ DEFAULT_EVAL_DATASET = os.getenv("SYNAPSE_EVAL_DATASET", "data/eval/v2/dataset.j
 # 512MB ceiling until something actually needs it (NFR1).
 DEFAULT_EMBED_MODEL = "BAAI/bge-small-en-v1.5"
 
+# F3: where the upload pipeline checkpoints. SQLite so a retry after a Gemini
+# rate-limit pause resumes instead of re-billing the document (C3.3).
+DEFAULT_CHECKPOINT_PATH = os.getenv("SYNAPSE_CHECKPOINT", "data/checkpoints/ingest.sqlite")
+
+# Upload outcomes. `reused` is the dedupe hit: no pipeline ran at all.
+UPLOAD_REUSED = "reused"
+
 
 # ------------------------------------------------------------------ contracts
 
@@ -234,6 +241,27 @@ class PoolListResponse(BaseModel):
     candidates: list[PoolCandidate]
 
 
+class UploadResponse(BaseModel):
+    """What one `POST /api/candidates` produced (F3).
+
+    `in_pool` is the field the page should act on: True means `rank_candidates`
+    with this `batch_id` will see the candidate. `status` says why not when it
+    is False, and `reused` says whether the extraction was paid for by this
+    request or an earlier one.
+    """
+
+    candidate_id: str
+    name: str
+    batch_id: str
+    content_hash: str
+    status: str = Field(..., description="reused | complete | partial | link_failed | persist_failed")
+    reused: bool = Field(..., description="Existing profile attached to the batch; no LLM call.")
+    in_pool: bool
+    skill_count: int
+    unresolved: list[str] = Field(default_factory=list)
+    failed_chunks: int = 0
+
+
 class RegisteredSkill(BaseModel):
     """Outcome of a C2.5 dynamic MERGE attempt for one unresolved surface."""
 
@@ -326,6 +354,8 @@ class MatchEngine:
         neo4j_client=None,
         expected_skills: int | None = EXPECTED_SKILLS,
         expected_pairs: int | None = EXPECTED_SIMILAR_PAIRS,
+        pipeline=None,
+        checkpoint_path: str | Path | None = DEFAULT_CHECKPOINT_PATH,
     ) -> None:
         self.graph_path = Path(graph_path)
         self.params = params or TUNED_PARAMS
@@ -337,6 +367,8 @@ class MatchEngine:
         self.expected_skills = expected_skills
         self.expected_pairs = expected_pairs
         self._neo4j_client = neo4j_client   # injectable for tests
+        self._pipeline = pipeline           # injectable for tests
+        self.checkpoint_path = checkpoint_path
         self._graph = None
         self._matcher: Matcher | None = None
         self._linker: EntityLinker | None = None
@@ -438,6 +470,33 @@ class MatchEngine:
                 use_embeddings=True,
             )
         return self._linker
+
+    @property
+    def pipeline(self):
+        """The ingestion graph, built on first upload (F3).
+
+        Lazy for the same reason as the graph: constructing it opens the Gemini
+        client and the checkpoint database, neither of which a ranking-only
+        process should pay for. Reuses the engine's own linker and Neo4j client
+        so an uploaded candidate is canonicalized exactly as a ranked one is.
+        """
+        if self._pipeline is None:
+            from ..ingest.extractor import SkillExtractor
+            from ..ingest.pipeline import IngestionPipeline
+
+            try:
+                extractor = SkillExtractor()
+            except ValueError as exc:
+                # A missing GEMINI_API_KEY is a deployment problem, not a bad
+                # request; surface it as such so the route maps it to 503.
+                raise RuntimeError(f"Upload pipeline unavailable: {exc}") from exc
+            self._pipeline = IngestionPipeline(
+                extractor=extractor,
+                checkpoint_path=self.checkpoint_path,
+                linker=self.linker,
+                store=self.neo4j,
+            )
+        return self._pipeline
 
     # -- linking -----------------------------------------------------------
 
@@ -555,6 +614,93 @@ class MatchEngine:
                 )
                 for r in rows
             ],
+        )
+
+    # -- F3: one résumé in -------------------------------------------------
+
+    def ingest_upload(
+        self,
+        data: bytes,
+        filename: str,
+        batch_id: str,
+        doc_type: str = "resume",
+    ) -> UploadResponse:
+        """`POST /api/candidates`: one document into the pool, under a batch.
+
+        Hash first. If the pool already holds this exact text, the existing
+        profile is attached to the batch and nothing else runs - the extraction
+        was paid for once and is not paid for again (locked decision). Only a
+        genuinely new document goes through the LangGraph pipeline.
+
+        Raises `ValueError` for a bad request (no batch, unsupported or
+        unparseable file) and `RuntimeError` when the service is not configured
+        to accept uploads; the route maps those to 400 and 503.
+        """
+        from ..ingest.reader import read_bytes
+        from ..ingest.pipeline import content_hash_of
+
+        if not batch_id:
+            raise ValueError("batch_id is required: an upload belongs to a session.")
+
+        client = self.neo4j
+        if not client.config.is_configured:
+            raise RuntimeError(
+                "Uploads write to the AuraDB candidate pool, but no NEO4J_PASSWORD "
+                f"is set ({client.config.describe()})."
+            )
+
+        document = read_bytes(data, filename, doc_type=doc_type)   # ValueError on a bad file
+        if not document.chunks:
+            # The common case is a scanned PDF with no text layer. The graph
+            # would finalize it with zero skills and never persist it, so say
+            # so now, before an LLM call or a checkpoint is spent on nothing.
+            raise ValueError(
+                f"No readable text in {filename!r}. A scanned or image-only "
+                "document has no text layer to extract skills from."
+            )
+        content_hash = content_hash_of(document.text)
+
+        existing = client.find_candidate_by_hash(content_hash)
+        if existing:
+            client.add_candidate_to_batch(existing, batch_id)
+            self.invalidate_pool(batch_id)
+            profile = client.get_candidate(existing) or {}
+            logger.info("Upload %s reused candidate %s (batch=%s)", filename, existing, batch_id)
+            return UploadResponse(
+                candidate_id=existing,
+                name=profile.get("name") or existing,
+                batch_id=batch_id,
+                content_hash=content_hash,
+                status=UPLOAD_REUSED,
+                reused=True,
+                in_pool=True,
+                skill_count=len(profile.get("skills") or []),
+                unresolved=list(profile.get("unresolved") or []),
+                failed_chunks=len(profile.get("failed_chunks") or []),
+            )
+
+        # The file stem alone is not an identity: two people uploading
+        # `resume.pdf` must not MERGE into one node. The hash makes it unique;
+        # the stem keeps it readable.
+        candidate_id = f"{document.source_id}-{content_hash[:8]}"
+        final = self.pipeline.run_document(
+            document, batch_id=batch_id, candidate_id=candidate_id
+        )
+
+        in_pool = bool(final.get("persisted"))
+        if in_pool:
+            self.invalidate_pool(batch_id)
+        return UploadResponse(
+            candidate_id=final.get("candidate_id") or candidate_id,
+            name=document.source_id,
+            batch_id=batch_id,
+            content_hash=content_hash,
+            status=final.get("status") or "",
+            reused=False,
+            in_pool=in_pool,
+            skill_count=len(final.get("linked") or []),
+            unresolved=list(final.get("unresolved") or []),
+            failed_chunks=len(final.get("failed_chunks") or []),
         )
 
     def _pool_as_candidates(
