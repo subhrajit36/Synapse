@@ -262,6 +262,31 @@ class UploadResponse(BaseModel):
     failed_chunks: int = 0
 
 
+class JDSkillsResponse(BaseModel):
+    """F4: a free-text JD turned into something `rank_candidates` accepts.
+
+    `skills` is already canonical and weighted - it can be posted straight to
+    `/api/rank_pool` as `jd_skills`. `unresolved` is what the model named but
+    the graph does not know; the page should show it, because a JD whose key
+    requirement is unresolved is being ranked on a narrower job than written.
+    """
+
+    skills: list[SkillWeight] = Field(
+        ..., description="Canonical graph nodes with demand weights, ready to rank on."
+    )
+    unresolved: list[str] = Field(
+        default_factory=list, description="Extracted surfaces that reached no node."
+    )
+    extracted: list[SkillWeight] = Field(
+        default_factory=list, description="What the model returned, before linking."
+    )
+    linking: list[LinkedSkill] = Field(
+        default_factory=list, description="Surface -> node trace, NFR6."
+    )
+    model: str = ""
+    text_words: int = 0
+
+
 class RegisteredSkill(BaseModel):
     """Outcome of a C2.5 dynamic MERGE attempt for one unresolved surface."""
 
@@ -356,6 +381,7 @@ class MatchEngine:
         expected_pairs: int | None = EXPECTED_SIMILAR_PAIRS,
         pipeline=None,
         checkpoint_path: str | Path | None = DEFAULT_CHECKPOINT_PATH,
+        extractor=None,
     ) -> None:
         self.graph_path = Path(graph_path)
         self.params = params or TUNED_PARAMS
@@ -368,6 +394,7 @@ class MatchEngine:
         self.expected_pairs = expected_pairs
         self._neo4j_client = neo4j_client   # injectable for tests
         self._pipeline = pipeline           # injectable for tests
+        self._extractor = extractor         # injectable for tests
         self.checkpoint_path = checkpoint_path
         self._graph = None
         self._matcher: Matcher | None = None
@@ -472,6 +499,22 @@ class MatchEngine:
         return self._linker
 
     @property
+    def extractor(self):
+        """The Gemini extractor, built on first use and shared by the upload
+        pipeline (F3) and JD extraction (F4), so a résumé and the JD it is
+        ranked against are read by the same model under the same prompt."""
+        if self._extractor is None:
+            from ..ingest.extractor import SkillExtractor
+
+            try:
+                self._extractor = SkillExtractor()
+            except ValueError as exc:
+                # A missing GEMINI_API_KEY is a deployment problem, not a bad
+                # request; surface it as such so the routes map it to 503.
+                raise RuntimeError(f"Extraction unavailable: {exc}") from exc
+        return self._extractor
+
+    @property
     def pipeline(self):
         """The ingestion graph, built on first upload (F3).
 
@@ -481,17 +524,10 @@ class MatchEngine:
         so an uploaded candidate is canonicalized exactly as a ranked one is.
         """
         if self._pipeline is None:
-            from ..ingest.extractor import SkillExtractor
             from ..ingest.pipeline import IngestionPipeline
 
-            try:
-                extractor = SkillExtractor()
-            except ValueError as exc:
-                # A missing GEMINI_API_KEY is a deployment problem, not a bad
-                # request; surface it as such so the route maps it to 503.
-                raise RuntimeError(f"Upload pipeline unavailable: {exc}") from exc
             self._pipeline = IngestionPipeline(
-                extractor=extractor,
+                extractor=self.extractor,
                 checkpoint_path=self.checkpoint_path,
                 linker=self.linker,
                 store=self.neo4j,
@@ -701,6 +737,51 @@ class MatchEngine:
             skill_count=len(final.get("linked") or []),
             unresolved=list(final.get("unresolved") or []),
             failed_chunks=len(final.get("failed_chunks") or []),
+        )
+
+    # -- F4: JD text -> skills ---------------------------------------------
+
+    def extract_jd_skills(self, text: str) -> JDSkillsResponse:
+        """`POST /api/jd_skills`: one chunk, one call, synchronous.
+
+        A JD is short and the page is waiting, so it does not go through the
+        checkpointed pipeline: no chunking, no backoff node, one `extract_once`.
+        A failure is returned to the caller to retry, not retried here - the
+        pipeline's retry policy exists for unattended batches, and a user with
+        a Retry button is a better policy for an interactive call.
+
+        Extraction weights become demand weights unchanged: the model's "core
+        requirement" (1.5) versus "nice to have" (0.5) is exactly the signal
+        `ScoringParams.use_weights` scores on.
+        """
+        from ..ingest.reader import normalize_text
+        from ..ingest.schemas import merge_skills
+
+        cleaned = normalize_text(text or "")
+        if not cleaned:
+            raise ValueError("JD text is empty.")
+
+        extractor = self.extractor
+        try:
+            extracted = merge_skills(extractor.extract_once(cleaned))
+        except Exception as exc:  # noqa: BLE001 - one attempt; the caller retries
+            raise RuntimeError(
+                f"JD extraction failed ({type(exc).__name__}): {exc}"
+            ) from exc
+
+        pairs = [SkillWeight(skill=s.skill, weight=s.weight) for s in extracted]
+        skills, profile = self.resolve(pairs, source_id="jd", link=True)
+
+        return JDSkillsResponse(
+            skills=[
+                SkillWeight(skill=node, weight=weight)
+                for node, weight in sorted(skills.items(), key=lambda kv: (-kv[1], kv[0]))
+            ],
+            unresolved=[r.surface for r in profile.unresolved],
+            extracted=pairs,
+            linking=_to_linked(profile),
+            model=getattr(extractor, "model", ""),
+            text_words=len(cleaned.split()),
         )
 
     def _pool_as_candidates(

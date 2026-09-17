@@ -287,6 +287,33 @@ async def api_upload_candidate(request: Request) -> JSONResponse:
     return JSONResponse(response.model_dump(), status_code=status)
 
 
+@mcp.custom_route("/api/jd_skills", methods=["POST"])
+async def api_jd_skills(request: Request) -> JSONResponse:
+    """F4: free-text JD -> canonical skills plus what did not resolve.
+
+    The response's `skills` is the exact shape `/api/rank_pool` takes as
+    `jd_skills`, so the page passes it through untouched - the JD is read once
+    by the model and never re-interpreted between the two calls.
+    """
+    try:
+        body = await request.json()
+    except Exception:  # noqa: BLE001
+        return JSONResponse({"error": "Body must be JSON."}, status_code=400)
+
+    text = (body or {}).get("text")
+    if not isinstance(text, str) or not text.strip():
+        return JSONResponse({"error": "Missing 'text'."}, status_code=400)
+
+    try:
+        return JSONResponse(get_engine().extract_jd_skills(text).model_dump())
+    except ValueError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
+    except RuntimeError as exc:
+        # No API key, or Gemini refused this call: retry-able by the user, not
+        # a fault in what they sent.
+        return JSONResponse({"error": str(exc)}, status_code=503)
+
+
 @mcp.custom_route("/api/rank_pool", methods=["POST"])
 async def api_rank_pool(request: Request) -> JSONResponse:
     """E4: rank the stored pool against a JD given as skills.
