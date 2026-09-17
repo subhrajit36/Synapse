@@ -123,6 +123,7 @@ class IngestState(TypedDict, total=False):
     # --- E3: canonicalization and persistence
     candidate_id: str
     content_hash: str           # dedupe key; a re-upload must not re-extract
+    batch_id: str               # F2: upload session; "" when not part of one
     linked: list[dict]          # {node, weight, context, method, link_score}
     unresolved: list[str]       # surfaces that reached no graph node
     persisted: bool
@@ -136,6 +137,7 @@ def initial_state(
     source_path: str | Path,
     doc_type: str = "unknown",
     candidate_id: str = "",
+    batch_id: str = "",
 ) -> IngestState:
     return IngestState(
         source_path=str(source_path),
@@ -151,6 +153,7 @@ def initial_state(
         stage=STAGE_EXTRACT,
         candidate_id=candidate_id,
         content_hash="",
+        batch_id=batch_id,
         linked=[],
         unresolved=[],
         persisted=False,
@@ -334,6 +337,7 @@ def _persist_node(state: IngestState, store, model: str = "") -> IngestState:
             chunk_count=len(state["chunks"]),
             failed_chunks=sorted(state["failed_chunks"]),
             unresolved=state["unresolved"],
+            batch_id=state.get("batch_id", ""),
         )
     except Exception as exc:  # noqa: BLE001 - classified by the router
         logger.warning(
@@ -642,12 +646,14 @@ class IngestionPipeline:
         doc_type: str = "unknown",
         thread_id: str | None = None,
         force_restart: bool = False,
+        batch_id: str = "",
     ) -> ExtractionResult | None:
         """Ingest one document. Returns None if the file could not be read.
 
         If a previous run on the same `thread_id` was interrupted, this resumes
         it (`invoke(None, ...)`) instead of re-extracting chunks that already
-        succeeded and were already paid for against the RPM budget.
+        succeeded and were already paid for against the RPM budget. A resumed
+        run keeps the `batch_id` it started under.
         """
         path = Path(path)
         thread_id = thread_id or default_thread_id(path)
@@ -661,7 +667,9 @@ class IngestionPipeline:
             logger.info("Resuming interrupted ingestion of %s", thread_id)
             final = self.graph.invoke(None, config)
         else:
-            final = self.graph.invoke(initial_state(path, doc_type), config)
+            final = self.graph.invoke(
+                initial_state(path, doc_type, batch_id=batch_id), config
+            )
 
         if final.get("status") == STATUS_READ_FAILED:
             return None

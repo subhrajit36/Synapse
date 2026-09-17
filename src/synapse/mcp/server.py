@@ -94,14 +94,21 @@ def rank_candidates(
         bool,
         Field(True, description="Canonicalize input names first. False = names are already graph nodes."),
     ] = True,
+    batch_id: Annotated[
+        str | None,
+        Field(None, description="Rank only the pool candidates uploaded under this "
+                                "session id. Null = the whole pool. Not combinable "
+                                "with `candidates`."),
+    ] = None,
 ) -> RankingResponse:
     """Rank candidates against a job description, best fit first.
 
     Omit `candidates` to rank the stored pool - candidates ingested earlier,
     whose skills were already extracted and canonicalized. That is the normal
     path: extraction is expensive and rate-limited, scoring is milliseconds, and
-    a resume's skills do not change between searches. Pass `candidates`
-    explicitly only to score skill lists you already hold.
+    a resume's skills do not change between searches. Give `batch_id` to rank
+    only one upload session's candidates. Pass `candidates` explicitly only to
+    score skill lists you already hold.
 
     Each result carries its score components (direct match, bridge credit, gap
     penalty), the skills that matched, the gaps that were bridgeable and via
@@ -111,6 +118,7 @@ def rank_candidates(
     return get_engine().rank_candidates(
         jd_skills=jd_skills, candidates=candidates, top_k=top_k, max_hops=max_hops,
         use_weights=use_weights, enable_bridging=enable_bridging, link=link,
+        batch_id=batch_id,
     )
 
 
@@ -165,14 +173,19 @@ def explain_score(
 
 
 @mcp.tool(annotations={"readOnlyHint": True, "idempotentHint": True}, tags={"pool"})
-def list_candidates() -> PoolListResponse:
+def list_candidates(
+    batch_id: Annotated[
+        str | None,
+        Field(None, description="Only candidates uploaded under this session id. Null = all."),
+    ] = None,
+) -> PoolListResponse:
     """List the candidates currently in the pool.
 
     These are the candidates `rank_candidates` scores when called without an
     explicit list. Skill payloads are omitted so this stays cheap to poll; use
     `explain_score` for one candidate's detail.
     """
-    return get_engine().list_pool()
+    return get_engine().list_pool(batch_id=batch_id)
 
 
 @mcp.tool(annotations={"readOnlyHint": True, "idempotentHint": True}, tags={"diagnostics"})
@@ -228,9 +241,10 @@ async def api_jds(request: Request) -> JSONResponse:
 
 @mcp.custom_route("/api/candidates", methods=["GET"])
 async def api_candidates(request: Request) -> JSONResponse:
-    """E4: the stored candidate pool."""
+    """E4: the stored candidate pool. `?batch_id=` narrows it to one session (F2)."""
+    batch_id = request.query_params.get("batch_id") or None
     try:
-        return JSONResponse(get_engine().list_pool().model_dump())
+        return JSONResponse(get_engine().list_pool(batch_id=batch_id).model_dump())
     except RuntimeError as exc:
         # Pool lives in AuraDB; an unconfigured or unreachable database is a
         # service-availability problem, not a bad request.
@@ -265,7 +279,8 @@ async def api_rank_pool(request: Request) -> JSONResponse:
 
     try:
         response = get_engine().rank_candidates(
-            jd_skills=jd_skills, candidates=None, top_k=body.get("top_k")
+            jd_skills=jd_skills, candidates=None, top_k=body.get("top_k"),
+            batch_id=body.get("batch_id") or None,
         )
     except RuntimeError as exc:
         return JSONResponse({"error": str(exc)}, status_code=503)

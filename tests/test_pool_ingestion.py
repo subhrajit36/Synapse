@@ -138,6 +138,22 @@ def test_link_provenance_travels_with_each_skill(tmp_path, linker):
     assert by_node["Kubernetes"]["weight"] == 1.0
 
 
+def test_batch_id_travels_from_run_to_the_store(tmp_path, linker):
+    """F2: the upload session survives the whole graph and reaches the write."""
+    store = StubStore()
+    IngestionPipeline(extractor(), FAST, linker=linker, store=store).run(
+        write_doc(tmp_path), batch_id="b-7f3a91")
+    assert store.written[0]["batch_id"] == "b-7f3a91"
+
+
+def test_a_run_without_a_batch_writes_an_empty_batch_id(tmp_path, linker):
+    """The CLI / directory path is not an upload session; nothing is invented."""
+    store = StubStore()
+    IngestionPipeline(extractor(), FAST, linker=linker, store=store).run(
+        write_doc(tmp_path))
+    assert store.written[0]["batch_id"] == ""
+
+
 def test_content_hash_is_stable_for_identical_text(tmp_path, linker):
     a, b = write_doc(tmp_path, "a.txt"), write_doc(tmp_path, "b.txt")
     store = StubStore()

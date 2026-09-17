@@ -144,6 +144,10 @@ class RankingResponse(BaseModel):
         description="'pool' when the stored candidate pool was ranked, "
                     "'request' when candidates were supplied in the call.",
     )
+    batch_id: str | None = Field(
+        None,
+        description="Upload session the pool was scoped to; null = the whole pool.",
+    )
     candidates: list[CandidateScore]
 
 
@@ -217,11 +221,16 @@ class PoolCandidate(BaseModel):
     unresolved_count: int = Field(
         0, description="Surfaces that reached no graph node and so score nothing."
     )
+    batch_ids: list[str] = Field(
+        default_factory=list,
+        description="Every upload session this candidate was part of (F2).",
+    )
     extracted_at: str = ""
 
 
 class PoolListResponse(BaseModel):
     count: int
+    batch_id: str | None = Field(None, description="Session filter applied; null = all.")
     candidates: list[PoolCandidate]
 
 
@@ -332,7 +341,9 @@ class MatchEngine:
         self._matcher: Matcher | None = None
         self._linker: EntityLinker | None = None
         self._dataset: dict | None = None
-        self._pool: list[dict] | None = None
+        # Keyed by batch id (None = the whole pool) so that two upload sessions
+        # ranking at the same time do not evict each other's cached slice.
+        self._pool: dict[str | None, list[dict]] = {}
 
     # -- lazy resources ----------------------------------------------------
 
@@ -484,15 +495,16 @@ class MatchEngine:
 
     # -- E4: the persistent candidate pool ---------------------------------
 
-    @property
-    def pool(self) -> list[dict]:
-        """Stored candidate profiles, loaded once per process and cached.
+    def pool_for(self, batch_id: str | None = None) -> list[dict]:
+        """Stored candidate profiles for one upload session, cached per batch.
 
-        Ranking is the fast half of the system and must stay that way, so the
-        whole pool is fetched in one query rather than one per candidate. It is
-        small - a profile is a name and a few dozen skill weights.
+        Ranking is the fast half of the system and must stay that way, so a
+        slice is fetched in one query rather than one per candidate. It is
+        small - a profile is a name and a few dozen skill weights. None is the
+        whole pool.
         """
-        if self._pool is None:
+        key = batch_id or None
+        if key not in self._pool:
             client = self.neo4j
             if not client.config.is_configured:
                 raise RuntimeError(
@@ -500,19 +512,36 @@ class MatchEngine:
                     f"is set ({client.config.describe()}). Ingest candidates "
                     "first, and configure the Neo4j environment variables."
                 )
-            self._pool = client.load_candidate_pool()
-            logger.info("Loaded %d candidates from the pool", len(self._pool))
-        return self._pool
+            self._pool[key] = client.load_candidate_pool(batch_id=key)
+            logger.info("Loaded %d candidates from the pool (batch=%s)",
+                        len(self._pool[key]), key)
+        return self._pool[key]
 
-    def invalidate_pool(self) -> None:
-        """Drop the cached pool so the next ranking sees new ingestions."""
-        self._pool = None
+    @property
+    def pool(self) -> list[dict]:
+        """The whole pool. Kept for callers that predate batch scoping."""
+        return self.pool_for(None)
 
-    def list_pool(self) -> PoolListResponse:
+    def invalidate_pool(self, batch_id: str | None = None) -> None:
+        """Drop cached slices so the next ranking sees new ingestions.
+
+        A write to one batch also stales the unscoped view, which is a superset
+        of it; other batches are untouched, since a candidate is only ever
+        added to the batch it was uploaded under. No batch given = drop all.
+        """
+        if batch_id is None:
+            self._pool.clear()
+        else:
+            self._pool.pop(batch_id, None)
+            self._pool.pop(None, None)
+
+    def list_pool(self, batch_id: str | None = None) -> PoolListResponse:
         """What is in the pool, without the skill payloads."""
-        rows = self.neo4j.list_candidates()
+        batch_id = batch_id or None
+        rows = self.neo4j.list_candidates(batch_id=batch_id)
         return PoolListResponse(
             count=len(rows),
+            batch_id=batch_id,
             candidates=[
                 PoolCandidate(
                     candidate_id=r["candidate_id"],
@@ -521,13 +550,16 @@ class MatchEngine:
                     model=r.get("model") or "",
                     skill_count=r.get("skill_count") or 0,
                     unresolved_count=r.get("unresolved_count") or 0,
+                    batch_ids=list(r.get("batch_ids") or []),
                     extracted_at=r.get("extracted_at") or "",
                 )
                 for r in rows
             ],
         )
 
-    def _pool_as_candidates(self) -> tuple[dict[str, dict[str, float]], dict[str, list[str]]]:
+    def _pool_as_candidates(
+        self, batch_id: str | None = None
+    ) -> tuple[dict[str, dict[str, float]], dict[str, list[str]]]:
         """Pool profiles in the shape the matcher wants.
 
         Stored skills are already canonical node names and already carry their
@@ -535,10 +567,11 @@ class MatchEngine:
         would let a linking change silently move the score of a candidate whose
         document has not been touched since ingestion.
         """
-        resolved = {c["name"] or c["candidate_id"]: c["skills"] for c in self.pool}
+        pool = self.pool_for(batch_id)
+        resolved = {c["name"] or c["candidate_id"]: c["skills"] for c in pool}
         unresolved = {
             (c["name"] or c["candidate_id"]): list(c.get("unresolved") or [])
-            for c in self.pool
+            for c in pool
         }
         return resolved, unresolved
 
@@ -551,13 +584,23 @@ class MatchEngine:
         use_weights: bool | None = None,
         enable_bridging: bool | None = None,
         link: bool = True,
+        batch_id: str | None = None,
     ) -> RankingResponse:
         """FR5: rank candidates against a JD with explainable components.
 
-        `candidates` omitted or empty ranks the stored pool (E4). Passing them
-        explicitly keeps the original stateless behaviour, which the evaluation
-        harness and the tests rely on.
+        `candidates` omitted ranks the stored pool (E4), narrowed to one upload
+        session when `batch_id` is given (F2). Passing candidates explicitly
+        keeps the original stateless behaviour, which the evaluation harness
+        and the tests rely on.
         """
+        batch_id = batch_id or None
+        if candidates is not None and batch_id is not None:
+            # Not silently ignorable: the caller asked for two different sets.
+            raise ValueError(
+                "batch_id scopes the stored pool and cannot be combined with "
+                "explicit candidates; pass one or the other."
+            )
+
         params = self._params_for(max_hops, use_weights, enable_bridging)
         jd_map, jd_profile = self.resolve(jd_skills, "jd", link)
 
@@ -573,7 +616,7 @@ class MatchEngine:
                 unresolved[candidate.name] = [r.surface for r in profile.unresolved]
             source = "request"
         else:
-            resolved, unresolved = self._pool_as_candidates()
+            resolved, unresolved = self._pool_as_candidates(batch_id)
             source = "pool"
 
         ranked = self.matcher.rank(jd_map, resolved, params=params, top_k=top_k)
@@ -583,6 +626,7 @@ class MatchEngine:
             jd_unresolved=[r.surface for r in jd_profile.unresolved],
             params=_params_dict(params),
             candidate_source=source,
+            batch_id=batch_id if source == "pool" else None,
             candidates=[
                 _to_candidate_score(r, unresolved.get(r.name, [])) for r in ranked
             ],

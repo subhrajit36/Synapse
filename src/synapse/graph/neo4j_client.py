@@ -178,6 +178,14 @@ class Neo4jClient:
                 CREATE INDEX candidate_content_hash IF NOT EXISTS
                 FOR (c:Candidate) ON (c.content_hash)
             """)
+            # F2: a candidate belongs to every upload session that touched it,
+            # so scoping is a list membership test. The pool is small enough
+            # that the `IN` scan below is cheap either way; the index declares
+            # the property as a query key.
+            session.run("""
+                CREATE INDEX candidate_batch_ids IF NOT EXISTS
+                FOR (c:Candidate) ON (c.batch_ids)
+            """)
 
     # ------------------------------------------------------------------ ingestion
 
@@ -413,6 +421,7 @@ class Neo4jClient:
         chunk_count: int = 0,
         failed_chunks: list[int] | None = None,
         unresolved: list[str] | None = None,
+        batch_id: str = "",
     ) -> None:
         """Write one candidate profile and its HAS_SKILL edges.
 
@@ -423,6 +432,12 @@ class Neo4jClient:
         one transaction. A re-extraction must *replace* a profile rather than
         union with it - otherwise a skill the model no longer finds lingers
         forever and the profile only ever grows.
+
+        `batch_ids` is the one property that does NOT follow that rule: it is
+        appended to, never replaced (F2). A batch is an upload session, and a
+        résumé uploaded in two sessions belongs to both - dropping the first
+        would make an earlier session's ranking lose a candidate because
+        someone else uploaded the same file later.
 
         Only skills that resolved to a graph node get an edge. Unresolved
         surfaces are kept as a property so they stay visible (NFR6) without
@@ -440,6 +455,7 @@ class Neo4jClient:
             "chunk_count": chunk_count,
             "failed_chunks": failed_chunks or [],
             "unresolved": unresolved or [],
+            "batch_id": batch_id or "",
             "skills": skills,
         }
 
@@ -460,7 +476,12 @@ class Neo4jClient:
                 c.chunk_count    = $chunk_count,
                 c.failed_chunks  = $failed_chunks,
                 c.unresolved     = $unresolved,
-                c.extracted_at   = datetime()
+                c.extracted_at   = datetime(),
+                c.batch_ids      = CASE
+                    WHEN $batch_id = '' THEN coalesce(c.batch_ids, [])
+                    WHEN $batch_id IN coalesce(c.batch_ids, []) THEN c.batch_ids
+                    ELSE coalesce(c.batch_ids, []) + $batch_id
+                END
         """, props)
 
         tx.run("""
@@ -481,6 +502,27 @@ class Neo4jClient:
                 r.link_score = skill.link_score
         """, {"candidate_id": props["candidate_id"], "skills": props["skills"]})
 
+    def add_candidate_to_batch(self, candidate_id: str, batch_id: str) -> bool:
+        """Attach an existing candidate to an upload session (F2).
+
+        The dedupe path: a re-uploaded résumé already has a profile, so the
+        pipeline is skipped and only the membership changes. Idempotent - a
+        second attach to the same batch is a no-op. False if the candidate
+        does not exist.
+        """
+        if not batch_id:
+            raise ValueError("batch_id must be non-empty")
+        with self.session() as session:
+            record = session.run("""
+                MATCH (c:Candidate {candidate_id: $candidate_id})
+                SET c.batch_ids = CASE
+                    WHEN $batch_id IN coalesce(c.batch_ids, []) THEN c.batch_ids
+                    ELSE coalesce(c.batch_ids, []) + $batch_id
+                END
+                RETURN count(c) AS n
+            """, {"candidate_id": candidate_id, "batch_id": batch_id}).single()
+        return bool(record and record["n"])
+
     def get_candidate(self, candidate_id: str) -> dict | None:
         """One candidate profile with its skills, or None."""
         with self.session() as session:
@@ -494,6 +536,7 @@ class Neo4jClient:
                        c.chunk_count AS chunk_count,
                        c.failed_chunks AS failed_chunks,
                        c.unresolved AS unresolved,
+                       coalesce(c.batch_ids, []) AS batch_ids,
                        toString(c.extracted_at) AS extracted_at,
                        collect(CASE WHEN s IS NULL THEN NULL ELSE {
                            node: s.name, weight: r.weight, context: r.context,
@@ -521,38 +564,53 @@ class Neo4jClient:
             """, {"content_hash": content_hash}).single()
         return record["candidate_id"] if record else None
 
-    def list_candidates(self) -> list[dict]:
-        """Pool summary - no skill payloads, so it stays cheap to poll."""
+    # The same predicate in both pool readers, so "in this batch" can never mean
+    # two different things. A null batch is the whole pool.
+    _BATCH_FILTER = "WHERE $batch_id IS NULL OR $batch_id IN coalesce(c.batch_ids, [])"
+
+    def list_candidates(self, batch_id: str | None = None) -> list[dict]:
+        """Pool summary - no skill payloads, so it stays cheap to poll.
+
+        `batch_id` narrows it to one upload session (F2); None is everything.
+        """
         with self.session() as session:
-            return [dict(r) for r in session.run("""
+            return [dict(r) for r in session.run(f"""
                 MATCH (c:Candidate)
+                {self._BATCH_FILTER}
                 OPTIONAL MATCH (c)-[r:HAS_SKILL]->()
                 RETURN c.candidate_id AS candidate_id, c.name AS name,
                        c.doc_type AS doc_type, c.model AS model,
                        c.content_hash AS content_hash,
                        size(c.unresolved) AS unresolved_count,
+                       coalesce(c.batch_ids, []) AS batch_ids,
                        toString(c.extracted_at) AS extracted_at,
                        count(r) AS skill_count
                 ORDER BY c.name
-            """)]
+            """, {"batch_id": batch_id or None})]
 
-    def load_candidate_pool(self) -> list[dict]:
+    def load_candidate_pool(self, batch_id: str | None = None) -> list[dict]:
         """Every candidate with `{skill: weight}`, ready for the matcher.
 
         One query for the whole pool rather than one per candidate: ranking is
         supposed to be the fast half, and N round trips to a managed database
         would undo exactly the cost asymmetry this design exists to exploit.
+
+        `batch_id` restricts the pool to one upload session (F2), which is what
+        the product page ranks: only the résumés this user just uploaded, not
+        everyone who has ever been ingested.
         """
         with self.session() as session:
-            rows = session.run("""
+            rows = session.run(f"""
                 MATCH (c:Candidate)
+                {self._BATCH_FILTER}
                 OPTIONAL MATCH (c)-[r:HAS_SKILL]->(s:Skill)
                 RETURN c.candidate_id AS candidate_id, c.name AS name,
                        c.unresolved AS unresolved,
+                       coalesce(c.batch_ids, []) AS batch_ids,
                        collect(CASE WHEN s IS NULL THEN NULL
-                               ELSE {node: s.name, weight: r.weight} END) AS skills
+                               ELSE {{node: s.name, weight: r.weight}} END) AS skills
                 ORDER BY c.name
-            """)
+            """, {"batch_id": batch_id or None})
             pool = []
             for record in rows:
                 entry = dict(record)
