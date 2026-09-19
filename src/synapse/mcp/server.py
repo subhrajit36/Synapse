@@ -94,14 +94,21 @@ def rank_candidates(
         bool,
         Field(True, description="Canonicalize input names first. False = names are already graph nodes."),
     ] = True,
+    batch_id: Annotated[
+        str | None,
+        Field(None, description="Rank only the pool candidates uploaded under this "
+                                "session id. Null = the whole pool. Not combinable "
+                                "with `candidates`."),
+    ] = None,
 ) -> RankingResponse:
     """Rank candidates against a job description, best fit first.
 
     Omit `candidates` to rank the stored pool - candidates ingested earlier,
     whose skills were already extracted and canonicalized. That is the normal
     path: extraction is expensive and rate-limited, scoring is milliseconds, and
-    a resume's skills do not change between searches. Pass `candidates`
-    explicitly only to score skill lists you already hold.
+    a resume's skills do not change between searches. Give `batch_id` to rank
+    only one upload session's candidates. Pass `candidates` explicitly only to
+    score skill lists you already hold.
 
     Each result carries its score components (direct match, bridge credit, gap
     penalty), the skills that matched, the gaps that were bridgeable and via
@@ -111,6 +118,7 @@ def rank_candidates(
     return get_engine().rank_candidates(
         jd_skills=jd_skills, candidates=candidates, top_k=top_k, max_hops=max_hops,
         use_weights=use_weights, enable_bridging=enable_bridging, link=link,
+        batch_id=batch_id,
     )
 
 
@@ -165,14 +173,19 @@ def explain_score(
 
 
 @mcp.tool(annotations={"readOnlyHint": True, "idempotentHint": True}, tags={"pool"})
-def list_candidates() -> PoolListResponse:
+def list_candidates(
+    batch_id: Annotated[
+        str | None,
+        Field(None, description="Only candidates uploaded under this session id. Null = all."),
+    ] = None,
+) -> PoolListResponse:
     """List the candidates currently in the pool.
 
     These are the candidates `rank_candidates` scores when called without an
     explicit list. Skill payloads are omitted so this stays cheap to poll; use
     `explain_score` for one candidate's detail.
     """
-    return get_engine().list_pool()
+    return get_engine().list_pool(batch_id=batch_id)
 
 
 @mcp.tool(annotations={"readOnlyHint": True, "idempotentHint": True}, tags={"diagnostics"})
@@ -228,12 +241,76 @@ async def api_jds(request: Request) -> JSONResponse:
 
 @mcp.custom_route("/api/candidates", methods=["GET"])
 async def api_candidates(request: Request) -> JSONResponse:
-    """E4: the stored candidate pool."""
+    """E4: the stored candidate pool. `?batch_id=` narrows it to one session (F2)."""
+    batch_id = request.query_params.get("batch_id") or None
     try:
-        return JSONResponse(get_engine().list_pool().model_dump())
+        return JSONResponse(get_engine().list_pool(batch_id=batch_id).model_dump())
     except RuntimeError as exc:
         # Pool lives in AuraDB; an unconfigured or unreachable database is a
         # service-availability problem, not a bad request.
+        return JSONResponse({"error": str(exc)}, status_code=503)
+
+
+@mcp.custom_route("/api/candidates", methods=["POST"])
+async def api_upload_candidate(request: Request) -> JSONResponse:
+    """F3: one résumé into the pool. Multipart: `file`, `batch_id`, [`doc_type`].
+
+    One document per request on purpose (locked decision): the page drives the
+    loop and renders its own progress, so there is no job store, no worker and
+    nothing to poll. A dedupe hit returns immediately without an LLM call.
+    """
+    try:
+        form = await request.form()
+    except Exception:  # noqa: BLE001 - not multipart, or malformed
+        return JSONResponse({"error": "Body must be multipart/form-data."}, status_code=400)
+
+    upload = form.get("file")
+    if upload is None or not hasattr(upload, "filename"):
+        return JSONResponse({"error": "Missing file field 'file'."}, status_code=400)
+    batch_id = (form.get("batch_id") or "").strip()
+    if not batch_id:
+        return JSONResponse({"error": "Missing 'batch_id'."}, status_code=400)
+
+    data = await upload.read()
+    try:
+        response = get_engine().ingest_upload(
+            data, upload.filename or "upload.txt", batch_id,
+            doc_type=str(form.get("doc_type") or "resume"),
+        )
+    except ValueError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
+    except RuntimeError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=503)
+
+    # The candidate never reached the pool: the page must not show it as ranked.
+    status = 200 if response.in_pool else 502
+    return JSONResponse(response.model_dump(), status_code=status)
+
+
+@mcp.custom_route("/api/jd_skills", methods=["POST"])
+async def api_jd_skills(request: Request) -> JSONResponse:
+    """F4: free-text JD -> canonical skills plus what did not resolve.
+
+    The response's `skills` is the exact shape `/api/rank_pool` takes as
+    `jd_skills`, so the page passes it through untouched - the JD is read once
+    by the model and never re-interpreted between the two calls.
+    """
+    try:
+        body = await request.json()
+    except Exception:  # noqa: BLE001
+        return JSONResponse({"error": "Body must be JSON."}, status_code=400)
+
+    text = (body or {}).get("text")
+    if not isinstance(text, str) or not text.strip():
+        return JSONResponse({"error": "Missing 'text'."}, status_code=400)
+
+    try:
+        return JSONResponse(get_engine().extract_jd_skills(text).model_dump())
+    except ValueError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
+    except RuntimeError as exc:
+        # No API key, or Gemini refused this call: retry-able by the user, not
+        # a fault in what they sent.
         return JSONResponse({"error": str(exc)}, status_code=503)
 
 
@@ -265,7 +342,8 @@ async def api_rank_pool(request: Request) -> JSONResponse:
 
     try:
         response = get_engine().rank_candidates(
-            jd_skills=jd_skills, candidates=None, top_k=body.get("top_k")
+            jd_skills=jd_skills, candidates=None, top_k=body.get("top_k"),
+            batch_id=body.get("batch_id") or None,
         )
     except RuntimeError as exc:
         return JSONResponse({"error": str(exc)}, status_code=503)

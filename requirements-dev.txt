@@ -2,12 +2,10 @@
 # server — NFR2 bans torch from the deployed image, and these stay off it.
 -r requirements.txt
 
-# Phase A1 — LLM extraction
-google-genai==1.29.0
-pydantic==2.9.2
+# google-genai, pydantic and fastembed are runtime deps and pinned in
+# requirements.txt; a second `==` here is a double requirement pip refuses.
 
-# Phase A2/A3 — graph build (FastEmbed for embeddings in C1)
-fastembed==0.8.0
+# Phase A2/A3 — graph build
 pandas==2.2.2
 numpy==1.26.4
 
