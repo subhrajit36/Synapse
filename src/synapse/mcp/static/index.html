@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Synapse — score decomposition</title>
+<title>Synapse — rank candidates</title>
 <style>
   :root {
     --bg: #f7f7f5;  --panel: #fff;   --ink: #1a1a19;  --muted: #6b6b66;
@@ -24,32 +24,56 @@
   }
   header {
     padding: 18px 22px; border-bottom: 1px solid var(--line); background: var(--panel);
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap;
   }
   header h1 { margin: 0; font-size: 17px; font-weight: 620; letter-spacing: -0.01em; }
   header p  { margin: 5px 0 0; color: var(--muted); font-size: 12.5px; max-width: 76ch; }
-  .layout { display: grid; grid-template-columns: 300px 1fr; gap: 18px; padding: 18px 22px; align-items: start; }
-  @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
-  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
+  header a  { color: var(--muted); font-size: 12.5px; }
+  .layout { display: grid; grid-template-columns: 340px 1fr; gap: 18px; padding: 18px 22px; align-items: start; }
+  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; margin-bottom: 14px; }
   .panel h2 { margin: 0 0 10px; font-size: 12px; text-transform: uppercase;
               letter-spacing: 0.07em; color: var(--muted); font-weight: 600; }
-  select { width: 100%; padding: 7px 8px; border: 1px solid var(--line); border-radius: 6px;
-           background: var(--bg); color: var(--ink); font: inherit; }
+  textarea, input[type=file] {
+    width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--bg); color: var(--ink); font: inherit;
+  }
+  textarea { min-height: 150px; resize: vertical; }
+  .row { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  button {
+    padding: 7px 14px; border: 1px solid var(--line); border-radius: 6px; font: inherit;
+    background: var(--panel); color: var(--ink); cursor: pointer;
+  }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .hint { color: var(--muted); font-size: 12.5px; }
+
   .skills { list-style: none; margin: 12px 0 0; padding: 0; }
   .skills li { display: flex; justify-content: space-between; gap: 10px;
                padding: 4px 0; border-bottom: 1px dashed var(--line); }
   .skills li:last-child { border-bottom: 0; }
   .w { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { font-size: 12px; padding: 2px 8px; border-radius: 99px; background: var(--chip); color: var(--muted); }
+  .chip.gap { color: var(--gap); }
+
+  .files { list-style: none; margin: 10px 0 0; padding: 0; }
+  .files li { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 5px 0;
+              border-bottom: 1px dashed var(--line); font-variant-numeric: tabular-nums; }
+  .files li:last-child { border-bottom: 0; }
+  .state { color: var(--muted); font-size: 12.5px; text-align: right; }
+  .state.ok { color: var(--accent); }
+  .state.err { color: var(--gap); }
 
   .cand { border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px;
           background: var(--panel); overflow: hidden; }
   .cand > summary {
     cursor: pointer; padding: 10px 12px; display: grid;
-    grid-template-columns: 26px 1fr auto auto; gap: 12px; align-items: center;
+    grid-template-columns: 26px 1fr auto; gap: 12px; align-items: center;
   }
   .cand > summary::-webkit-details-marker { display: none; }
   .rank { color: var(--muted); font-variant-numeric: tabular-nums; }
   .name { font-weight: 560; }
-  .tier { font-size: 11px; padding: 2px 7px; border-radius: 99px; background: var(--chip); color: var(--muted); }
   .total { font-variant-numeric: tabular-nums; font-weight: 620; min-width: 4.5em; text-align: right; }
   .body { padding: 0 12px 14px; border-top: 1px solid var(--line); }
 
@@ -72,34 +96,59 @@
          font: 12px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
   .cfg { margin-top: 16px; font-size: 12px; color: var(--muted); word-break: break-word; }
   .empty { color: var(--muted); }
-  .note { margin-top: 14px; padding: 9px 11px; border-left: 3px solid var(--line);
-          color: var(--muted); font-size: 12.5px; }
   .err { color: var(--gap); }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Synapse — score decomposition</h1>
-  <p>
-    Every number on this page is read from a <code>MatchResult</code> returned by
-    <code>POST /api/rank</code>. Nothing is computed in the browser. Candidates are
-    from the versioned eval snapshot, and each one's ground-truth tier is shown so the
-    ranking can be checked against the labels rather than taken on trust.
-  </p>
+  <div>
+    <h1>Synapse — rank candidates</h1>
+    <p>
+      Upload résumés, paste a job description, rank. Only the résumés uploaded in
+      <em>this</em> session are scored. Every number on this page is read from a
+      <code>MatchResult</code> returned by <code>POST /api/rank_pool</code>; nothing is
+      computed in the browser.
+    </p>
+  </div>
+  <a href="/eval">eval viewer &rarr;</a>
 </header>
 
 <div class="layout">
-  <div class="panel">
-    <h2>Job description</h2>
-    <select id="jd"><option>loading…</option></select>
-    <div id="jdmeta" class="cfg"></div>
-    <h2 style="margin-top:16px">Required skills &amp; demand weight</h2>
-    <ul class="skills" id="jdskills"></ul>
+  <div>
+    <div class="panel">
+      <h2>1 &middot; Résumés</h2>
+      <input type="file" id="files" multiple accept=".pdf,.docx,.txt,.md">
+      <div class="row">
+        <button id="upload" class="primary">Upload</button>
+        <span class="hint" id="uploadhint">.pdf, .docx, .txt, .md &middot; one request per file</span>
+      </div>
+      <ul class="files" id="filelist"></ul>
+    </div>
+
+    <div class="panel">
+      <h2>2 &middot; Job description</h2>
+      <textarea id="jdtext" placeholder="Paste the job description as written…"></textarea>
+      <div class="row">
+        <button id="extract" class="primary">Extract skills</button>
+        <span class="hint" id="jdhint"></span>
+      </div>
+      <ul class="skills" id="jdskills"></ul>
+      <div class="chips" id="jdunresolved"></div>
+    </div>
+
+    <div class="panel">
+      <h2>3 &middot; Rank</h2>
+      <div class="row">
+        <button id="rank" class="primary" disabled>Rank candidates</button>
+        <button id="newsession" title="Start over with an empty session">New session</button>
+      </div>
+      <div class="cfg">session <code id="batch"></code></div>
+    </div>
   </div>
 
   <div>
-    <div id="status" class="panel" style="margin-bottom:10px">Loading…</div>
+    <div id="status" class="panel">Upload at least one résumé and extract the JD's skills.</div>
     <div id="results"></div>
   </div>
 </div>
@@ -108,36 +157,126 @@
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-async function loadJds() {
-  const res = await fetch('/api/jds');
-  if (!res.ok) { $('status').innerHTML = '<span class="err">Could not load JDs.</span>'; return; }
-  const data = await res.json();
-  const sel = $('jd');
-  sel.innerHTML = '';
-  for (const jd of data.jds) {
-    const o = document.createElement('option');
-    o.value = jd.jd_id;
-    o.textContent = `${jd.jd_id} — ${jd.n_candidates} candidates`;
-    sel.appendChild(o);
-  }
-  $('jdmeta').textContent = `${data.jds.length} JDs · dataset ${data.version} · ${data.dataset}`;
-  sel.addEventListener('change', () => rank(sel.value));
-  if (data.jds.length) rank(data.jds[0].jd_id);
+// The session id is minted here, in the browser, and sent with every upload
+// and the rank call (F2/F5). The server never allocates one and keeps no
+// record of sessions; a batch is simply the set of candidates tagged with it.
+function newBatchId() {
+  if (window.crypto && crypto.randomUUID) return 'b-' + crypto.randomUUID().slice(0, 8);
+  return 'b-' + Math.random().toString(16).slice(2, 10);
 }
 
-async function rank(jdId) {
-  $('status').textContent = 'Scoring…';
-  const res = await fetch('/api/rank', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({jd_id: jdId})
+const state = { batchId: newBatchId(), inPool: 0, jdSkills: [] };
+
+function showBatch() { $('batch').textContent = state.batchId; }
+function gate() {
+  $('rank').disabled = !(state.inPool > 0 && state.jdSkills.length > 0);
+}
+function setStatus(html, cls) {
+  $('status').innerHTML = cls ? `<span class="${cls}">${html}</span>` : html;
+}
+
+// ------------------------------------------------------------- 1. upload
+
+function fileRow(name) {
+  const li = document.createElement('li');
+  li.innerHTML = `<span>${esc(name)}</span><span class="state">queued</span>`;
+  $('filelist').appendChild(li);
+  return li.querySelector('.state');
+}
+
+// Serial on purpose: one request in flight at a time keeps the free-tier
+// Gemini budget and the 512MB server honest, and the page owns the progress
+// display - there is no job to poll.
+async function uploadAll() {
+  const files = [...$('files').files];
+  if (!files.length) { setStatus('Choose at least one file first.', 'err'); return; }
+  $('upload').disabled = true;
+  $('files').disabled = true;
+  const rows = files.map(f => fileRow(f.name));
+
+  for (let i = 0; i < files.length; i++) {
+    const stateEl = rows[i];
+    stateEl.textContent = 'uploading…';
+    setStatus(`Uploading ${i + 1} of ${files.length}: ${esc(files[i].name)}`);
+
+    const form = new FormData();
+    form.append('file', files[i]);
+    form.append('batch_id', state.batchId);
+    let res, body;
+    try {
+      res = await fetch('/api/candidates', { method: 'POST', body: form });
+      body = await res.json().catch(() => ({ error: res.statusText }));
+    } catch (e) {
+      stateEl.textContent = 'network error'; stateEl.className = 'state err';
+      continue;
+    }
+
+    if (res.ok && body.in_pool) {
+      state.inPool += 1;
+      stateEl.textContent = body.reused
+        ? `reused · ${body.skill_count} skills`
+        : `${body.status} · ${body.skill_count} skills`;
+      stateEl.className = 'state ok';
+    } else {
+      stateEl.textContent = body.error || body.status || `HTTP ${res.status}`;
+      stateEl.className = 'state err';
+    }
+  }
+
+  $('files').value = '';
+  $('files').disabled = false;
+  $('upload').disabled = false;
+  setStatus(`${state.inPool} candidate(s) in this session.`);
+  gate();
+}
+
+// ------------------------------------------------------------- 2. JD
+
+async function extractJd() {
+  const text = $('jdtext').value;
+  if (!text.trim()) { $('jdhint').innerHTML = '<span class="err">Paste a JD first.</span>'; return; }
+  $('extract').disabled = true;
+  $('jdhint').textContent = 'Reading with the extractor…';
+
+  const res = await fetch('/api/jd_skills', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text })
   });
+  const body = await res.json().catch(() => ({ error: res.statusText }));
+  $('extract').disabled = false;
+
   if (!res.ok) {
-    const e = await res.json().catch(() => ({error: res.statusText}));
-    $('status').innerHTML = `<span class="err">${esc(e.error || 'Request failed')}</span>`;
+    $('jdhint').innerHTML = `<span class="err">${esc(body.error || 'Extraction failed')}</span>`;
     return;
   }
-  render(await res.json());
+
+  // Kept exactly as returned: this list is what gets posted to /api/rank_pool.
+  state.jdSkills = body.skills;
+  $('jdskills').innerHTML = body.skills
+    .map(s => `<li><span>${esc(s.skill)}</span><span class="w">${s.weight}</span></li>`)
+    .join('');
+  $('jdunresolved').innerHTML = body.unresolved
+    .map(s => `<span class="chip gap" title="Named in the JD but not a node in the skill graph; not scored.">${esc(s)} &middot; unresolved</span>`)
+    .join('');
+  $('jdhint').textContent =
+    `${body.skills.length} skill(s) to rank on` +
+    (body.unresolved.length ? ` · ${body.unresolved.length} unresolved` : '');
+  gate();
+}
+
+// ------------------------------------------------------------- 3. rank
+
+async function rank() {
+  $('rank').disabled = true;
+  setStatus('Scoring…');
+  const res = await fetch('/api/rank_pool', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jd_skills: state.jdSkills, batch_id: state.batchId })
+  });
+  const body = await res.json().catch(() => ({ error: res.statusText }));
+  gate();
+  if (!res.ok) { setStatus(esc(body.error || 'Ranking failed'), 'err'); return; }
+  render(body);
 }
 
 function skillList(items, empty) {
@@ -146,12 +285,10 @@ function skillList(items, empty) {
 }
 
 function render(data) {
-  $('jdskills').innerHTML = data.jd_skills
-    .map(s => `<li><span>${esc(s.skill)}</span><span class="w">${s.weight}</span></li>`)
-    .join('');
-  $('jdmeta').textContent = `${data.jd_id} · domain ${data.domain} · ${data.split} split`;
-  $('status').textContent =
-    `${data.candidates.length} candidates ranked · scored against ${data.jd_skills.length} JD skills`;
+  setStatus(
+    `${data.candidates.length} candidate(s) ranked against ${data.jd_skills.length} JD skill(s)` +
+    (data.jd_unresolved.length ? ` · ${data.jd_unresolved.length} JD skill(s) unresolved and not scored` : '')
+  );
 
   $('results').innerHTML = data.candidates.map((c, i) => {
     const matched = skillList(
@@ -172,15 +309,19 @@ function render(data) {
           g.via ? `, nearest ${esc(g.via)} at ${g.distance}` : ''})</span></li>`).join(''),
       'No unreachable gaps.');
 
+    const unresolved = c.unresolved_skills.length
+      ? `<h3>On the résumé but not in the graph (${c.unresolved_skills.length})</h3>
+         <div class="chips">${c.unresolved_skills.map(s => `<span class="chip">${esc(s)}</span>`).join('')}</div>`
+      : '';
+
     const cfg = Object.entries(data.params)
       .map(([k, v]) => `${k}=${v}`).join(' · ');
 
     return `
-    <details class="cand">
+    <details class="cand" ${i === 0 ? 'open' : ''}>
       <summary>
         <span class="rank">${i + 1}</span>
         <span class="name">${esc(c.name)}</span>
-        <span class="tier">${esc(c.tier)} · grade ${c.grade}</span>
         <span class="total">${c.total}</span>
       </summary>
       <div class="body">
@@ -189,12 +330,12 @@ function render(data) {
           <div class="bridgev"><span class="k">bridge</span><span class="v">${c.bridge_score}</span></div>
           <div class="penalty"><span class="k">gap penalty</span><span class="v">${c.gap_penalty}</span></div>
           <div><span class="k">total demand</span><span class="v">${c.total_demand}</span></div>
-          <div><span class="k">exact overlap</span><span class="v">${c.exact_overlap}</span></div>
         </div>
 
         <h3>Matched (${c.matched_skills.length})</h3>${matched}
         <h3>Bridged (${c.bridged_skills.length})</h3>${bridged}
         <h3>Unreachable gaps (${c.missing_skills.length})</h3>${missing}
+        ${unresolved}
 
         <div class="cfg">ScoringParams &middot; ${esc(cfg)}</div>
       </div>
@@ -202,7 +343,29 @@ function render(data) {
   }).join('');
 }
 
-loadJds();
+// ------------------------------------------------------------- session
+
+function newSession() {
+  state.batchId = newBatchId();
+  state.inPool = 0;
+  state.jdSkills = [];
+  $('filelist').innerHTML = '';
+  $('files').value = '';
+  $('jdskills').innerHTML = '';
+  $('jdunresolved').innerHTML = '';
+  $('jdhint').textContent = '';
+  $('results').innerHTML = '';
+  setStatus('New session. Upload at least one résumé and extract the JD\'s skills.');
+  showBatch();
+  gate();
+}
+
+$('upload').addEventListener('click', uploadAll);
+$('extract').addEventListener('click', extractJd);
+$('rank').addEventListener('click', rank);
+$('newsession').addEventListener('click', newSession);
+showBatch();
+gate();
 </script>
 </body>
 </html>
