@@ -221,13 +221,24 @@ async def health(request: Request) -> JSONResponse:
 STATIC_DIR = Path(__file__).parent / "static"
 
 
-@mcp.custom_route("/", methods=["GET"])
-async def index(request: Request) -> HTMLResponse:
-    """D2: the single static page."""
-    page = STATIC_DIR / "index.html"
+def _page(name: str) -> HTMLResponse:
+    page = STATIC_DIR / name
     if not page.exists():  # pragma: no cover - packaging error, not a runtime path
         return HTMLResponse(f"<h1>Missing {page}</h1>", status_code=500)
     return HTMLResponse(page.read_text(encoding="utf-8"))
+
+
+@mcp.custom_route("/", methods=["GET"])
+async def index(request: Request) -> HTMLResponse:
+    """F5: the product page - upload résumés, type a JD, rank this session."""
+    return _page("index.html")
+
+
+@mcp.custom_route("/eval", methods=["GET"])
+async def eval_viewer(request: Request) -> HTMLResponse:
+    """D2: the score-decomposition viewer over the versioned eval snapshot.
+    Moved here from `/` unchanged when the product page took the root."""
+    return _page("eval.html")
 
 
 @mcp.custom_route("/api/jds", methods=["GET"])

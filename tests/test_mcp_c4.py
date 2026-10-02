@@ -462,8 +462,24 @@ def test_api_rank_rejects_bad_requests(web):
     assert web.post("/api/rank", content=b"not json").status_code == 400
 
 
-def test_index_page_is_served(web):
+def test_product_page_is_served_at_root(web):
+    """F5: the upload-and-rank page took `/`."""
     response = web.get("/")
+    assert response.status_code == 200
+    assert "text/html" in response.headers["content-type"]
+    body = response.text
+    # It drives the F3/F4/F2 routes, mints the session id itself, and renders
+    # the three score terms.
+    for needle in ("/api/candidates", "/api/jd_skills", "/api/rank_pool",
+                   "batch_id", "direct_match_score", "bridge_score", "gap_penalty",
+                   'href="/eval"'):
+        assert needle in body
+    assert "/api/jds" not in body, "the eval snapshot is not the product page's data"
+
+
+def test_eval_viewer_moved_to_eval_unchanged(web):
+    """D2's page still exists, at `/eval`, exactly as before."""
+    response = web.get("/eval")
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
     body = response.text
@@ -473,14 +489,15 @@ def test_index_page_is_served(web):
         assert needle in body
 
 
-def test_page_does_not_compute_scores_in_js(web):
-    """D2: 'Every number on screen comes from MatchResult.'
+@pytest.mark.parametrize("path", ["/", "/eval"])
+def test_page_does_not_compute_scores_in_js(web, path):
+    """D2/F5: 'Every number on screen comes from MatchResult.'
 
     A cheap structural guard - no arithmetic on the score fields in the script.
     """
     import re
 
-    body = web.get("/").text
+    body = web.get(path).text
     script = body[body.index("<script>"):]
     for field in ("total", "direct_match_score", "bridge_score", "gap_penalty",
                   "distance", "hops"):
