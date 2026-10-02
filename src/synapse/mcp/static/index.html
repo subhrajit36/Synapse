@@ -97,6 +97,20 @@
   .cfg { margin-top: 16px; font-size: 12px; color: var(--muted); word-break: break-word; }
   .empty { color: var(--muted); }
   .err { color: var(--gap); }
+
+  .tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+  .tabs button { border-radius: 6px 6px 0 0; }
+  .tabs button.on { background: var(--panel); border-bottom-color: var(--panel); font-weight: 600; }
+  .turn { border: 1px solid var(--line); border-radius: 8px; background: var(--panel);
+          padding: 10px 12px; margin-bottom: 8px; }
+  .turn .q { font-weight: 560; margin-bottom: 6px; }
+  .turn .a { white-space: pre-wrap; }
+  .call { margin: 6px 0; border-left: 3px solid var(--line); padding-left: 8px; font-size: 12.5px; }
+  .call.ok { border-left-color: var(--accent); }
+  .call.bad { border-left-color: var(--gap); }
+  .call summary { cursor: pointer; color: var(--muted); }
+  .call pre { margin: 6px 0 0; max-height: 220px; overflow: auto; background: var(--chip);
+              padding: 6px 8px; border-radius: 4px; font: 11.5px/1.45 ui-monospace, Menlo, Consolas, monospace; }
 </style>
 </head>
 <body>
@@ -148,8 +162,28 @@
   </div>
 
   <div>
-    <div id="status" class="panel">Upload at least one résumé and extract the JD's skills.</div>
-    <div id="results"></div>
+    <div class="tabs">
+      <button id="tab-rank" class="on">Ranking</button>
+      <button id="tab-ask">Ask</button>
+    </div>
+
+    <div id="pane-rank">
+      <div id="status" class="panel">Upload at least one résumé and extract the JD's skills.</div>
+      <div id="results"></div>
+    </div>
+
+    <div id="pane-ask" hidden>
+      <div class="panel">
+        <h2>Ask about this session</h2>
+        <textarea id="chatmsg" style="min-height:70px"
+          placeholder="e.g. Why is ravi ranked above meera for a Kubernetes and Terraform role?"></textarea>
+        <div class="row">
+          <button id="chatsend" class="primary">Send</button>
+          <span class="hint">No memory: each question stands alone, so name the skills and candidates you mean. Every tool call is shown; the Ranking tab is the source of truth.</span>
+        </div>
+      </div>
+      <div id="chatlog"></div>
+    </div>
   </div>
 </div>
 
@@ -343,6 +377,64 @@ function render(data) {
   }).join('');
 }
 
+// ------------------------------------------------------------- 4. ask (F6)
+
+function showTab(name) {
+  $('pane-rank').hidden = name !== 'rank';
+  $('pane-ask').hidden = name !== 'ask';
+  $('tab-rank').classList.toggle('on', name === 'rank');
+  $('tab-ask').classList.toggle('on', name === 'ask');
+}
+
+// Each tool call is rendered with the exact arguments sent and the exact
+// result returned, so an answer can be checked against what the tools said.
+function renderCall(t) {
+  const detail = t.ok ? JSON.stringify(t.result, null, 2) : t.error;
+  return `
+  <details class="call ${t.ok ? 'ok' : 'bad'}">
+    <summary>${t.ok ? '&#10003;' : '&#10007;'} <code>${esc(t.name)}</code></summary>
+    <pre>args: ${esc(JSON.stringify(t.arguments, null, 2))}</pre>
+    <pre>${t.ok ? 'result' : 'error'}: ${esc(detail)}</pre>
+  </details>`;
+}
+
+async function sendChat() {
+  const message = $('chatmsg').value.trim();
+  if (!message) return;
+  $('chatsend').disabled = true;
+
+  const turn = document.createElement('div');
+  turn.className = 'turn';
+  turn.innerHTML = `<div class="q">${esc(message)}</div><div class="a empty">Thinking…</div>`;
+  $('chatlog').prepend(turn);
+
+  let res, body;
+  try {
+    res = await fetch('/api/chat', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, batch_id: state.batchId })
+    });
+    body = await res.json().catch(() => ({ error: res.statusText }));
+  } catch (e) {
+    res = { ok: false }; body = { error: 'network error' };
+  }
+  $('chatsend').disabled = false;
+
+  if (!res.ok) {
+    turn.querySelector('.a').outerHTML = `<div class="a err">${esc(body.error || 'Chat failed')}</div>`;
+    return;
+  }
+  $('chatmsg').value = '';
+  const calls = body.tool_calls.length
+    ? body.tool_calls.map(renderCall).join('')
+    : '<div class="call"><span class="hint">No tools called: this answer is not grounded in Synapse data.</span></div>';
+  turn.innerHTML = `
+    <div class="q">${esc(message)}</div>
+    ${calls}
+    <div class="a">${esc(body.reply)}</div>
+    ${body.truncated ? '<div class="hint err">Stopped at the tool-call limit.</div>' : ''}`;
+}
+
 // ------------------------------------------------------------- session
 
 function newSession() {
@@ -355,6 +447,7 @@ function newSession() {
   $('jdunresolved').innerHTML = '';
   $('jdhint').textContent = '';
   $('results').innerHTML = '';
+  $('chatlog').innerHTML = '';
   setStatus('New session. Upload at least one résumé and extract the JD\'s skills.');
   showBatch();
   gate();
@@ -364,6 +457,9 @@ $('upload').addEventListener('click', uploadAll);
 $('extract').addEventListener('click', extractJd);
 $('rank').addEventListener('click', rank);
 $('newsession').addEventListener('click', newSession);
+$('chatsend').addEventListener('click', sendChat);
+$('tab-rank').addEventListener('click', () => showTab('rank'));
+$('tab-ask').addEventListener('click', () => showTab('ask'));
 showBatch();
 gate();
 </script>

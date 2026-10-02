@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 # ExtractionResult so Phase B numbers stay attributable to a specific prompt.
 PROMPT_VERSION = "a1-v1"
 
-DEFAULT_MODEL = os.getenv("SYNAPSE_GEMINI_MODEL", "gemini-3.1-flash-lite")
+DEFAULT_MODEL = os.getenv("SYNAPSE_GEMINI_MODEL", "gemini-3.6-flash")
 
 SYSTEM_INSTRUCTION = """\
 You extract skills from hiring documents (resumes and job descriptions).
