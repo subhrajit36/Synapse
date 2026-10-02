@@ -325,6 +325,33 @@ async def api_jd_skills(request: Request) -> JSONResponse:
         return JSONResponse({"error": str(exc)}, status_code=503)
 
 
+@mcp.custom_route("/api/chat", methods=["POST"])
+async def api_chat(request: Request) -> JSONResponse:
+    """F6: one question, answered by Gemini calling this server's MCP tools.
+
+    Body: `{message, batch_id?}`. No memory, no streaming. The response lists
+    every tool call with its arguments and result so the page can show them.
+    """
+    from .chat import run_chat
+
+    try:
+        body = await request.json()
+    except Exception:  # noqa: BLE001
+        return JSONResponse({"error": "Body must be JSON."}, status_code=400)
+
+    message = (body or {}).get("message")
+    if not isinstance(message, str) or not message.strip():
+        return JSONResponse({"error": "Missing 'message'."}, status_code=400)
+
+    try:
+        response = await run_chat(message, body.get("batch_id") or None, mcp)
+    except ValueError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
+    except RuntimeError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=503)
+    return JSONResponse(response.model_dump(mode="json"))
+
+
 @mcp.custom_route("/api/rank_pool", methods=["POST"])
 async def api_rank_pool(request: Request) -> JSONResponse:
     """E4: rank the stored pool against a JD given as skills.
