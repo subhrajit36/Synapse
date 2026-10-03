@@ -302,3 +302,54 @@ def test_ceiling_binds_only_above_it(chain):
     loose = ScoringParams(bridge_credit_scale=2.0, max_bridge_credit=10.0)
     r2 = Matcher(chain, params=loose).match(["B"], ["A"], params=loose)
     assert r2.bridge_score == pytest.approx(1.8)
+
+
+# --------------------------------------------- held-skill floor (monotonicity)
+
+
+def test_mentioning_a_skill_never_scores_below_omitting_it(chain):
+    """The live regression: a résumé mentioning Kubernetes once (proficiency
+    0.5) ranked below the same résumé with the mention deleted, because the
+    deleted skill bridged from Docker at 0.9 while the mention earned 0.5."""
+    from synapse.matching.matcher import TUNED_PARAMS
+
+    m = Matcher(chain, params=TUNED_PARAMS)
+    mentions = m.match({"B": 1.0}, {"A": 1.0, "B": 0.5}, params=TUNED_PARAMS)
+    omits = m.match({"B": 1.0}, {"A": 1.0}, params=TUNED_PARAMS)
+
+    assert mentions.total >= omits.total
+    assert mentions.direct_match_score == pytest.approx(0.9)   # floored, not 0.5
+    assert mentions.matched_skills == ["B"], "still a held skill, not a bridge"
+    [f] = mentions.floored_skills
+    assert (f.skill, f.via, f.reason) == ("B", "A", "held_floor")
+
+
+def test_floor_never_lifts_a_held_skill_past_full_credit(chain):
+    """Under an uncapped scale-2.0 arm a bridge from A to B earns 1.8. The floor
+    must cap at 1.0, or fully held skills would gain credit and every recorded
+    Phase B number would move."""
+    loose = ScoringParams(bridge_credit_scale=2.0)          # no max_bridge_credit
+    m = Matcher(chain, params=loose)
+
+    full = m.match({"B": 1.0}, {"A": 1.0, "B": 1.0}, params=loose)
+    assert full.direct_match_score == pytest.approx(1.0)
+    assert full.floored_skills == []
+
+    weak = m.match({"B": 1.0}, {"A": 1.0, "B": 0.5}, params=loose)
+    assert weak.direct_match_score == pytest.approx(1.0)    # 1.8 capped at 1.0
+
+
+def test_floor_needs_a_bridge_from_another_held_skill(chain):
+    """Alone, a weak skill keeps its proficiency credit; nothing to bridge from."""
+    from synapse.matching.matcher import TUNED_PARAMS
+
+    r = Matcher(chain, params=TUNED_PARAMS).match({"B": 1.0}, {"B": 0.5}, params=TUNED_PARAMS)
+    assert r.direct_match_score == pytest.approx(0.5)
+    assert r.floored_skills == []
+
+
+def test_floor_is_off_when_bridging_is_off(chain):
+    p = ScoringParams(enable_bridging=False)
+    r = Matcher(chain, params=p).match({"B": 1.0}, {"A": 1.0, "B": 0.5}, params=p)
+    assert r.direct_match_score == pytest.approx(0.5)
+    assert r.floored_skills == []

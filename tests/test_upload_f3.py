@@ -388,6 +388,47 @@ def test_upload_route_is_503_without_a_database(tmp_path):
         set_engine(None)
 
 
+def test_an_incomplete_stored_profile_is_re_extracted_not_reused(tmp_path):
+    """A résumé stored while Gemini refused calls (quota) has failed chunks and
+    no skills. Reusing it pinned the résumé to that failure on every re-upload."""
+    h = content_hash_of(read_bytes(TEXT, "ravi.txt").text)
+    store = StubStore(existing={h: "ravi-old"})
+    store.profiles["ravi-old"] = {"candidate_id": "ravi-old", "name": "ravi",
+                                  "skills": [], "unresolved": [], "failed_chunks": [0]}
+    pipe = FakePipeline()
+    eng = engine_with(store, pipe, tmp_path)
+
+    res = eng.ingest_upload(TEXT, "ravi.txt", "b2")
+
+    assert res.reused is False
+    assert len(pipe.calls) == 1, "the document must go through extraction again"
+    assert pipe.calls[0]["candidate_id"] == "ravi-old", "same node, replaced in place"
+    assert store.attached == [], "the batch is appended by the write, not the reuse path"
+
+
+class UnreachableStore(StubStore):
+    """Configured, but every query fails the way an unreachable Aura does."""
+
+    def find_candidate_by_hash(self, content_hash):
+        from neo4j.exceptions import ServiceUnavailable
+
+        raise ServiceUnavailable("Unable to retrieve routing information")
+
+
+def test_upload_route_is_503_when_the_database_is_unreachable(tmp_path):
+    """A driver error is not a RuntimeError; it used to escape as a bare 500."""
+    from starlette.testclient import TestClient
+
+    set_engine(engine_with(UnreachableStore(), FakePipeline(), tmp_path))
+    try:
+        with TestClient(mcp.http_app()) as client:
+            res = post(client, batch_id="b1")
+            assert res.status_code == 503
+            assert "routing information" in res.json()["error"]
+    finally:
+        set_engine(None)
+
+
 def test_get_on_the_same_path_still_lists(web):
     """Adding POST must not shadow the E4 listing on the same URL."""
     client, _, _ = web

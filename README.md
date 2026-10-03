@@ -290,6 +290,62 @@ distance d`), its unreachable gaps with a reason code, and the active
 the browser. Each candidate's ground-truth tier from the eval set is shown beside
 its score, so the ranking can be checked against the labels.
 
+### Run locally (upload-and-rank site)
+
+Windows PowerShell shown; on macOS/Linux use `source venv/bin/activate` and
+`set -a; source .env; set +a`.
+
+```powershell
+# 1. Activate the project
+python -m venv venv                      # first time only
+.\venv\Scripts\Activate.ps1
+pip install -r requirements-dev.txt; pip install -e .   # first time only
+
+# 2. Load .env into the shell (the server does not read .env itself)
+Get-Content .env | Where-Object { $_ -match '^\s*[A-Z_]+\s*=' } | ForEach-Object {
+  $k, $v = $_ -split '=', 2; Set-Item "env:$($k.Trim())" $v.Trim().Trim('"') }
+
+# 3. Start the server
+python -m synapse.mcp.server --warm -v
+```
+
+Open `http://127.0.0.1:8000/` (upload, rank, Ask tab), `/eval` (eval viewer),
+`/health`. MCP clients connect to `/mcp`. Uploads, ranking and chat need
+`GEMINI_API_KEY` and a reachable Neo4j for the candidate pool; scoring itself
+uses `data/skill_graph.pkl` (`SYNAPSE_GRAPH_SOURCE=pickle`, the default).
+
+### Test against a local Neo4j graph
+
+When AuraDB is unreachable (Bolt port 7687 blocked), run Neo4j in Docker and
+point the pool at it. AuraDB is not touched.
+
+```powershell
+# 1. Start Neo4j (browser UI on http://localhost:7474)
+docker run -d --name synapse-neo4j-local -p 7687:7687 -p 7474:7474 `
+  -e NEO4J_AUTH=neo4j/localtest123 neo4j:5.26-community
+
+# 2. After step 2 above, override the connection for this shell
+$env:NEO4J_URI = "neo4j://localhost:7687"; $env:NEO4J_USERNAME = "neo4j"
+$env:NEO4J_PASSWORD = "localtest123";      $env:NEO4J_DATABASE = "neo4j"
+
+# 3. Load the skill graph, then check it matches the artifact
+python -m synapse.graph.migrate_to_neo4j
+python scripts/migrate_graph.py --verify-only     # every row must say OK
+
+# 4. Start the server as above and use the page
+python -m synapse.mcp.server --warm -v
+```
+
+Inspect what an upload wrote at `http://localhost:7474`, e.g.
+`MATCH (c:Candidate)-[r:HAS_SKILL]->(s) RETURN c.name, s.name, r.weight`.
+Reset the pool with `MATCH (c:Candidate) DETACH DELETE c`. Stop with
+`docker stop synapse-neo4j-local`; `docker start synapse-neo4j-local` brings it
+back with its data.
+
+Each new résumé and each JD costs one Gemini call and a chat question a few
+more, so the free-tier daily quota runs out quickly in testing. Uploads made
+while it is exhausted are shown in red and re-extracted on the next upload.
+
 ---
 
 ## Known limitation — FR4 is not validated

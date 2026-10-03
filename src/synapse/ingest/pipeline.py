@@ -341,6 +341,14 @@ def _link_node(state: IngestState, linker) -> IngestState:
     # so a stored profile can still answer "why does this candidate have this
     # skill" without re-reading the document (NFR6).
     context_by_surface = {s.skill: s.context for s in merged}
+    # One entry per node. Two surfaces can land on the same node ("Jenkins" and
+    # "Jenkins pipelines"); keeping both overstated the skill count, and the
+    # store's MERGE then kept whichever weight was written last. The higher
+    # weight wins, the same rule as `link_many`'s `profile.skills`.
+    best = {}
+    for r in profile.results:
+        if r.node is not None and (r.node not in best or r.weight > best[r.node].weight):
+            best[r.node] = r
     linked = [
         {
             "node": r.node,
@@ -349,7 +357,7 @@ def _link_node(state: IngestState, linker) -> IngestState:
             "method": r.method,
             "link_score": round(r.score, 4),
         }
-        for r in profile.results if r.node is not None
+        for r in best.values()
     ]
     unresolved = [r.surface for r in profile.unresolved]
 

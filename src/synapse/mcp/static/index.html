@@ -199,11 +199,13 @@ function newBatchId() {
   return 'b-' + Math.random().toString(16).slice(2, 10);
 }
 
-const state = { batchId: newBatchId(), inPool: 0, jdSkills: [] };
+// A Set of candidate ids, not a counter: re-uploading a résumé already in this
+// session returns the same candidate, which must not count twice.
+const state = { batchId: newBatchId(), inPool: new Set(), jdSkills: [] };
 
 function showBatch() { $('batch').textContent = state.batchId; }
 function gate() {
-  $('rank').disabled = !(state.inPool > 0 && state.jdSkills.length > 0);
+  $('rank').disabled = !(state.inPool.size > 0 && state.jdSkills.length > 0);
 }
 function setStatus(html, cls) {
   $('status').innerHTML = cls ? `<span class="${cls}">${html}</span>` : html;
@@ -246,11 +248,18 @@ async function uploadAll() {
     }
 
     if (res.ok && body.in_pool) {
-      state.inPool += 1;
+      state.inPool.add(body.candidate_id);
       stateEl.textContent = body.reused
         ? `reused · ${body.skill_count} skills`
         : `${body.status} · ${body.skill_count} skills`;
-      stateEl.className = 'state ok';
+      // Stored, but part of the résumé was never read (rate limit, quota).
+      // Uploading it again later re-extracts rather than reusing this.
+      if (body.failed_chunks > 0) {
+        stateEl.textContent += ` · ${body.failed_chunks} chunk(s) failed, upload again later`;
+        stateEl.className = 'state err';
+      } else {
+        stateEl.className = 'state ok';
+      }
     } else {
       stateEl.textContent = body.error || body.status || `HTTP ${res.status}`;
       stateEl.className = 'state err';
@@ -260,7 +269,7 @@ async function uploadAll() {
   $('files').value = '';
   $('files').disabled = false;
   $('upload').disabled = false;
-  setStatus(`${state.inPool} candidate(s) in this session.`);
+  setStatus(`${state.inPool.size} candidate(s) in this session.`);
   gate();
 }
 
@@ -343,6 +352,13 @@ function render(data) {
           g.via ? `, nearest ${esc(g.via)} at ${g.distance}` : ''})</span></li>`).join(''),
       'No unreachable gaps.');
 
+    // Held only in passing, but credited at the bridge value its `via` skill
+    // gives it - so mentioning a skill never scores below omitting it.
+    const floored = (c.floored_skills || []).length
+      ? `<p class="reason">Held only in passing, credited as a bridge: ${c.floored_skills.map(g =>
+          `${esc(g.skill)} &larr; via ${esc(g.via)}, distance ${g.distance}`).join('; ')}</p>`
+      : '';
+
     const unresolved = c.unresolved_skills.length
       ? `<h3>On the résumé but not in the graph (${c.unresolved_skills.length})</h3>
          <div class="chips">${c.unresolved_skills.map(s => `<span class="chip">${esc(s)}</span>`).join('')}</div>`
@@ -366,7 +382,7 @@ function render(data) {
           <div><span class="k">total demand</span><span class="v">${c.total_demand}</span></div>
         </div>
 
-        <h3>Matched (${c.matched_skills.length})</h3>${matched}
+        <h3>Matched (${c.matched_skills.length})</h3>${matched}${floored}
         <h3>Bridged (${c.bridged_skills.length})</h3>${bridged}
         <h3>Unreachable gaps (${c.missing_skills.length})</h3>${missing}
         ${unresolved}
@@ -396,6 +412,16 @@ function renderCall(t) {
     <pre>args: ${esc(JSON.stringify(t.arguments, null, 2))}</pre>
     <pre>${t.ok ? 'result' : 'error'}: ${esc(detail)}</pre>
   </details>`;
+}
+
+// The model answers in light markdown. Escape first, then turn back on only
+// bold, inline code and bullets - nothing the model writes can become markup.
+function md(s) {
+  return esc(s)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/^[ \t]*[*-][ \t]+/gm, '&bull; ')
+    .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
 }
 
 async function sendChat() {
@@ -431,7 +457,7 @@ async function sendChat() {
   turn.innerHTML = `
     <div class="q">${esc(message)}</div>
     ${calls}
-    <div class="a">${esc(body.reply)}</div>
+    <div class="a">${md(body.reply)}</div>
     ${body.truncated ? '<div class="hint err">Stopped at the tool-call limit.</div>' : ''}`;
 }
 
@@ -439,7 +465,7 @@ async function sendChat() {
 
 function newSession() {
   state.batchId = newBatchId();
-  state.inPool = 0;
+  state.inPool = new Set();
   state.jdSkills = [];
   $('filelist').innerHTML = '';
   $('files').value = '';

@@ -131,6 +131,12 @@ class CandidateScore(BaseModel):
     matched_skills: list[str]
     bridged_skills: list[GapInfo]
     missing_skills: list[GapInfo]
+    floored_skills: list[GapInfo] = Field(
+        default_factory=list,
+        description="Matched skills held only weakly whose credit was raised to "
+                    "the bridge credit their `via` skill gives them (inside "
+                    "direct_match_score). Listing a skill never lowers a score.",
+    )
     unresolved_skills: list[str] = Field(
         default_factory=list,
         description="Candidate surfaces that reached no graph node and so scored nothing.",
@@ -353,6 +359,7 @@ def _to_candidate_score(result: MatchResult, unresolved: Iterable[str]) -> Candi
         matched_skills=result.matched_skills,
         bridged_skills=[_to_gap_info(g) for g in result.bridged_skills],
         missing_skills=[_to_gap_info(g) for g in result.missing_skills],
+        floored_skills=[_to_gap_info(g) for g in result.floored_skills],
         unresolved_skills=list(unresolved),
     )
 
@@ -697,10 +704,17 @@ class MatchEngine:
         content_hash = content_hash_of(document.text)
 
         existing = client.find_candidate_by_hash(content_hash)
-        if existing:
+        profile = (client.get_candidate(existing) or {}) if existing else {}
+        if existing and profile.get("failed_chunks"):
+            # Only a complete extraction is reusable. A profile stored while
+            # Gemini was refusing calls (quota, outage) has failed chunks and
+            # possibly no skills; reusing it would pin this résumé to that
+            # failure forever. Extract again under the same id - the write
+            # replaces the profile and appends this batch.
+            logger.info("Upload %s re-extracting incomplete candidate %s", filename, existing)
+        elif existing:
             client.add_candidate_to_batch(existing, batch_id)
             self.invalidate_pool(batch_id)
-            profile = client.get_candidate(existing) or {}
             logger.info("Upload %s reused candidate %s (batch=%s)", filename, existing, batch_id)
             return UploadResponse(
                 candidate_id=existing,
@@ -717,8 +731,8 @@ class MatchEngine:
 
         # The file stem alone is not an identity: two people uploading
         # `resume.pdf` must not MERGE into one node. The hash makes it unique;
-        # the stem keeps it readable.
-        candidate_id = f"{document.source_id}-{content_hash[:8]}"
+        # the stem keeps it readable. A re-extraction keeps the stored id.
+        candidate_id = existing or f"{document.source_id}-{content_hash[:8]}"
         final = self.pipeline.run_document(
             document, batch_id=batch_id, candidate_id=candidate_id
         )

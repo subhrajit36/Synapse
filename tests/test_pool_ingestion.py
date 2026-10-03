@@ -138,6 +138,25 @@ def test_link_provenance_travels_with_each_skill(tmp_path, linker):
     assert by_node["Kubernetes"]["weight"] == 1.0
 
 
+def test_two_surfaces_on_one_node_are_stored_once_at_the_higher_weight(tmp_path, linker):
+    """'k8s' and 'Kubernetes' both link to Kubernetes. Stored twice, the skill
+    count was overstated and the MERGE kept whichever weight came last."""
+    payload = json.dumps([
+        {"skill": "Kubernetes", "weight": 1.5, "context": "ran clusters"},
+        {"skill": "k8s", "weight": 0.5, "context": "mentioned once"},
+        {"skill": "Docker", "weight": 1.0, "context": "containers"},
+    ])
+    store = StubStore()
+    IngestionPipeline(extractor([payload]), FAST, linker=linker, store=store).run(
+        write_doc(tmp_path))
+
+    skills = store.written[0]["skills"]
+    assert sorted(s["node"] for s in skills) == ["Docker", "Kubernetes"]
+    k8s = next(s for s in skills if s["node"] == "Kubernetes")
+    assert k8s["weight"] == 1.5
+    assert k8s["context"] == "ran clusters", "provenance follows the winning surface"
+
+
 def test_batch_id_travels_from_run_to_the_store(tmp_path, linker):
     """F2: the upload session survives the whole graph and reaches the write."""
     store = StubStore()

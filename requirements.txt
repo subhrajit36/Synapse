@@ -24,6 +24,10 @@ langgraph-checkpoint-sqlite==3.1.1
 # MCP tool/API layer (Phase C4). HTTP transport; no WebSocket transport used.
 fastmcp==3.4.7
 
+# Loads .env on package import (never overrides variables already set). Was
+# already installed via fastmcp; pinned because synapse now imports it directly.
+python-dotenv==1.2.3
+
 # Transitive pins, forced by a genuine conflict rather than preference:
 #   websockets - four packages disagree. fastmcp-slim[server] needs >=15.0.1,
 #                google-genai 1.29.0 needs <15.1.0, streamlit and langgraph-sdk

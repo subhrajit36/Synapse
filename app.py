@@ -6,7 +6,11 @@ sys.path.insert(0, "src")
 
 import streamlit as st
 from synapse.matching.matcher import Matcher, TUNED_PARAMS
-from synapse.matching.entity_linker import PRODUCTION_EMBED_MODEL, EntityLinker
+from synapse.matching.entity_linker import (
+    DEFAULT_MIN_SCORE,
+    PRODUCTION_EMBED_MODEL,
+    EntityLinker,
+)
 from synapse.ingest.resume import read_resume
 from synapse.ingest.skill_extractor import SkillExtractor as GazetteerExtractor
 
@@ -55,7 +59,7 @@ def load_engine():
         skills,
         node_texts=node_texts,
         model_name=PRODUCTION_EMBED_MODEL,
-        min_score=0.60,  # threshold for embedding fallback
+        min_score=DEFAULT_MIN_SCORE,  # calibrated; same value the MCP server links with
         use_embeddings=True,
         cache_dir=EMBED_CACHE_DIR,
     )

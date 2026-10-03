@@ -383,3 +383,34 @@ def test_pool_routes_report_unavailable_when_the_database_is_not(tmp_path):
             ).status_code == 503
     finally:
         set_engine(None)
+
+
+class UnreachableClient(StubClient):
+    """Configured, but the driver cannot reach the database."""
+
+    def load_candidate_pool(self, batch_id=None):
+        from neo4j.exceptions import ServiceUnavailable
+
+        raise ServiceUnavailable("Unable to retrieve routing information")
+
+    def list_candidates(self, batch_id=None):
+        from neo4j.exceptions import SessionExpired
+
+        raise SessionExpired("Failed to read from defunct connection")
+
+
+def test_pool_routes_are_503_when_the_database_is_unreachable(tmp_path):
+    """Driver errors are not RuntimeErrors; they used to escape as bare 500s."""
+    from starlette.testclient import TestClient
+
+    path = tmp_path / "g.pkl"
+    path.write_bytes(pickle.dumps(build_graph()))
+    set_engine(MatchEngine(graph_path=path, neo4j_client=UnreachableClient()))
+    try:
+        with TestClient(mcp.http_app()) as client:
+            assert client.get("/api/candidates").status_code == 503
+            res = client.post("/api/rank_pool", json={"jd_skills": ["Docker"], "batch_id": "b1"})
+            assert res.status_code == 503
+            assert "routing information" in res.json()["error"]
+    finally:
+        set_engine(None)

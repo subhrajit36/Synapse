@@ -512,6 +512,13 @@ def test_page_and_api_coexist_with_the_mcp_transport(web):
     assert len(tools) == 5
 
 
+def test_favicon_is_an_empty_204_not_a_404(web):
+    """Browsers request it on every load; a 404 logged a console error each time."""
+    res = web.get("/favicon.ico")
+    assert res.status_code == 204
+    assert res.content == b""
+
+
 def test_health_route_does_not_touch_the_graph():
     """The probe must answer while the graph is still unloaded (C6.3)."""
     from starlette.testclient import TestClient

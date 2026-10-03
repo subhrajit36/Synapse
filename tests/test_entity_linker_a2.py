@@ -169,3 +169,27 @@ def test_no_log_file_written_when_all_resolved(tmp_path):
     linker = EntityLinker(NODES, embedder=FakeEmbedder(), unresolved_log=log)
     linker.link_many(["Docker"])
     assert not log.exists()
+
+# ------------------------------------------------- calibrated threshold (A2)
+
+
+def test_default_threshold_is_the_calibrated_value():
+    """0.60 was an uncalibrated placeholder that linked 74 of 83 non-graph terms
+    to some node. The value comes from scripts/calibrate_link_threshold.py;
+    changing it must be deliberate, like TUNED_PARAMS."""
+    from synapse.matching.entity_linker import DEFAULT_MIN_SCORE
+
+    assert DEFAULT_MIN_SCORE == 0.80
+    assert EntityLinker(NODES, use_embeddings=False).min_score == 0.80
+
+
+def test_alternate_names_resolve_by_alias_not_by_cosine():
+    """Names the calibrated threshold would drop are recovered deterministically.
+    'c sharp' matters most: the embedding sends it to C, not C#."""
+    nodes = ["C", "C#", "C++", "Go", "Scikit-learn", "Google Angular", "Docker"]
+    linker = EntityLinker(nodes, use_embeddings=False)
+    for surface, node in [("C sharp", "C#"), ("CPP", "C++"), ("Golang", "Go"),
+                          ("sklearn", "Scikit-learn"), ("AngularJS", "Google Angular"),
+                          ("docker-compose", "Docker")]:
+        r = linker.link(surface)
+        assert (r.node, r.method) == (node, METHOD_ALIAS), surface

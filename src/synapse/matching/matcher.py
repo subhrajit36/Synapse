@@ -194,6 +194,10 @@ class MatchResult:
     matched_skills: list[str] = field(default_factory=list)
     bridged_skills: list[Gap] = field(default_factory=list)
     missing_skills: list[Gap] = field(default_factory=list)
+    # Held skills whose credit was raised to what bridging would have earned
+    # them (see Matcher._held_floor). Their credit is inside direct_match_score;
+    # this list is how that decision stays inspectable (NFR6).
+    floored_skills: list[Gap] = field(default_factory=list)
     name: str = ""
 
     @property
@@ -229,6 +233,7 @@ class MatchResult:
             "matched_skills": self.matched_skills,
             "bridged_skills": [g.to_dict() for g in self.bridged_skills],
             "missing_skills": [g.to_dict() for g in self.missing_skills],
+            "floored_skills": [g.to_dict() for g in self.floored_skills],
         }
 
     def explain(self) -> str:
@@ -238,6 +243,9 @@ class MatchResult:
             f"- penalty {self.gap_penalty:.2f}) / demand {self.total_demand:.2f}",
             f"  matched   : {', '.join(self.matched_skills) or '-'}",
         ]
+        for g in self.floored_skills:
+            lines.append(f"  floored   : {g.skill} held weakly, credited as bridge <- {g.via} "
+                         f"(d={g.distance:.2f}, {g.hops} hop)")
         for g in self.bridged_skills:
             lines.append(f"  bridged   : {g.skill} <- {g.via} (d={g.distance:.2f}, {g.hops} hop)")
         for g in self.missing_skills:
@@ -338,6 +346,51 @@ class Matcher:
             return f"beyond_hops({h}>{p.max_hops})"
         return "bridgeable"
 
+    @staticmethod
+    def _within_bridge(p: ScoringParams, d: float, h: int | None) -> tuple[bool, bool, bool]:
+        """(bridgeable, within_distance, within_hops) - the one bridging rule."""
+        within_distance = p.bridge_cutoff is None or d <= p.bridge_cutoff
+        within_hops = p.max_hops is None or (h is not None and h <= p.max_hops)
+        bridgeable = p.enable_bridging and d != float("inf") and within_distance and within_hops
+        return bridgeable, within_distance, within_hops
+
+    @staticmethod
+    def _bridge_credit(p: ScoringParams, d: float) -> float:
+        """Per-unit-demand credit for a skill reached at distance `d`."""
+        credit = max(0.0, 1 - d) * p.bridge_credit_scale
+        if p.max_bridge_credit is not None:
+            credit = min(credit, p.max_bridge_credit)
+        return credit
+
+    def _held_floor(
+        self, skill: str, cand: Mapping[str, float], demand: float, p: ScoringParams
+    ) -> tuple[float, Gap] | None:
+        """What a held skill would earn if the candidate lacked it and bridged.
+
+        Monotonicity: listing a skill must never score lower than omitting it.
+        A passing mention earns proficiency credit 0.5, while the same skill
+        absent but reachable from the candidate's other skills earns a bridge
+        credit of up to 0.9 - so without this floor, a résumé that mentions
+        Kubernetes once ranked below the same résumé with the mention deleted.
+
+        Capped at full held credit (1.0): the floor can lift a weakly held skill
+        up to "held", never past it. That cap is what keeps it inert whenever
+        proficiency credit is already 1.0, which includes every Phase B pair
+        (the eval candidates carry no weights), so no recorded number moves even
+        under the uncapped `bridge_credit_scale=2.0` arms.
+        """
+        if not p.enable_bridging:
+            return None
+        others = [s for s in cand if s != skill]
+        dist, hops, via = self._reachability(others, params=p)
+        d = dist.get(skill, float("inf"))
+        h = hops.get(skill)
+        if not self._within_bridge(p, d, h)[0]:
+            return None
+        credit = min(self._bridge_credit(p, d), 1.0)
+        return credit, Gap(skill=skill, via=via.get(skill), distance=d, hops=h,
+                           bridgeable=True, demand=demand, reason="held_floor")
+
     # ------------------------------------------------------------------ scoring
 
     def match(
@@ -358,9 +411,16 @@ class Matcher:
         missing = [s for s in jd if s not in cand]
 
         direct = 0.0
+        floored: list[Gap] = []
         for skill in matched:
             demand = jd[skill] if p.use_weights else 1.0
-            direct += demand * p.proficiency_credit(cand[skill])
+            credit = p.proficiency_credit(cand[skill])
+            if credit < 1.0:
+                floor = self._held_floor(skill, cand, demand, p)
+                if floor is not None and floor[0] > credit:
+                    credit = floor[0]
+                    floored.append(floor[1])
+            direct += demand * credit
 
         # `p`, not `self.params` - this is the fix.
         dist, hops, via = (
@@ -377,12 +437,7 @@ class Matcher:
             demand = jd[skill] if p.use_weights else 1.0
             d = dist.get(skill, float("inf"))
             h = hops.get(skill)
-            within_distance = p.bridge_cutoff is None or d <= p.bridge_cutoff
-            within_hops = p.max_hops is None or (h is not None and h <= p.max_hops)
-            bridgeable = (
-                p.enable_bridging and d != float("inf")
-                and within_distance and within_hops
-            )
+            bridgeable, within_distance, within_hops = self._within_bridge(p, d, h)
 
             gap = Gap(
                 skill=skill,
@@ -394,10 +449,7 @@ class Matcher:
                 reason=self._gap_reason(p, d, h, within_distance, within_hops),
             )
             if bridgeable:
-                credit = max(0.0, 1 - d) * p.bridge_credit_scale
-                if p.max_bridge_credit is not None:
-                    credit = min(credit, p.max_bridge_credit)
-                bridge_score += demand * credit
+                bridge_score += demand * self._bridge_credit(p, d)
                 penalty += demand * p.bridgeable_penalty
                 bridged.append(gap)
             else:
@@ -415,6 +467,7 @@ class Matcher:
             matched_skills=sorted(matched),
             bridged_skills=sorted(bridged, key=lambda g: g.distance),
             missing_skills=sorted(unreachable, key=lambda g: g.skill),
+            floored_skills=sorted(floored, key=lambda g: g.skill),
         )
 
     # ------------------------------------------------------------------- diagnostics

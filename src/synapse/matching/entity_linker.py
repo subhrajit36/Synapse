@@ -38,11 +38,25 @@ logger = logging.getLogger(__name__)
 # below, which is still the Phase A dev embedder for backwards compatibility.
 PRODUCTION_EMBED_MODEL = "BAAI/bge-small-en-v1.5"
 
-# NOTE: this default is a starting point, NOT a validated value. Canonical node
-# names are long O*NET strings, so a short surface like "aws" scores far lower
-# against "Amazon Web Services AWS software" than the 0.82 the plan assumes.
-# Run scripts/calibrate_link_threshold.py and set this from the data.
-DEFAULT_MIN_SCORE = 0.60
+# Calibrated by scripts/calibrate_link_threshold.py against bge-small-en-v1.5,
+# on surfaces that miss the alias and surface indexes (60 graph-skill variants,
+# 83 real skills/concepts that are NOT graph nodes):
+#
+#   min_score   correct   missed   wrong links
+#     0.60         59        0         75      <- old uncalibrated default
+#     0.75         54        6         14
+#     0.80         46       14          5      <- selected
+#     0.86         16       44          0
+#
+# At 0.60 the fallback attached a node to 74 of 83 non-graph terms ("Feature
+# Engineering" -> C++, "Deep Learning" -> Keras), so every résumé carried about
+# eighteen skills it never claimed. A wrong link corrupts scores invisibly; a
+# missed one surfaces in `unresolved` and is recovered by an alias entry. So
+# precision is bought here and coverage restored in aliases.ALIAS_TABLE.
+#
+# SCALE WARNING: like matcher.TUNED_PARAMS' cutoffs, this is specific to the
+# embedder. Changing it invalidates the number; re-run the calibration.
+DEFAULT_MIN_SCORE = 0.80
 
 METHOD_ALIAS = "alias"
 METHOD_SURFACE = "surface"

@@ -53,6 +53,24 @@ ALIAS_TABLE: dict[str, str] = {
     "gcp": "Google Workspace software",  # Closest match in current graph
     "tf": "IBM Terraform",
     "terraform": "IBM Terraform",
+    # Standard alternate names that score below the calibrated embedding
+    # threshold (entity_linker.DEFAULT_MIN_SCORE) and would otherwise come back
+    # unresolved. "c sharp" is the dangerous one: the embedding sends it to C.
+    "cpp": "C++",
+    "c sharp": "C#",
+    "csharp": "C#",
+    "golang": "Go",
+    "sklearn": "Scikit-learn",
+    "scikit learn": "Scikit-learn",
+    "angularjs": "Google Angular",
+    "angular js": "Google Angular",
+    "docker compose": "Docker",
+    "docker-compose": "Docker",
+    "huggingface": "Hugging Face",
+    "hugging face transformers": "Hugging Face",
+    "llama 2": "Llama",
+    "llama 3": "Llama",
+    "django rest framework": "Django",
     # Four graph nodes that `build_surface_index` cannot index, so without these
     # they resolve to nothing even when a document names them exactly:
     #   C, R      - one character, dropped by the index's `len(surface) >= 2` guard

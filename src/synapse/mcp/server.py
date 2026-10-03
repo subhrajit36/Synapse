@@ -22,9 +22,10 @@ from typing import Annotated
 from pathlib import Path
 
 from fastmcp import FastMCP
+from neo4j.exceptions import AuthError, DriverError
 from pydantic import Field
 from starlette.requests import Request
-from starlette.responses import HTMLResponse, JSONResponse
+from starlette.responses import HTMLResponse, JSONResponse, Response
 
 from .engine import (
     CandidateInput,
@@ -220,6 +221,12 @@ async def health(request: Request) -> JSONResponse:
 
 STATIC_DIR = Path(__file__).parent / "static"
 
+# What a pool route reports as 503. `RuntimeError` is an unconfigured database;
+# the driver's errors are an unreachable one (ServiceUnavailable, SessionExpired)
+# or one refusing our credentials. They are not RuntimeErrors, so without this
+# they escaped as a bare 500 the page could not explain.
+UNAVAILABLE = (RuntimeError, DriverError, AuthError)
+
 
 def _page(name: str) -> HTMLResponse:
     page = STATIC_DIR / name
@@ -232,6 +239,12 @@ def _page(name: str) -> HTMLResponse:
 async def index(request: Request) -> HTMLResponse:
     """F5: the product page - upload résumés, type a JD, rank this session."""
     return _page("index.html")
+
+
+@mcp.custom_route("/favicon.ico", methods=["GET"])
+async def favicon(request: Request) -> Response:
+    """No icon. 204 rather than 404, so every page load stops logging an error."""
+    return Response(status_code=204)
 
 
 @mcp.custom_route("/eval", methods=["GET"])
@@ -256,7 +269,7 @@ async def api_candidates(request: Request) -> JSONResponse:
     batch_id = request.query_params.get("batch_id") or None
     try:
         return JSONResponse(get_engine().list_pool(batch_id=batch_id).model_dump())
-    except RuntimeError as exc:
+    except UNAVAILABLE as exc:
         # Pool lives in AuraDB; an unconfigured or unreachable database is a
         # service-availability problem, not a bad request.
         return JSONResponse({"error": str(exc)}, status_code=503)
@@ -290,7 +303,7 @@ async def api_upload_candidate(request: Request) -> JSONResponse:
         )
     except ValueError as exc:
         return JSONResponse({"error": str(exc)}, status_code=400)
-    except RuntimeError as exc:
+    except UNAVAILABLE as exc:
         return JSONResponse({"error": str(exc)}, status_code=503)
 
     # The candidate never reached the pool: the page must not show it as ranked.
@@ -383,7 +396,7 @@ async def api_rank_pool(request: Request) -> JSONResponse:
             jd_skills=jd_skills, candidates=None, top_k=body.get("top_k"),
             batch_id=body.get("batch_id") or None,
         )
-    except RuntimeError as exc:
+    except UNAVAILABLE as exc:
         return JSONResponse({"error": str(exc)}, status_code=503)
     return JSONResponse(response.model_dump())
 
@@ -428,7 +441,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--path", default="/mcp", help="Mount path for http/sse.")
     parser.add_argument(
         "--warm", action="store_true",
-        help="Load the graph at startup instead of on the first request.",
+        help="Load the graph and the linker's embedder at startup instead of on "
+             "the first request.",
     )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
@@ -439,10 +453,15 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     if args.warm:
-        stats = get_engine().stats()
+        engine = get_engine()
+        stats = engine.stats()
         logger.info(
             "Graph ready: %d skills, %d similar edges", stats.skill_nodes, stats.similar_edges
         )
+        # Embedding model + node matrix (~6s on CPU). Otherwise the first upload
+        # or JD extraction that misses the alias/surface indexes pays it.
+        if engine.linker.warm():
+            logger.info("Linker ready: embedding fallback loaded")
 
     if args.transport == "stdio":
         mcp.run(transport="stdio")
